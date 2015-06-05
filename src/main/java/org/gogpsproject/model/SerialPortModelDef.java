@@ -6,6 +6,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
 
+import org.gogpsproject.Coordinates;
+import org.gogpsproject.EphGps;
+import org.gogpsproject.IonoGps;
+import org.gogpsproject.Observations;
+import org.gogpsproject.StreamEventListener;
 import org.gogpsproject.parser.ublox.UBXSerialConnection;
 
 import net.java.html.json.Function;
@@ -13,14 +18,13 @@ import net.java.html.json.Model;
 import net.java.html.json.Property;
 
 @Model(className = "SerialPortModel", targetId="", properties = {
-    @Property(name = "name", type = String.class ),
+    @Property(name = "port", type = String.class ),
+    @Property(name = "speed", type = int.class),
     @Property(name = "ports", type = String.class, array = true )
-//    @Property(name = "message", type = String.class),
 //    @Property(name = "rotating", type = boolean.class)
 })
 public class SerialPortModelDef {
 
-  public static int speed = 9600;
   private static UBXSerialConnection ubxSerialConn;
   private String fileNameOutLog = null;
   private FileOutputStream fosOutLog = null;
@@ -28,30 +32,67 @@ public class SerialPortModelDef {
   
   @Function 
   static void getPortList( SerialPortModel model ){
+    model.setPort("undefined");
     List<String> ports = model.getPorts();
     ports.clear();
     ports.addAll( UBXSerialConnection.getPortList(true));
+    if( ports.size()>0 )
+      model.setPort( ports.get(0) );
   }
   
-  public void UBXTest() {
+  public static class UBXTest implements StreamEventListener{
+
+    @Override
+    public void streamClosed() {
+      // TODO Auto-generated method stub
+      
+    }
+
+    @Override
+    public void addObservations(Observations o) {
+      // TODO Auto-generated method stub
+      
+    }
+
+    @Override
+    public void addIonospheric(IonoGps iono) {
+      // TODO Auto-generated method stub
+      
+    }
+
+    @Override
+    public void addEphemeris(EphGps eph) {
+      // TODO Auto-generated method stub
+      
+    }
+
+    @Override
+    public void setDefinedPosition(Coordinates definedPosition) {
+      // TODO Auto-generated method stub
+      
+    }
+
+    @Override
+    public Observations getCurrentObservations() {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    @Override
+    public void pointToNextObservations() {
+      // TODO Auto-generated method stub
+    }
+  }
+
+  @Function 
+  static void RunUBXxTest( SerialPortModel model ) throws InterruptedException {
     //force dot as decimal separator
     Locale.setDefault(new Locale("en", "US"));
 
-    Vector<String> ports = UBXSerialConnection.getPortList(false);
-    if (ports.size() > 0) {
-      System.out.println("the following serial ports have been detected:");
-    } else {
-      System.out.println("sorry, no serial ports were found on your computer\n");
-      System.exit(0);
-    }
-    String port = null;
-    for (int i = 0; i < ports.size(); ++i) {
-      System.out.println("    " + Integer.toString(i + 1) + ":  "+ ports.elementAt(i));
-    }
-
-    port = ports.elementAt(0);
-
-    ubxSerialConn = new UBXSerialConnection(port, speed);
+    if( ubxSerialConn != null )
+      ubxSerialConn.release( true, 1000 );
+    
+    ubxSerialConn = new UBXSerialConnection( model.getPort(), model.getSpeed() );
     try {
       ubxSerialConn.init();
 //      ObservationsBuffer rover = new ObservationsBuffer();
@@ -62,12 +103,11 @@ public class SerialPortModelDef {
 //      } catch (Exception e) {
 //        e.printStackTrace();
 //      }
-      //TestUBX test = new TestUBX();
-      //ubxSerialConn.addStreamEventListener(test);
+      UBXTest test = new UBXTest();
+      ubxSerialConn.addStreamEventListener(test);
 
     } catch (Exception e) {
       e.printStackTrace();
     }
   }
-  
 }

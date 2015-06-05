@@ -31,11 +31,9 @@ public class GoGPS_Fx {
    */
   public static void onPageLoad() throws Exception {
       goGPSModel = new GoGPSModel();
-      //SirtrackModel.alert("Start");
-      goGPSModel.setName("E");
-      goGPSModel.setSurname("Z");
-      goGPSModel.setMessage("Hello World from HTML and Java!");
-      goGPSModel.getSerialPort().setName("serport");
+      
+      goGPSModel.getSerialPort().setPort("undefined");
+      goGPSModel.getSerialPort().setSpeed(9600);
       
       Models.toRaw(goGPSModel);
       GoGPSModelDef.registerModel();

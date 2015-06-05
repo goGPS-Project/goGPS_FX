@@ -68,29 +68,11 @@
 				  </div>
 				</nav>
         
-        <h1>Words Demo 1</h1>
-        name: <span data-bind="text: name"></span><br/>
-        surname: <span data-bind="text: surname"></span><br/>
-        <!--span data-bind="text: Sirtrack.name"></span>
-        <span data-bind="text: Sirtrack.surname"></span-->
-        serport name: <span data-bind="text: SerialPort().name"></span><br/>
+        serport name: <span data-bind="text: SerialPort().port"></span><br/>
         <button data-bind="click: SerialPort().getPortList">Refresh Port List</button><br>
         Port List:
         <ol data-bind="foreach: SerialPort().ports">
           <li><span data-bind="text: $data"></span></li>
         </ol>
-        
-        <input data-bind="value: message, valueUpdate: 'afterkeydown'">
-        <br>
-        <button data-bind="enable: !rotating(), click: turnAnimationOn">Start</button>
-        <button data-bind="enable: rotating, click: turnAnimationOff">Stop</button>
-        <button data-bind="enable: !rotating(), click: rotate5s">Rotate Few Seconds</button>
-        <button data-bind="click: showScreenSize">Screen Size!</button>
-        <button data-bind="click: alert">Pop Alert!</button>
-        <div id="scene">
-            <span id="words" data-bind="foreach: words">
-                <span data-bind="text: $data, css: { 'rotate' : $root.rotating } "></span>
-            </span>
-        </div>
-    
+        <button data-bind="enable: SerialPort().port()!='undefined', click: SerialPort().RunUBXxTest">UBXTest</button><br>
 </html>
