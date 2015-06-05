@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!--script type='text/javascript' src='js/Sirtrack.js'></script-->
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+        <style type="text/css">
+            @-webkit-keyframes spin {
+                0% { -webkit-transform: rotate(0deg); }
+                100% { -webkit-transform: rotate(360deg); }
+            }
+
+            input {
+                width: 100%;
+            }
+
+            .rotate {
+                -webkit-animation-name: spin;
+                -webkit-animation-duration: 3s;
+                -webkit-animation-iteration-count: infinite;
+                -webkit-animation-direction: alternate;
+            }
+
+            #scene {
+                position: relative;
+                top: 60px;
+                text-align: center;
+            }
+            
+            #words span {
+                border: 1px solid #ccc;
+                background: rgba(255,255,155,0.8);
+                text-align: center;
+                font-size: 30px;                
+                -webkit-box-shadow: inset 0 0 40px rgba(0,0,0,0.4);
+                position: absolute;
+            }
+
+            #words span:nth-child(1) { left: 45%; top: 0px; }
+            #words span:nth-child(2) { left: 25%; top: 100px; }
+            #words span:nth-child(3) { left: 65%; top: 100px; }
+            #words span:nth-child(4) { left: 10%; top: 200px; }
+            #words span:nth-child(5) { left: 45%; top: 200px; }
+            #words span:nth-child(6) { left: 80%; top: 200px; }
+            
+        </style>
+        <link rel="stylesheet" href="css/bootstrap.min.css" />
+
+     <script type='text/javascript' src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>
+        
+    </head>
+    <body>
+				<nav class="navbar navbar-default">
+				  <div class="container-fluid">
+				    <div class="navbar-header">
+				      <a class="navbar-brand" href="#">Javelin</a>
+				    </div>
+				    <div>
+				      <ul class="nav navbar-nav">
+				        <li class="active"><a href="index.html">Reload</a></li>
+				        <li><a href="#">Connect</a></li>
+				        <li><a href="#">Page 2</a></li>
+				        <li><a href="#">Page 3</a></li>
+				      </ul>
+				    </div>
+				  </div>
+				</nav>
+        
+        <h1>Words Demo 1</h1>
+        name: <span data-bind="text: name"></span><br/>
+        surname: <span data-bind="text: surname"></span><br/>
+        <!--span data-bind="text: Sirtrack.name"></span>
+        <span data-bind="text: Sirtrack.surname"></span-->
+        serport name: <span data-bind="text: serport().name"></span><br/>
+        <input data-bind="value: message, valueUpdate: 'afterkeydown'">
+        <br>
+        <button data-bind="enable: !rotating(), click: turnAnimationOn">Start</button>
+        <button data-bind="enable: rotating, click: turnAnimationOff">Stop</button>
+        <button data-bind="enable: !rotating(), click: rotate5s">Rotate Few Seconds</button>
+        <button data-bind="click: showScreenSize">Screen Size!</button>
+        <button data-bind="click: alert">Pop Alert!</button>
+        <div data-bind="Model"></div>
+        <div id="scene">
+            <span id="words" data-bind="foreach: words">
+                <span data-bind="text: $data, css: { 'rotate' : $root.rotating } "></span>
+            </span>
+        </div>
+    
+</html>
