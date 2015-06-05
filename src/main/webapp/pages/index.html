@@ -48,6 +48,7 @@
         <link rel="stylesheet" href="css/bootstrap.min.css" />
 
      <script type='text/javascript' src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>
+     <script type='text/javascript' src='js/GoGPS.js'></script>
         
     </head>
     <body  data-bind="Model">
@@ -73,6 +74,12 @@
         <!--span data-bind="text: Sirtrack.name"></span>
         <span data-bind="text: Sirtrack.surname"></span-->
         serport name: <span data-bind="text: SerialPort().name"></span><br/>
+        <button data-bind="click: SerialPort().getPortList">Refresh Port List</button><br>
+        Port List:
+        <ol data-bind="foreach: SerialPort().ports">
+          <li><span data-bind="text: $data"></span></li>
+        </ol>
+        
         <input data-bind="value: message, valueUpdate: 'afterkeydown'">
         <br>
         <button data-bind="enable: !rotating(), click: turnAnimationOn">Start</button>
