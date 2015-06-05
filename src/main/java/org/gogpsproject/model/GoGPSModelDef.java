@@ -10,7 +10,7 @@ import net.java.html.json.Property;
     @Property(name = "surname", type = String.class),
     @Property(name = "message", type = String.class),
     @Property(name = "rotating", type = boolean.class), 
-    @Property(name = "serport", type = SerialPortModel.class) 
+    @Property(name = "SerialPort", type = SerialPortModel.class) 
     })
 public final class GoGPSModelDef {
 

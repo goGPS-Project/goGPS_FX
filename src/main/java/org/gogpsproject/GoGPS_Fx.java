@@ -35,7 +35,7 @@ public class GoGPS_Fx {
       goGPSModel.setName("E");
       goGPSModel.setSurname("Z");
       goGPSModel.setMessage("Hello World from HTML and Java!");
-      goGPSModel.getSerport().setName("serport");
+      goGPSModel.getSerialPort().setName("serport");
       
       Models.toRaw(goGPSModel);
       GoGPSModelDef.registerModel();
