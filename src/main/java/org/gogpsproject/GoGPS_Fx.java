@@ -1,7 +1,7 @@
 package org.gogpsproject;
 	
+import org.gogpsproject.model.GoGPSDef;
 import org.gogpsproject.model.GoGPSModel;
-import org.gogpsproject.model.GoGPSModelDef;
 import org.gogpsproject.model.SerialPortModel;
 
 import net.java.html.boot.BrowserBuilder;
@@ -36,7 +36,7 @@ public class GoGPS_Fx {
       goGPSModel.getSerialPort().setSpeed(9600);
       
       Models.toRaw(goGPSModel);
-      GoGPSModelDef.registerModel();
+      GoGPSDef.registerModel();
       goGPSModel.applyBindings();
       
       
