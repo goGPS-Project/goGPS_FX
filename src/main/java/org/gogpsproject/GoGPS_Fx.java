@@ -2,6 +2,7 @@ package org.gogpsproject;
 	
 import org.gogpsproject.model.GoGPSDef;
 import org.gogpsproject.model.GoGPSModel;
+import org.gogpsproject.model.SerialPortDef;
 import org.gogpsproject.model.SerialPortModel;
 
 import net.java.html.boot.BrowserBuilder;
@@ -38,8 +39,9 @@ public class GoGPS_Fx {
       Models.toRaw(goGPSModel);
       GoGPSDef.registerModel();
       goGPSModel.applyBindings();
-      
-      
+
+      SerialPortDef.setRxTxLibPath();
+      SerialPortDef.getPortList( goGPSModel.getSerialPort() );
   }    
 }
 

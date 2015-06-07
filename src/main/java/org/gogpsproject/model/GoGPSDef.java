@@ -6,6 +6,7 @@ import net.java.html.json.Model;
 import net.java.html.json.Property;
 
 @Model(className = "GoGPSModel", targetId = "", properties = {
+    @Property(name = "javaLibraryPath", type = String.class), 
     @Property(name = "SerialPort", type = SerialPortModel.class) 
 })
 public final class GoGPSDef {
@@ -33,6 +34,18 @@ public final class GoGPSDef {
       + "init: function( element, valueAccessor, allBindingsAccessor, viewModel ){"
       + "Model = viewModel;" + "}" + "};")
   public static native void registerModel();
+  
+//  @ComputedProperty 
+//  public static String getLibPath( GoGPSModel model ){
+//    return ( System.getProperty("java.library.path") );
+//  }
+  
+  @Function 
+  public static void getLibPath( GoGPSModel model ){
+    model.setJavaLibraryParh( System.getProperty("java.library.path") );
+  }
 }
+
+
 
 
