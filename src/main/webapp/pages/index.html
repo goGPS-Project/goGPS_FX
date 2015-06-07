@@ -68,13 +68,14 @@
 				  </div>
 				</nav>
         
-        serport name: <span data-bind="text: SerialPort().port"></span><br/>
-        <button data-bind="click: SerialPort().getPortList">Refresh Port List</button><br>
         Port List:
-        <ol data-bind="foreach: SerialPort().ports">
-          <li><span data-bind="text: $data"></span></li>
+        <ol data-bind="foreach: serialPortList">
+          <li><span data-bind="text: name"></span></li>
         </ol>
-        <button data-bind="enable: SerialPort().port()!='undefined', 
-                           click: SerialPort().RunUBXxTest, 
-                           text:  SerialPort().running()? 'Stop UBXTest' : 'Start UBXTest' "></button><br/>
+        <button data-bind="click: getPortList">Refresh Port List</button><br>
+        <div data-bind="with:serialPort">
+	        serport name: <span data-bind="text: name"></span><br/>
+	        <button data-bind="click:  running()? stopUBXxTest : startUBXxTest, 
+	                           text:   running()? 'Stop UBXTest' : 'Start UBXTest' "></button><br/>
+        </div>                           
 </html>

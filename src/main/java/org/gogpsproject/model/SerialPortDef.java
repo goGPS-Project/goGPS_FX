@@ -21,9 +21,8 @@ import net.java.html.json.Model;
 import net.java.html.json.Property;
 
 @Model(className = "SerialPortModel", targetId="", properties = {
-    @Property(name = "port", type = String.class ),
+    @Property(name = "name", type = String.class ),
     @Property(name = "speed", type = int.class),
-    @Property(name = "ports", type = String.class, array = true ),
     @Property(name = "running", type = boolean.class)
 })
 public class SerialPortDef {
@@ -129,16 +128,6 @@ public class SerialPortDef {
 //    System.out.println("Library Path is " + System.getProperty("java.library.path"));
   }
   
-  @Function 
-  public static void getPortList( SerialPortModel model ) throws Exception{
-    model.setPort("undefined");
-    List<String> ports = model.getPorts();
-    ports.clear();
-    ports.addAll( UBXSerialConnection.getPortList(true));
-    if( ports.size()>0 )
-      model.setPort( ports.get(0) );
-  }
-  
   public static class UBXTest implements StreamEventListener{
 
     @Override
@@ -184,18 +173,23 @@ public class SerialPortDef {
   }
 
   @Function 
-  static void RunUBXxTest( SerialPortModel model ) throws InterruptedException {
+  static void stopUBXxTest( SerialPortModel model ) throws InterruptedException {
+    if( ubxSerialConn != null ){
+      ubxSerialConn.release( true, 1000 );
+      ubxSerialConn = null;
+    }
+    model.setRunning(false);
+  }
+  
+  @Function 
+  static void startUBXxTest( SerialPortModel model ) throws Exception {
     //force dot as decimal separator
     Locale.setDefault(new Locale("en", "US"));
 
-    if( ubxSerialConn != null ) {
-      ubxSerialConn.release( true, 1000 );
-      ubxSerialConn = null;
-      model.setRunning(false);
-      return;
-    }
-    ubxSerialConn = new UBXSerialConnection( model.getPort(), model.getSpeed() );
-    try {
+    if( model.isRunning() ) 
+      stopUBXxTest( model );
+    
+    ubxSerialConn = new UBXSerialConnection( model.getName(), model.getSpeed() );
       ubxSerialConn.init();
 //      ObservationsBuffer rover = new ObservationsBuffer();
 //      rover.setStreamSource(ubxSerialConn);
@@ -208,9 +202,5 @@ public class SerialPortDef {
       UBXTest test = new UBXTest();
       ubxSerialConn.addStreamEventListener(test);
       model.setRunning(true);
-
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
   }
 }
