@@ -42,7 +42,7 @@ public final class GoGPSDef {
   
   @Function 
   public static void getLibPath( GoGPSModel model ){
-    model.setJavaLibraryParh( System.getProperty("java.library.path") );
+    model.setJavaLibraryPath( System.getProperty("java.library.path") );
   }
 }
 

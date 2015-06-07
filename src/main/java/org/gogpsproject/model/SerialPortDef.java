@@ -23,8 +23,8 @@ import net.java.html.json.Property;
 @Model(className = "SerialPortModel", targetId="", properties = {
     @Property(name = "port", type = String.class ),
     @Property(name = "speed", type = int.class),
-    @Property(name = "ports", type = String.class, array = true )
-//    @Property(name = "rotating", type = boolean.class)
+    @Property(name = "ports", type = String.class, array = true ),
+    @Property(name = "running", type = boolean.class)
 })
 public class SerialPortDef {
 
@@ -188,9 +188,12 @@ public class SerialPortDef {
     //force dot as decimal separator
     Locale.setDefault(new Locale("en", "US"));
 
-    if( ubxSerialConn != null )
+    if( ubxSerialConn != null ) {
       ubxSerialConn.release( true, 1000 );
-    
+      ubxSerialConn = null;
+      model.setRunning(false);
+      return;
+    }
     ubxSerialConn = new UBXSerialConnection( model.getPort(), model.getSpeed() );
     try {
       ubxSerialConn.init();
@@ -204,6 +207,7 @@ public class SerialPortDef {
 //      }
       UBXTest test = new UBXTest();
       ubxSerialConn.addStreamEventListener(test);
+      model.setRunning(true);
 
     } catch (Exception e) {
       e.printStackTrace();

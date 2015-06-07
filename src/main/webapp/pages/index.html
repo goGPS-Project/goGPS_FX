@@ -74,5 +74,7 @@
         <ol data-bind="foreach: SerialPort().ports">
           <li><span data-bind="text: $data"></span></li>
         </ol>
-        <button data-bind="enable: SerialPort().port()!='undefined', click: SerialPort().RunUBXxTest">UBXTest</button><br>
+        <button data-bind="enable: SerialPort().port()!='undefined', 
+                           click: SerialPort().RunUBXxTest, 
+                           text:  SerialPort().running()? 'Stop UBXTest' : 'Start UBXTest' "></button><br/>
 </html>

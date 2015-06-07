@@ -10,37 +10,32 @@ import net.java.html.json.Models;
 
 
 public class GoGPS_Fx {
-  public static BrowserBuilder b;
   static GoGPSModel goGPSModel;
-  static String args[];
+  static SerialPortModel serialPort; 
 
-  public static void main(String... argsp) throws Exception {
+  public static void main(String... args) throws Exception {
     String rootdir = System.getProperty("user.dir") + "/src/main/webapp";
     System.setProperty("browser.rootdir", rootdir ); 
-    args = argsp;
-    b = BrowserBuilder.newBrowser();
-    //reload();
-    b.loadPage("pages/index.html");
-    b.loadClass(GoGPS_Fx.class).
-    invoke("onPageLoad", args).
-    showAndWait();
+
+    SerialPortDef.setRxTxLibPath();
+
+    goGPSModel = new GoGPSModel();
+    serialPort = goGPSModel.getSerialPort();
+    serialPort.setPort("undefined");
+    serialPort.setSpeed(9600);
+    
+    BrowserBuilder.newBrowser().
+                   loadPage("pages/index.html").
+                   loadClass(GoGPS_Fx.class).
+                   invoke("onPageLoad", args).
+                   showAndWait();
     System.exit(0);
   }
   
-  /**
-   * Called when the page is ready.
-   */
   public static void onPageLoad() throws Exception {
-      goGPSModel = new GoGPSModel();
-      
-      goGPSModel.getSerialPort().setPort("undefined");
-      goGPSModel.getSerialPort().setSpeed(9600);
-      
       Models.toRaw(goGPSModel);
       GoGPSDef.registerModel();
       goGPSModel.applyBindings();
-
-      SerialPortDef.setRxTxLibPath();
       SerialPortDef.getPortList( goGPSModel.getSerialPort() );
   }    
 }
