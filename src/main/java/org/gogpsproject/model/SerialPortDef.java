@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
@@ -31,6 +32,16 @@ import net.java.html.json.Property;
 public class SerialPortDef {
 
   private static UBXSerialConnection ubxSerialConn;
+  private static ObservationsBuffer roverIn;
+  private static NavigationProducer navigationIn;
+  
+  private static int setMeasurementRate = 1;
+  private static int setEphemerisRate = 10;
+  private static int setIonosphereRate = 60;
+  private static boolean enableTimetag = true;
+  private static Boolean enableDebug = true;
+
+  
   private String fileNameOutLog = null;
   private FileOutputStream fosOutLog = null;
   private DataOutputStream outLog = null;//new XMLEncoder(os);
@@ -145,12 +156,12 @@ public class SerialPortDef {
 
     @Override
     public void addIonospheric(IonoGps iono) {
-      System.out.println("addIonospheric");
+      System.out.println( "Iono" + iono.toString());
     }
 
     @Override
     public void addEphemeris(EphGps eph) {
-      System.out.println("addEphemeris");
+//      System.out.println("Eph" + eph.toString());
     }
 
     @Override
@@ -172,8 +183,14 @@ public class SerialPortDef {
 
   @Function 
   static void stopUBXxTest( SerialPortModel model ) throws InterruptedException {
+    if( roverIn != null ){
+      System.out.println("Stop Rover");
+      roverIn.release( true, 10000 ); // release and close rover
+      roverIn = null;
+    }
     if( ubxSerialConn != null ){
-      ubxSerialConn.release( true, 1000 );
+      System.out.println("Stop UBX");
+      ubxSerialConn.release( true, 10000 );
       ubxSerialConn = null;
     }
     model.setRunning(false);
@@ -188,18 +205,27 @@ public class SerialPortDef {
       stopUBXxTest( model );
     
     ubxSerialConn = new UBXSerialConnection( model.getName(), model.getSpeed() );
-//    ubxSerialConn.setMeasurementRate(10);
-    ubxSerialConn.init();
-    ObservationsBuffer roverIn = new ObservationsBuffer(ubxSerialConn, "./roverOut.dat" );
-    NavigationProducer navigationIn = roverIn;
-    roverIn.init();
 
+    UBXTest test = new UBXTest();
+    ubxSerialConn.setMeasurementRate(1/*setMeasurementRate*/);
+    ubxSerialConn.enableEphemeris(setEphemerisRate);
+    ubxSerialConn.enableIonoParam(setIonosphereRate);
+    ubxSerialConn.enableTimetag(enableTimetag);
+    ubxSerialConn.enableDebug(enableDebug);
+    ubxSerialConn.enableNmeaSentences(new ArrayList<String>());
+
+    ubxSerialConn.init();
+    ubxSerialConn.addStreamEventListener(test);
+    
+    roverIn = new ObservationsBuffer( ubxSerialConn, "./roverOut.dat" );
+    navigationIn = roverIn;
+    roverIn.init();
+ 
     GoGPS goGPSstandalone = new GoGPS(navigationIn, roverIn, null);
     goGPSstandalone.setDynamicModel(GoGPS.DYN_MODEL_STATIC);
-    goGPSstandalone.runThreadMode(GoGPS.RUN_MODE_KALMAN_FILTER);
     
-//    UBXTest test = new UBXTest();
-//    ubxSerialConn.addStreamEventListener(test);
+    goGPSstandalone.runThreadMode(GoGPS.RUN_MODE_STANDALONE);
+    
     model.setRunning(true);
   }
 }
