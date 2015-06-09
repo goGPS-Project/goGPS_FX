@@ -1,5 +1,8 @@
 package org.gogpsproject;
 	
+import gnu.io.CommDriver;
+import gnu.io.CommPortIdentifier;
+
 import org.gogpsproject.model.GoGPSDef;
 import org.gogpsproject.model.GoGPSModel;
 import org.gogpsproject.model.SerialPortDef;
@@ -17,7 +20,15 @@ public class GoGPS_Fx {
     String rootdir = System.getProperty("user.dir") + "/src/main/webapp";
     System.setProperty("browser.rootdir", rootdir ); 
 
-    SerialPortDef.setRxTxLibPath();
+    try {
+      CommDriver localCommDriver = (CommDriver)Class.forName("gnu.io.RXTXCommDriver").newInstance();
+      localCommDriver.initialize();
+    }
+    catch (Throwable localThrowable){
+      System.err.println(localThrowable + " thrown while loading " + "gnu.io.RXTXCommDriver");
+      System.err.flush();
+      SerialPortDef.setRxTxLibPath();
+    }
 
     BrowserBuilder.newBrowser().
                    loadPage("pages/index.html").
