@@ -11,8 +11,11 @@ import java.util.Vector;
 
 import org.gogpsproject.Coordinates;
 import org.gogpsproject.EphGps;
+import org.gogpsproject.GoGPS;
 import org.gogpsproject.IonoGps;
+import org.gogpsproject.NavigationProducer;
 import org.gogpsproject.Observations;
+import org.gogpsproject.ObservationsBuffer;
 import org.gogpsproject.StreamEventListener;
 import org.gogpsproject.parser.ublox.UBXSerialConnection;
 
@@ -132,43 +135,38 @@ public class SerialPortDef {
 
     @Override
     public void streamClosed() {
-      // TODO Auto-generated method stub
-      
+      System.out.println("streamClosed");
     }
 
     @Override
     public void addObservations(Observations o) {
-      // TODO Auto-generated method stub
-      
+      System.out.println("addObservations");
     }
 
     @Override
     public void addIonospheric(IonoGps iono) {
-      // TODO Auto-generated method stub
-      
+      System.out.println("addIonospheric");
     }
 
     @Override
     public void addEphemeris(EphGps eph) {
-      // TODO Auto-generated method stub
-      
+      System.out.println("addEphemeris");
     }
 
     @Override
     public void setDefinedPosition(Coordinates definedPosition) {
-      // TODO Auto-generated method stub
-      
+      System.out.println("setDefinedPosition");
     }
 
     @Override
     public Observations getCurrentObservations() {
-      // TODO Auto-generated method stub
+//      System.out.println("streamClosed");
       return null;
     }
 
     @Override
     public void pointToNextObservations() {
-      // TODO Auto-generated method stub
+      System.out.println("pointToNextObservations");
     }
   }
 
@@ -190,17 +188,19 @@ public class SerialPortDef {
       stopUBXxTest( model );
     
     ubxSerialConn = new UBXSerialConnection( model.getName(), model.getSpeed() );
-      ubxSerialConn.init();
-//      ObservationsBuffer rover = new ObservationsBuffer();
-//      rover.setStreamSource(ubxSerialConn);
-  //
-//      try {
-//        rover.init();
-//      } catch (Exception e) {
-//        e.printStackTrace();
-//      }
-      UBXTest test = new UBXTest();
-      ubxSerialConn.addStreamEventListener(test);
-      model.setRunning(true);
+//    ubxSerialConn.setMeasurementRate(10);
+    ubxSerialConn.init();
+    ObservationsBuffer roverIn = new ObservationsBuffer(ubxSerialConn, "./roverOut.dat" );
+    NavigationProducer navigationIn = roverIn;
+    roverIn.init();
+
+    GoGPS goGPSstandalone = new GoGPS(navigationIn, roverIn, null);
+    goGPSstandalone.setDynamicModel(GoGPS.DYN_MODEL_STATIC);
+    goGPSstandalone.runThreadMode(GoGPS.RUN_MODE_KALMAN_FILTER);
+    
+//    UBXTest test = new UBXTest();
+//    ubxSerialConn.addStreamEventListener(test);
+    model.setRunning(true);
   }
 }
+

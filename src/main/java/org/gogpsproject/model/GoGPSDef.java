@@ -35,15 +35,16 @@ public final class GoGPSDef {
   public static void getPortList( GoGPSModel model ) throws Exception{
     List<SerialPortModel> ports = model.getSerialPortList();
     
-    for( SerialPortModel serialPort: ports ){
-        
+    for( SerialPortModel port: ports ){
+        if( port.isRunning() )
+          SerialPortDef.stopUBXxTest(port);
     }
     ports.clear();
     model.setSerialPort(null);
     
     for( String name: UBXSerialConnection.getPortList(true) ){
-      SerialPortModel serialPort = new SerialPortModel(name, 9600, false);
-      ports.add(serialPort);
+      SerialPortModel port = new SerialPortModel(name, 9600, false);
+      ports.add(port);
     }
     if( ports.size()>0 ){
       model.setSerialPort( ports.get(0) );

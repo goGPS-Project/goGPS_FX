@@ -3,9 +3,10 @@ package org.gogpsproject;
 import org.gogpsproject.model.GoGPSDef;
 import org.gogpsproject.model.GoGPSModel;
 import org.gogpsproject.model.SerialPortDef;
-import org.gogpsproject.model.SerialPortModel;
 
 import net.java.html.boot.BrowserBuilder;
+import net.java.html.js.JavaScriptBody;
+import net.java.html.js.JavaScriptResource;
 import net.java.html.json.Models;
 
 
@@ -36,5 +37,6 @@ public class GoGPS_Fx {
       goGPSModel.applyBindings();
       GoGPSDef.getPortList( goGPSModel );
   }    
+  
 }
 
