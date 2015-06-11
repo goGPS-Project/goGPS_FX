@@ -29,25 +29,28 @@
 		</div>
 	</nav>
 <body>
-
-	<div class="btn-group">
-		<button type="button" class="btn btn-default dropdown-toggle"
-			data-toggle="dropdown">
-			Port List <span class="caret"></span>
-		</button>
-		<ul class="dropdown-menu" role="menu"
-			data-bind="foreach: serialPortList">
-			<li><a role="menuitem" tabindex="-1" href="#"
-				data-bind="text: name"></a></li>
-		</ul>
-	</div>
-	<button data-bind="click: getPortList">Refresh Port List</button>
-	<br>
+<div class="container">
+  <button data-bind="click: getPortList">Refresh Port List</button><br/>
+  <table class = "table">
+  <thead>
+    <tr></tr>
+  </thead>
+  <tbody>
+    <tr>
+  	 <td>Navigation</td>
+  	 <td><select data-bind="options: serialPortList, optionsText: 'name'"></select></td>
+  	<tr>
+      <td>Rover</td>
+      <td><select data-bind="options: serialPortList, optionsText: 'name'"></select></td>
+    </tr>
+   </tbody>
+  </table>
 	<div data-bind="with:serialPort">
 		serport name: <span data-bind="text: name"></span><br />
 		<button
 			data-bind="click: running()? stopUBXxTest : startUBXxTest, 
-                             text:  running()? 'Stop UBXTest' : 'Start UBXTest' "></button>
+                             text:  running()? 'Stop UBXTest' : 'GO!' "></button>
 		<br />
 	</div>
+</div>	
 </html>
