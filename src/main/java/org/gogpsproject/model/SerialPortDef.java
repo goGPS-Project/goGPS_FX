@@ -20,6 +20,7 @@ import org.gogpsproject.ObservationsBuffer;
 import org.gogpsproject.StreamEventListener;
 import org.gogpsproject.parser.ublox.UBXSerialConnection;
 
+import net.java.html.json.ComputedProperty;
 import net.java.html.json.Function;
 import net.java.html.json.Model;
 import net.java.html.json.Property;
@@ -31,7 +32,7 @@ import net.java.html.json.Property;
 })
 public class SerialPortDef {
 
-  private static UBXSerialConnection ubxSerialConn;
+  private static UBXSerialConnection ubxSerialConn1;
   private static ObservationsBuffer roverIn;
   private static NavigationProducer navigationIn;
   
@@ -188,10 +189,10 @@ public class SerialPortDef {
       roverIn.release( true, 10000 ); // release and close rover
       roverIn = null;
     }
-    if( ubxSerialConn != null ){
+    if( ubxSerialConn1 != null ){
       System.out.println("Stop UBX");
-      ubxSerialConn.release( true, 10000 );
-      ubxSerialConn = null;
+      ubxSerialConn1.release( true, 10000 );
+      ubxSerialConn1 = null;
     }
     model.setRunning(false);
   }
@@ -204,20 +205,20 @@ public class SerialPortDef {
     if( model.isRunning() ) 
       stopUBXxTest( model );
     
-    ubxSerialConn = new UBXSerialConnection( model.getName(), model.getSpeed() );
+    ubxSerialConn1 = new UBXSerialConnection( model.getName(), model.getSpeed() );
 
     UBXTest test = new UBXTest();
-    ubxSerialConn.setMeasurementRate(1/*setMeasurementRate*/);
-    ubxSerialConn.enableEphemeris(setEphemerisRate);
-    ubxSerialConn.enableIonoParam(setIonosphereRate);
-    ubxSerialConn.enableTimetag(enableTimetag);
-    ubxSerialConn.enableDebug(enableDebug);
-    ubxSerialConn.enableNmeaSentences(new ArrayList<String>());
+    ubxSerialConn1.setMeasurementRate(1/*setMeasurementRate*/);
+    ubxSerialConn1.enableEphemeris(setEphemerisRate);
+    ubxSerialConn1.enableIonoParam(setIonosphereRate);
+    ubxSerialConn1.enableTimetag(enableTimetag);
+    ubxSerialConn1.enableDebug(enableDebug);
+    ubxSerialConn1.enableNmeaSentences(new ArrayList<String>());
 
-    ubxSerialConn.init();
-    ubxSerialConn.addStreamEventListener(test);
+    ubxSerialConn1.init();
+    ubxSerialConn1.addStreamEventListener(test);
     
-    roverIn = new ObservationsBuffer( ubxSerialConn, "./roverOut.dat" );
+    roverIn = new ObservationsBuffer( ubxSerialConn1, "./roverOut.dat" );
     navigationIn = roverIn;
     roverIn.init();
  
@@ -228,5 +229,6 @@ public class SerialPortDef {
     
     model.setRunning(true);
   }
+  
 }
 

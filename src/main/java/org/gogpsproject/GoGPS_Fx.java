@@ -1,5 +1,7 @@
 package org.gogpsproject;
 	
+import java.util.logging.Logger;
+
 import gnu.io.CommDriver;
 import gnu.io.CommPortIdentifier;
 
@@ -14,6 +16,7 @@ import net.java.html.json.Models;
 
 
 public class GoGPS_Fx {
+  private static final Logger logger = Logger.getLogger(GoGPS_Fx.class.getName());
   static GoGPSModel goGPSModel;
 
   public static void main(String... args) throws Exception {

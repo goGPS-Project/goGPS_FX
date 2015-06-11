@@ -1,7 +1,9 @@
 package org.gogpsproject.model;
 
 import java.util.List;
+import java.util.logging.Logger;
 
+import org.gogpsproject.GoGPS_Fx;
 import org.gogpsproject.parser.ublox.UBXSerialConnection;
 
 import net.java.html.json.ComputedProperty;
@@ -11,10 +13,13 @@ import net.java.html.json.Property;
 
 @Model(className = "GoGPSModel", targetId = "", properties = {
     @Property(name = "javaLibraryPath", type = String.class), 
-    @Property(name = "serialPort", type = SerialPortModel.class),
+    @Property(name = "serialPort1", type = SerialPortModel.class),
+    @Property(name = "serialPort2", type = SerialPortModel.class),
     @Property(name = "serialPortList", type = SerialPortModel.class, array = true )
 })
 public final class GoGPSDef {
+
+  private static final Logger l = Logger.getLogger(GoGPS_Fx.class.getName());
 
   @net.java.html.js.JavaScriptBody(args = { "msg" }, body = "alert(msg);")
   public static native void alert(String msg);
@@ -40,16 +45,24 @@ public final class GoGPSDef {
           SerialPortDef.stopUBXxTest(port);
     }
     ports.clear();
-    model.setSerialPort(null);
     
     for( String name: UBXSerialConnection.getPortList(true) ){
       SerialPortModel port = new SerialPortModel(name, 9600, false);
       ports.add(port);
     }
     if( ports.size()>0 ){
-      model.setSerialPort( ports.get(0) );
+      model.setSerialPort1( ports.get(0) );
     }
+    else 
+      model.setSerialPort1(null);
+    if( ports.size()>1 ){
+      model.setSerialPort2( ports.get(1) );
+    }
+    else 
+      model.setSerialPort2(null);
   }
+  
+  
   
   /** Shows direct interaction with JavaScript */
   @net.java.html.js.JavaScriptBody(args = { "msg", "callback" }, javacall = true, body = "if (confirm(msg)) {\n"
@@ -78,6 +91,12 @@ public final class GoGPSDef {
   public static void getLibPath( GoGPSModel model ){
     model.setJavaLibraryPath( System.getProperty("java.library.path") );
   }
+  
+//  @Function
+//  public static void setPort( GoGPSModel model, int index, SerialPortModel port ){
+//      l.info(port.toString());
+//  }
+  
 }
 
 

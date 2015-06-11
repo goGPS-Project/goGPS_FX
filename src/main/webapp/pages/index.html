@@ -30,27 +30,29 @@
 	</nav>
 <body>
 <div class="container">
-  <button data-bind="click: getPortList">Refresh Port List</button><br/>
   <table class = "table">
-  <thead>
-    <tr></tr>
-  </thead>
-  <tbody>
-    <tr>
-  	 <td>Navigation</td>
-  	 <td><select data-bind="options: serialPortList, optionsText: 'name'"></select></td>
-  	<tr>
-      <td>Rover</td>
-      <td><select data-bind="options: serialPortList, optionsText: 'name'"></select></td>
-    </tr>
+	  <thead>
+	    <tr></tr>
+	  </thead>
+	  <tbody>
+	    <tr>
+		  	 <td>Navigation</td>
+		  	 <td><select class="form-control" data-bind="options: serialPortList, optionsText: 'name', value: serialPort1"></select></td-->
+       </tr>
+	  	 <!--tr>
+	      <td>Rover</td>
+	      <td><select class="form-control" data-bind="options: serialPortList, optionsText: 'name', optionsValue: 'name', value:serialPort2"></select></td>
+	    </tr-->
    </tbody>
   </table>
-	<div data-bind="with:serialPort">
-		serport name: <span data-bind="text: name"></span><br />
-		<button
-			data-bind="click: running()? stopUBXxTest : startUBXxTest, 
-                             text:  running()? 'Stop UBXTest' : 'GO!' "></button>
-		<br />
+  <button class="btn pull-left" data-bind="click: getPortList">Refresh Port List</button>
+	<div data-bind="with:serialPort1" >
+    <em><button class="btn pull-right" data-bind="click: running()? stopUBXxTest : startUBXxTest, 
+                             text:  running()? 'stop!' : 'go!' "></button></em></tr>
+    <br/>
+    <br/>
 	</div>
+    Nav Port Name: <span data-bind="text: serialPort1().name"></span><br/>
+    Rov Port Name: <span data-bind="text: serialPort2().name"></span><br/>
 </div>	
 </html>
