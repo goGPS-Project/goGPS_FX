@@ -510,15 +510,17 @@
 		<mkdir dir="dist" />
 		<mkdir dir="dist/libs" />
     <mkdir dir="dist/libs/RXTX" />
-		<mkdir dir="dist/resources" />
-			
+		<mkdir dir="dist/src" />
+    <mkdir dir="dist/src/main" />
+    <mkdir dir="dist/src/main/webapp" />
+    					
 		<copy todir="dist/libs">
 			<fileset dir="externalLibs">
 				<include name="*" />
 			</fileset>
 		</copy>
 	
-    <copy todir="dist/resources">
+    <copy todir="dist/src/main/webapp">
      <fileset dir="/home/emanuele/git/goGPS_FX/src/main/webapp">
         <include name="**/*"/>
       </fileset>
@@ -532,7 +534,7 @@
 		<fx:resources id="appRes">
 			<fx:fileset dir="dist" includes="goGPS_FX.jar"/>
 			<fx:fileset dir="dist" includes="libs/**"/>
-      <fx:fileset dir="dist" includes="resources/**"/>
+      <fx:fileset dir="dist" includes="src/**"/>
 		</fx:resources>
 	
 		<fx:application id="fxApplication"
