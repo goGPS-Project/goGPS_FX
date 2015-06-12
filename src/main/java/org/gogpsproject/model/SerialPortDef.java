@@ -70,7 +70,9 @@ public class SerialPortDef {
 // System.getProperty ("os.arch");
     if (detectedOS == null) {
       String OS = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
+      System.out.println("os.name = " + OS );
       String osArch = System.getProperty("os.arch", "generic").toLowerCase(Locale.ENGLISH);
+      System.out.println("os.arch = " + osArch );
       
       if ((OS.indexOf("mac") >= 0) || (OS.indexOf("darwin") >= 0)) {
         detectedOS = OSType.MacOS;
@@ -88,6 +90,7 @@ public class SerialPortDef {
         detectedOS = OSType.Other;
       }
     }
+    System.out.println("detectedOS = " + detectedOS.name() );
     return detectedOS;
   }
   
@@ -138,9 +141,9 @@ public class SerialPortDef {
         case Other: 
           throw new Exception("RxTx doesn't support this system");
     }    
-//    System.out.println("Library Path is " + System.getProperty("java.library.path"));
-    addDir( "./libs/RXTX/win64" );
-//    System.out.println("Library Path is " + System.getProperty("java.library.path"));
+    System.out.println("Library Path is " + System.getProperty("java.library.path"));
+    addDir( dir );
+    System.out.println("Library Path is " + System.getProperty("java.library.path"));
   }
   
   public static class UBXTest implements StreamEventListener{
