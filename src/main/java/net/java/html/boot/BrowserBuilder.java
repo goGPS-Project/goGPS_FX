@@ -291,16 +291,16 @@ public final class BrowserBuilder {
             }
             activeLoader = loader;
         } else {
-//            final URL res = FnContext.isJavaScriptCapable(myCls.getClassLoader());
-//            if (res == null) {
+            final URL res = FnContext.isJavaScriptCapable(myCls.getClassLoader());
+            if (res == null) {
                 activeLoader = myCls.getClassLoader();
-//            } else {
-//                if (!FnContext.isAsmPresent(res)) {
-//                    throw new IllegalStateException("Cannot find asm-5.0.jar classes!");
-//                }
-//                FImpl impl = new FImpl(myCls.getClassLoader());
-//                activeLoader = FnUtils.newLoader(impl, dfnr, myCls.getClassLoader().getParent());
-//            }
+            } else {
+                if (!FnContext.isAsmPresent(res)) {
+                    throw new IllegalStateException("Cannot find asm-5.0.jar classes!");
+                }
+                FImpl impl = new FImpl(myCls.getClassLoader());
+                activeLoader = FnUtils.newLoader(impl, dfnr, myCls.getClassLoader().getParent());
+            }
         }
         
         final Fn.Presenter dP = dfnr;
