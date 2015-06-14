@@ -37,7 +37,7 @@
 	  <tbody>
 	    <tr>
 		  	 <td>Navigation</td>
-		  	 <td><select class="form-control" data-bind="options: serialPortList, optionsText: 'name', value: serialPort1"></select></td-->
+		  	 <td data-bind="if: serialPortList().length>0"><select class="form-control" data-bind="options: serialPortList, optionsText: 'name', value: serialPort1"></select></td-->
        </tr>
 	  	 <!--tr>
 	      <td>Rover</td>
@@ -47,12 +47,11 @@
   </table>
   <button class="btn pull-left" data-bind="click: getPortList">Refresh Port List</button>
 	<div data-bind="with:serialPort1" >
-    <em><button class="btn pull-right" data-bind="click: running()? stopUBXxTest : startUBXxTest, 
-                             text:  running()? 'stop!' : 'go!' "></button></em></tr>
-    <br/>
-    <br/>
+	    Nav Port Name: <span data-bind="text: name"></span><br/>
+	    <em><button class="btn pull-right" data-bind="click: running()? stopUBXxTest : startUBXxTest, 
+	                             text:  running()? 'stop!' : 'go!' "></button></em></tr>
+	    <br/>
+	    <br/>
 	</div>
-    Nav Port Name: <span data-bind="text: serialPort1().name"></span><br/>
-    Rov Port Name: <span data-bind="text: serialPort2().name"></span><br/>
 </div>	
 </html>
