@@ -20,19 +20,10 @@
 
 	<build>
 		<plugins>
-			<!--plugin>
-				<groupId>org.netbeans.html</groupId>
-				<artifactId>html4j-maven-plugin</artifactId>
-				<version>${net.java.html.version}</version>
-				<executions>
-					<execution>
-						<id>js-classes</id>
-						<goals>
-							<goal>process-js-annotations</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin-->
+			<!--plugin> <groupId>org.netbeans.html</groupId> <artifactId>html4j-maven-plugin</artifactId> 
+				<version>${net.java.html.version}</version> <executions> <execution> <id>js-classes</id> 
+				<goals> <goal>process-js-annotations</goal> </goals> </execution> </executions> 
+				</plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -137,8 +128,7 @@
 									</pluginExecutionFilter>
 									<action>
 										<execute>
-											<!--runOnIncremental>true</runOnIncremental>
-											<runOnConfiguration>true</runOnConfiguration-->
+											<!--runOnIncremental>true</runOnIncremental> <runOnConfiguration>true</runOnConfiguration -->
 										</execute>
 									</action>
 								</pluginExecution>
@@ -217,11 +207,13 @@
 			<artifactId>html4j-maven-plugin</artifactId>
 			<version>${net.java.html.version}</version>
 		</dependency>
-		<!--dependency>
-			<groupId>org.sonatype.plexus</groupId>
-			<artifactId>plexus-build-api</artifactId>
-			<version>0.0.7</version>
-		</dependency-->
+		<dependency>
+			<groupId>org.ow2.asm</groupId>
+			<artifactId>asm</artifactId>
+			<version>5.0.3</version>
+		</dependency>
+		<!--dependency> <groupId>org.sonatype.plexus</groupId> <artifactId>plexus-build-api</artifactId> 
+			<version>0.0.7</version> </dependency -->
 	</dependencies>
 	<profiles>
 		<profile>
