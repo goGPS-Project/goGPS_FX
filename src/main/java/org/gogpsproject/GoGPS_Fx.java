@@ -20,19 +20,12 @@ public class GoGPS_Fx {
   static GoGPSModel goGPSModel;
 
   public static void main(String... args) throws Exception {
+    System.out.println("Library Path is " + System.getProperty("java.library.path"));
+    System.out.println("rootdir is " + System.getProperty("user.dir"));
+
     String rootdir = System.getProperty("user.dir") + "/src/main/webapp";
     System.setProperty("browser.rootdir", rootdir ); 
-
-    try {
-      CommDriver localCommDriver = (CommDriver)Class.forName("gnu.io.RXTXCommDriver").newInstance();
-      localCommDriver.initialize();
-    }
-    catch (Throwable localThrowable){
-      System.err.println(localThrowable + " thrown while loading " + "gnu.io.RXTXCommDriver");
-      System.err.flush();
-      SerialPortDef.setRxTxLibPath();
-    }
-
+    
     BrowserBuilder.newBrowser().
                    loadPage("pages/index.html").
                    loadClass(GoGPS_Fx.class).
@@ -42,6 +35,19 @@ public class GoGPS_Fx {
   }
   
   public static void onPageLoad() throws Exception {
+        for( int i=0; i<2; i++ ){
+          try {
+            CommPortIdentifier.getPortIdentifiers();
+            System.out.println("RXTX Ok");
+            break;
+          }
+          catch (Throwable localThrowable){
+            System.err.println(localThrowable + " thrown while loading " + "gnu.io.RXTXCommDriver");
+            System.err.flush();
+            if( i == 0 )
+              SerialPortDef.copyRxTxLibToRoot();
+          }
+      }
       if( goGPSModel != null ){
         GoGPSDef.cleanUp(goGPSModel);
       }
