@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -127,7 +128,7 @@ public class SerialPortDef {
           dir = "./libs/RXTX/win32";
           break;
         case Windows64: 
-          dir = "./libs/RXTX/win64";
+          dir = System.getProperty("user.dir") + "\\libs\\RXTX\\win64";
           break;
         case MacOS: 
           dir = "./libs/RXTX/mac-10.5";
@@ -146,6 +147,41 @@ public class SerialPortDef {
     System.out.println("Library Path is " + System.getProperty("java.library.path"));
   }
   
+  public static void copyFile( File from, File to ) throws IOException {
+    Files.copy( from.toPath(), to.toPath() );
+  }
+
+  public static void copyRxTxLibToRoot() throws Exception{
+  //  System.getProperty("os.name");
+    OSType ostype= getOperatingSystemType();
+    String from = "";
+    String to = "";
+    switch (ostype) {
+        case Windows32: 
+          from = "./libs/RXTX/win32";
+          break;
+        case Windows64: 
+          from = /*System.getProperty("user.dir") + */ ".\\libs\\RXTX\\win64\\rxtxSerial.dll";
+          to = ".\\rxtxSerial.dll";
+          break;
+        case MacOS: 
+          from = "./libs/RXTX/mac-10.5";
+          break;
+        case Linux32: 
+          from = "./libs/RXTX/i686-pc-linux-gnu";
+          break;
+        case Linux64: 
+          from = "./libs/RXTX/x86_64-unknown-linux-gnu";
+          break;
+        case Other: 
+          throw new Exception("RxTx doesn't support this system");
+    }    
+    try{
+      Files.copy( new File(from).toPath(), new File(to).toPath() );
+    }
+    catch( java.nio.file.FileAlreadyExistsException e){};
+  }
+
   public static class UBXTest implements StreamEventListener{
 
     @Override
