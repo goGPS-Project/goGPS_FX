@@ -20,7 +20,7 @@
 
 	<build>
 		<plugins>
-			<plugin>
+			<!--plugin>
 				<groupId>org.netbeans.html</groupId>
 				<artifactId>html4j-maven-plugin</artifactId>
 				<version>${net.java.html.version}</version>
@@ -32,7 +32,7 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
+			</plugin-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -136,7 +136,10 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<execute></execute>
+										<execute>
+											<!--runOnIncremental>true</runOnIncremental>
+											<runOnConfiguration>true</runOnConfiguration-->
+										</execute>
 									</action>
 								</pluginExecution>
 							</pluginExecutions>
@@ -209,6 +212,16 @@
 			<scope>system</scope>
 			<systemPath>${basedir}/libs/RXTX/RXTXcomm.jar</systemPath>
 		</dependency>
+		<dependency>
+			<groupId>org.netbeans.html</groupId>
+			<artifactId>html4j-maven-plugin</artifactId>
+			<version>${net.java.html.version}</version>
+		</dependency>
+		<!--dependency>
+			<groupId>org.sonatype.plexus</groupId>
+			<artifactId>plexus-build-api</artifactId>
+			<version>0.0.7</version>
+		</dependency-->
 	</dependencies>
 	<profiles>
 		<profile>
@@ -225,6 +238,11 @@
 				</dependency>
 			</dependencies>
 		</profile>
+		<!--profile> <id>qa</id> <build> <plugins> <plugin> <artifactId>maven-dependency-plugin</artifactId> 
+			<executions> <execution> <phase>install</phase> <goals> <goal>copy-dependencies</goal> 
+			</goals> <configuration> <outputDirectory>${project.build.directory}/lib</outputDirectory> 
+			</configuration> </execution> </executions> </plugin> </plugins> </build> 
+			</profile -->
 	</profiles>
 </project>
 
