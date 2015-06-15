@@ -20,10 +20,6 @@
 
 	<build>
 		<plugins>
-			<!--plugin> <groupId>org.netbeans.html</groupId> <artifactId>html4j-maven-plugin</artifactId> 
-				<version>${net.java.html.version}</version> <executions> <execution> <id>js-classes</id> 
-				<goals> <goal>process-js-annotations</goal> </goals> </execution> </executions> 
-				</plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -31,7 +27,7 @@
 				<configuration>
 					<source>${javaVersion}</source>
 					<target>${javaVersion}</target>
-					<compilerArgument>-proc:none</compilerArgument>
+					<compilerArgument>-proc:only</compilerArgument>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -93,6 +89,9 @@
 						<configuration>
 							<outputDirectory>target/generated-sources/annotations</outputDirectory>
 						</configuration>
+						<phase>
+						  process-classes
+						</phase>
 					</execution>
 				</executions>
 				<dependencies>
@@ -100,45 +99,11 @@
 						<groupId>org.netbeans.html</groupId>
 						<artifactId>html4j-maven-plugin</artifactId>
 						<version>${net.java.html.version}</version>
+                        <scope>compile</scope>
 					</dependency>
 				</dependencies>
 			</plugin>
 		</plugins>
-		<pluginManagement>
-			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings 
-					only. It has no influence on the Maven build itself. -->
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>org.netbeans.html</groupId>
-										<artifactId>
-											html4j-maven-plugin
-										</artifactId>
-										<versionRange>[1.1,)</versionRange>
-										<goals>
-											<goal>process-js-annotations</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<execute>
-											<!--runOnIncremental>true</runOnIncremental> <runOnConfiguration>true</runOnConfiguration -->
-										</execute>
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-
 	</build>
 	<dependencies>
 		<dependency>
