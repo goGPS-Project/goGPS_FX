@@ -3,8 +3,8 @@
 	<target name="init-fx-tasks">
 		<path id="fxant">
 			<filelist>
-				<file name="${java.home}\..\lib\ant-javafx.jar"/>
-				<file name="${java.home}\lib\jfxrt.jar"/>
+				<file name="${java.home}/../lib/ant-javafx.jar"/>
+				<file name="${java.home}/lib/jfxrt.jar"/>
                 <file name="${basedir}"/>
 			</filelist>
 		</path>
@@ -21,104 +21,34 @@
 		<mkdir dir="externalLibs" />
 	
 		<copy todir="externalLibs">
-			<fileset dir="C:\Users\EZ\.m2\repository\org\netbeans\html\net.java.html.sound\1.1">
-				<filename name="net.java.html.sound-1.1.jar"/>
-			</fileset>
+            <fileset dir="../target/goGPS_FX-1.0-SNAPSHOT-html.java.net/goGPS_FX-1.0-SNAPSHOT-app/lib">
+                <include name="*" />
+            </fileset>
 		</copy>
-		<copy todir="externalLibs">
-			<fileset dir="C:\Users\EZ\.m2\repository\net\sourceforge\argparse4j\argparse4j\0.4.1">
-				<filename name="argparse4j-0.4.1.jar"/>
-			</fileset>
-		</copy>
-		<copy todir="externalLibs">
-			<fileset dir="C:\Users\EZ\.m2\repository\junit\junit\4.10">
-				<filename name="junit-4.10.jar"/>
-			</fileset>
-		</copy>
-		<copy todir="externalLibs">
-			<fileset dir="C:\Users\EZ\.m2\repository\org\netbeans\html\net.java.html.boot\1.1">
-				<filename name="net.java.html.boot-1.1.jar"/>
-			</fileset>
-		</copy>
-		<copy todir="externalLibs">
-			<fileset dir="C:\Users\EZ\.m2\repository\org\netbeans\html\net.java.html.boot.fx\1.1">
-				<filename name="net.java.html.boot.fx-1.1.jar"/>
-			</fileset>
-		</copy>
-		<copy todir="externalLibs">
-			<fileset dir="C:\Users\EZ\.m2\repository\commons-net\commons-net\2.2">
-				<filename name="commons-net-2.2.jar"/>
-			</fileset>
-		</copy>
-		<copy todir="externalLibs">
-			<fileset dir="C:\Users\EZ\.m2\repository\org\netbeans\html\net.java.html\1.1">
-				<filename name="net.java.html-1.1.jar"/>
-			</fileset>
-		</copy>
-		<copy todir="externalLibs">
-			<fileset dir="C:\Program Files\Java\jre8\lib\ext">
-				<filename name="jfxrt.jar"/>
-			</fileset>
-		</copy>
-		<copy todir="externalLibs">
-			<fileset dir="C:\Users\EZ\.m2\repository\com\googlecode\efficient-java-matrix-library\ejml\0.17">
-				<filename name="ejml-0.17.jar"/>
-			</fileset>
-		</copy>
-		<copy todir="externalLibs">
-			<fileset dir="C:\Users\EZ\.m2\repository\org\netbeans\html\net.java.html.json\1.1">
-				<filename name="net.java.html.json-1.1.jar"/>
-			</fileset>
-		</copy>
-		<copy todir="externalLibs">
-			<fileset dir="C:\Users\EZ\.m2\repository\org\netbeans\html\net.java.html.boot.script\1.1">
-				<filename name="net.java.html.boot.script-1.1.jar"/>
-			</fileset>
-		</copy>
-		<copy todir="externalLibs">
-			<fileset dir="C:\Users\EZ\git\goGPS_FX\libs\RXTX">
-				<filename name="RXTXcomm.jar"/>
-			</fileset>
-		</copy>
-		<copy todir="externalLibs">
-			<fileset dir="C:\Users\EZ\.m2\repository\org\hamcrest\hamcrest-core\1.1">
-				<filename name="hamcrest-core-1.1.jar"/>
-			</fileset>
-		</copy>
-		<copy todir="externalLibs">
-			<fileset dir="C:\Users\EZ\.m2\repository\org\netbeans\html\ko4j\1.1">
-				<filename name="ko4j-1.1.jar"/>
-			</fileset>
-		</copy>
-		<copy todir="externalLibs">
-			<fileset dir="C:\Users\EZ\.m2\repository\HTTPClient\HTTPClient\0.3-3">
-				<filename name="HTTPClient-0.3-3.jar"/>
-			</fileset>
-		</copy>
-	    <copy todir="externalLibs">
-    	  <fileset dir="C:\Users\EZ\.m2\repository\org\gogpsproject\goGPS-core\1.0.3">
-       		 <filename name="goGPS-core-1.0.3.jar"/>
-      	  </fileset>
+        <copy todir="externalLibs">
+            <fileset dir="../libs/RXTX">
+                <filename name="*"/>
+            </fileset>
         </copy>
-	
+			
 		<mkdir dir="project" />
 		<copy todir="project">
-			<fileset dir="C:\Users\EZ\git\goGPS_FX">
+			<fileset dir="../">
 				<include name="src/main/java/**" />
 			</fileset>
 		</copy>
 		<copy todir="project">
-			<fileset dir="C:\Users\EZ\git\goGPS_FX">
+			<fileset dir="../">
 				<include name="src/main/resources/**" />
 			</fileset>
 		</copy>
 		<copy todir="project">
-			<fileset dir="C:\Users\EZ\git\goGPS_FX">
+			<fileset dir="../">
 				<include name="src/test/java/**" />
 			</fileset>
 		</copy>
 		<copy todir="project">
-			<fileset dir="C:\Users\EZ\git\goGPS_FX">
+			<fileset dir="../">
 				<include name="target/generated-sources/annotations/**" />
 			</fileset>
 		</copy>
@@ -134,22 +64,7 @@
 		<!-- Copy project-libs references -->
 		<copy todir="build/libs">
 			<fileset dir="externalLibs">
-				<include name="RXTXcomm.jar"/>
-				<include name="argparse4j-0.4.1.jar"/>
-				<include name="hamcrest-core-1.1.jar"/>
-				<include name="ejml-0.17.jar"/>
-				<include name="net.java.html.boot.fx-1.1.jar"/>
-				<include name="jfxrt.jar"/>
-				<include name="net.java.html.boot.script-1.1.jar"/>
-				<include name="commons-net-2.2.jar"/>
-				<include name="HTTPClient-0.3-3.jar"/>
-				<include name="net.java.html-1.1.jar"/>
-				<include name="ko4j-1.1.jar"/>
-				<include name="net.java.html.json-1.1.jar"/>
-				<include name="net.java.html.boot-1.1.jar"/>
-				<include name="junit-4.10.jar"/>
-				<include name="net.java.html.sound-1.1.jar"/>
-				<include name="goGPS-core-1.0.3.jar"/>
+				<include name="**"/>
 			</fileset>
 		</copy>
 	
@@ -221,12 +136,12 @@
 		</copy>
 	
     <copy todir="dist/src/main/webapp">
-     <fileset dir="C:\Users\EZ\git\goGPS_FX\src\main\webapp">
+     <fileset dir="../src/main/webapp">
         <include name="**/*"/>
       </fileset>
     </copy>
     <copy todir="dist/libs/RXTX">
-     <fileset dir="C:\Users\EZ\git\goGPS_FX\libs\RXTX">
+     <fileset dir="../libs/RXTX">
         <include name="**/*"/>
       </fileset>
     </copy>
