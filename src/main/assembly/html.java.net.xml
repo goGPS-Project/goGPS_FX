@@ -6,7 +6,8 @@
   <formats>
       <format>dir</format>
   </formats>
-  <baseDirectory>${project.build.finalName}-app</baseDirectory>
+  <!--baseDirectory>${project.build.finalName}-app</baseDirectory-->
+  <baseDirectory>app</baseDirectory>
   <dependencySets>
     <dependencySet>
         <useProjectArtifact>false</useProjectArtifact>
