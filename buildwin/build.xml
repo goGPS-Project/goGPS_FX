@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 	<project name="goGPS_FX" default="do-deploy" basedir="."  xmlns:fx="javafx:com.sun.javafx.tools.ant">
+	<property name="version" value="1.0-SNAPSHOT"/>
 	<target name="init-fx-tasks">
 		<path id="fxant">
 			<filelist>
@@ -21,7 +22,7 @@
 		<mkdir dir="externalLibs" />
 	
 		<copy todir="externalLibs">
-            <fileset dir="../target/goGPS_FX-1.0-SNAPSHOT-html.java.net/goGPS_FX-1.0-SNAPSHOT-app/lib">
+            <fileset dir="../target/goGPS_FX-${version}-html.java.net/app/lib">
                 <include name="*" />
             </fileset>
 		</copy>
@@ -155,11 +156,10 @@
 		<fx:application id="fxApplication"
 			name="goGPS_FX"
 			mainClass="org.gogpsproject.GoGPS_Fx"
+			version="${version}"
 		/>
 	
 		<mkdir dir="build/classes/META-INF" />
-	
-	
 	
 		<fx:jar destfile="dist/goGPS_FX.jar">
 			<fx:application refid="fxApplication"/>
@@ -170,7 +170,7 @@
 			<manifest>
 				<attribute name="Implementation-Vendor" value="goGPS"/>
 				<attribute name="Implementation-Title" value="goGPS_FX"/>
-				<attribute name="Implementation-Version" value="0.1"/>
+				<attribute name="Implementation-Version" value="${version}"/>
 				<attribute name="JavaFX-Feature-Proxy" value="None"/>
 			</manifest>
 		</fx:jar>
