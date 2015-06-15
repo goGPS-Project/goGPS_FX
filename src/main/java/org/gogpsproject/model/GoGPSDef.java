@@ -1,5 +1,9 @@
 package org.gogpsproject.model;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -12,11 +16,10 @@ import net.java.html.json.Model;
 import net.java.html.json.Property;
 
 @Model(className = "GoGPSModel", targetId = "", properties = {
-    @Property(name = "javaLibraryPath", type = String.class), 
+    @Property(name = "javaLibraryPath", type = String.class),
     @Property(name = "serialPort1", type = SerialPortModel.class),
     @Property(name = "serialPort2", type = SerialPortModel.class),
-    @Property(name = "serialPortList", type = SerialPortModel.class, array = true )
-})
+    @Property(name = "serialPortList", type = SerialPortModel.class, array = true) })
 public final class GoGPSDef {
 
   private static final Logger l = Logger.getLogger(GoGPS_Fx.class.getName());
@@ -27,43 +30,39 @@ public final class GoGPSDef {
   @net.java.html.js.JavaScriptBody(args = {}, body = "if (!document.getElementById('FirebugLite')){E = document['createElement' + 'NS'] && document.documentElement.namespaceURI;E = E ? document['createElement' + 'NS'](E, 'script') : document['createElement']('script');E['setAttribute']('id', 'FirebugLite');E['setAttribute']('src', 'https://getfirebug.com/' + 'firebug-lite.js' + '#startOpened');E['setAttribute']('FirebugLite', '4');(document['getElementsByTagName']('head')[0] || document['getElementsByTagName']('body')[0]).appendChild(E);E = new Image;E['setAttribute']('src', 'https://getfirebug.com/' + '#startOpened');}")
   public static native void loadFirebug();
 
-  public static void cleanUp( GoGPSModel model ) throws InterruptedException {
+  public static void cleanUp(GoGPSModel model) throws InterruptedException {
     List<SerialPortModel> ports = model.getSerialPortList();
-    for( SerialPortModel port: ports ){
-        if( port.isRunning()){
-          SerialPortDef.stopUBXxTest( port );
-        }
+    for (SerialPortModel port : ports) {
+      if (port.isRunning()) {
+        SerialPortDef.stopUBXxTest(port);
+      }
     }
   }
 
-  @Function 
-  public static void getPortList( GoGPSModel model ) throws Exception{
+  @Function
+  public static void getPortList(GoGPSModel model) throws Exception {
     List<SerialPortModel> ports = model.getSerialPortList();
-    
-    for( SerialPortModel port: ports ){
-        if( port.isRunning() )
-          SerialPortDef.stopUBXxTest(port);
+
+    for (SerialPortModel port : ports) {
+      if (port.isRunning())
+        SerialPortDef.stopUBXxTest(port);
     }
     ports.clear();
-    
-    for( String name: UBXSerialConnection.getPortList(true) ){
+
+    for (String name : UBXSerialConnection.getPortList(true)) {
       SerialPortModel port = new SerialPortModel(name, 9600, false);
       ports.add(port);
     }
-    if( ports.size()>0 ){
-      model.setSerialPort1( ports.get(0) );
-    }
-    else 
+    if (ports.size() > 0) {
+      model.setSerialPort1(ports.get(0));
+    } else
       model.setSerialPort1(null);
-    if( ports.size()>1 ){
-      model.setSerialPort2( ports.get(1) );
-    }
-    else 
+    if (ports.size() > 1) {
+      model.setSerialPort2(ports.get(1));
+    } else
       model.setSerialPort2(null);
   }
-  
-  
-  
+
   /** Shows direct interaction with JavaScript */
   @net.java.html.js.JavaScriptBody(args = { "msg", "callback" }, javacall = true, body = "if (confirm(msg)) {\n"
       + "  callback.@java.lang.Runnable::run()();\n" + "}\n")
@@ -79,26 +78,48 @@ public final class GoGPSDef {
 
   @net.java.html.js.JavaScriptBody(args = {}, body = "ko.bindingHandlers.Model = {"
       + "init: function( element, valueAccessor, allBindingsAccessor, viewModel ){"
-      + "Model = viewModel;" + "}" + "};")
+      + "Model = viewModel;" + "}" 
+      + "};")
   public static native void registerModel();
-  
-//  @ComputedProperty 
-//  public static String getLibPath( GoGPSModel model ){
-//    return ( System.getProperty("java.library.path") );
-//  }
-  
-  @Function 
-  public static void getLibPath( GoGPSModel model ){
-    model.setJavaLibraryPath( System.getProperty("java.library.path") );
+
+  // @ComputedProperty
+  // public static String getLibPath( GoGPSModel model ){
+  // return ( System.getProperty("java.library.path") );
+  // }
+
+  @Function
+  public static void getLibPath(GoGPSModel model) {
+    model.setJavaLibraryPath(System.getProperty("java.library.path"));
   }
-  
-//  @Function
-//  public static void setPort( GoGPSModel model, int index, SerialPortModel port ){
-//      l.info(port.toString());
-//  }
-  
+
+  // @Function
+  // public static void setPort( GoGPSModel model, int index, SerialPortModel
+  // port ){
+  // l.info(port.toString());
+  // }
+  public static class Console extends OutputStream {
+
+    @net.java.html.js.JavaScriptBody(args = { "msg" }, body = ""
+        + "Firebug.Console.log(msg);")
+    public static native void logMsg( String msg );
+
+    @net.java.html.js.JavaScriptBody(args = { "msg" }, body = ""
+        + "Firebug.Console.log(msg);")
+    public static native void logErr( String msg );
+
+    StringBuilder sb = new StringBuilder();
+    
+    @Override
+    public void write(int i) {
+      sb.append((char)i);
+    }
+
+    @Override
+    public void flush() {
+      if( sb.length() >0 && !sb.toString().equals("\r\n"))
+        logMsg(sb.toString());
+      sb = new StringBuilder();
+    }
+
+  }
 }
-
-
-
-

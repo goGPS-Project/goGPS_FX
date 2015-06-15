@@ -1,11 +1,13 @@
 package org.gogpsproject;
 	
+import java.io.PrintStream;
 import java.util.logging.Logger;
 
 import gnu.io.CommDriver;
 import gnu.io.CommPortIdentifier;
 
 import org.gogpsproject.model.GoGPSDef;
+import org.gogpsproject.model.GoGPSDef.Console;
 import org.gogpsproject.model.GoGPSModel;
 import org.gogpsproject.model.SerialPortDef;
 
@@ -35,19 +37,6 @@ public class GoGPS_Fx {
   }
   
   public static void onPageLoad() throws Exception {
-        for( int i=0; i<2; i++ ){
-          try {
-            CommPortIdentifier.getPortIdentifiers();
-            System.out.println("RXTX Ok");
-            break;
-          }
-          catch (Throwable localThrowable){
-            System.err.println(localThrowable + " thrown while loading " + "gnu.io.RXTXCommDriver");
-            System.err.flush();
-            if( i == 0 )
-              SerialPortDef.copyRxTxLibToRoot();
-          }
-      }
       if( goGPSModel != null ){
         GoGPSDef.cleanUp(goGPSModel);
       }
@@ -55,7 +44,32 @@ public class GoGPS_Fx {
       Models.toRaw(goGPSModel);
       GoGPSDef.registerModel();
       goGPSModel.applyBindings();
-      GoGPSDef.getPortList( goGPSModel );
+      
+      System.out.println("Info");
+      System.err.println("Err");
+
+      Console console = new Console();
+      PrintStream ps = new PrintStream(console, true);
+      System.setOut(ps);
+      System.setErr(ps);
+
+      System.out.println("Info");
+      System.err.println("Err");
+
+      // test Serialio. If it fails, copy native library to root
+      for( int i=0; i<2; i++ ){
+        try {
+          GoGPSDef.getPortList( goGPSModel );
+          System.out.println("RXTX Ok");
+          break;
+        }
+        catch (Throwable localThrowable){
+          System.err.println(localThrowable + " thrown while loading " + "gnu.io.RXTXCommDriver");
+          System.err.flush();
+          if( i == 0 )
+            SerialPortDef.copyRxTxLibToRoot();
+        }
+      }
   }    
   
 }
