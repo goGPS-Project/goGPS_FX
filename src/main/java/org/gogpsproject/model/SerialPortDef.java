@@ -10,10 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
+import java.util.logging.Logger;
 
 import org.gogpsproject.Coordinates;
 import org.gogpsproject.EphGps;
 import org.gogpsproject.GoGPS;
+import org.gogpsproject.GoGPS_Fx;
 import org.gogpsproject.IonoGps;
 import org.gogpsproject.NavigationProducer;
 import org.gogpsproject.Observations;
@@ -32,6 +34,8 @@ import net.java.html.json.Property;
     @Property(name = "running", type = boolean.class)
 })
 public class SerialPortDef {
+
+  private static final Logger l = Logger.getLogger(SerialPortDef.class.getName());
 
   private static UBXSerialConnection ubxSerialConn1;
   private static ObservationsBuffer roverIn;
@@ -229,7 +233,7 @@ public class SerialPortDef {
       roverIn = null;
     }
     if( ubxSerialConn1 != null ){
-      System.out.println("Stop UBX");
+      l.info("Stop UBX");
       ubxSerialConn1.release( true, 10000 );
       ubxSerialConn1 = null;
     }
@@ -238,12 +242,17 @@ public class SerialPortDef {
   
   @Function 
   static void startUBXxTest( SerialPortModel model ) throws Exception {
+    System.out.println("Info");
+    System.err.println("Err");
+    
     //force dot as decimal separator
     Locale.setDefault(new Locale("en", "US"));
 
     if( model.isRunning() ) 
       stopUBXxTest( model );
-    
+
+    l.info("Start UBX test" );
+
     ubxSerialConn1 = new UBXSerialConnection( model.getName(), model.getSpeed() );
 
     UBXTest test = new UBXTest();

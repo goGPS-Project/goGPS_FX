@@ -6,8 +6,9 @@ import java.util.logging.Logger;
 import gnu.io.CommDriver;
 import gnu.io.CommPortIdentifier;
 
+import org.gogpsproject.model.ConsoleError;
+import org.gogpsproject.model.ConsoleInfo;
 import org.gogpsproject.model.GoGPSDef;
-import org.gogpsproject.model.GoGPSDef.Console;
 import org.gogpsproject.model.GoGPSModel;
 import org.gogpsproject.model.SerialPortDef;
 
@@ -15,7 +16,6 @@ import net.java.html.boot.BrowserBuilder;
 import net.java.html.js.JavaScriptBody;
 import net.java.html.js.JavaScriptResource;
 import net.java.html.json.Models;
-
 
 public class GoGPS_Fx {
   private static final Logger logger = Logger.getLogger(GoGPS_Fx.class.getName());
@@ -47,11 +47,8 @@ public class GoGPS_Fx {
       
       System.out.println("Info");
       System.err.println("Err");
-
-      Console console = new Console();
-      PrintStream ps = new PrintStream(console, true);
-      System.setOut(ps);
-      System.setErr(ps);
+      System.setOut(new PrintStream(new ConsoleInfo(), true));
+      System.setErr(new PrintStream(new ConsoleError(), true));
 
       System.out.println("Info");
       System.err.println("Err");

@@ -3,7 +3,6 @@ package org.gogpsproject.model;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -90,36 +89,5 @@ public final class GoGPSDef {
   @Function
   public static void getLibPath(GoGPSModel model) {
     model.setJavaLibraryPath(System.getProperty("java.library.path"));
-  }
-
-  // @Function
-  // public static void setPort( GoGPSModel model, int index, SerialPortModel
-  // port ){
-  // l.info(port.toString());
-  // }
-  public static class Console extends OutputStream {
-
-    @net.java.html.js.JavaScriptBody(args = { "msg" }, body = ""
-        + "Firebug.Console.log(msg);")
-    public static native void logMsg( String msg );
-
-    @net.java.html.js.JavaScriptBody(args = { "msg" }, body = ""
-        + "Firebug.Console.log(msg);")
-    public static native void logErr( String msg );
-
-    StringBuilder sb = new StringBuilder();
-    
-    @Override
-    public void write(int i) {
-      sb.append((char)i);
-    }
-
-    @Override
-    public void flush() {
-      if( sb.length() >0 && !sb.toString().equals("\r\n"))
-        logMsg(sb.toString());
-      sb = new StringBuilder();
-    }
-
   }
 }
