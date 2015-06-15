@@ -27,7 +27,7 @@
 				<configuration>
 					<source>${javaVersion}</source>
 					<target>${javaVersion}</target>
-					<compilerArgument>-proc:only</compilerArgument>
+					<!--compilerArgument>-proc:none</compilerArgument-->
 				</configuration>
 			</plugin>
 			<plugin>
