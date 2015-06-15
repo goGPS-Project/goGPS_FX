@@ -18,7 +18,9 @@ import net.java.html.json.Property;
     @Property(name = "javaLibraryPath", type = String.class),
     @Property(name = "serialPort1", type = SerialPortModel.class),
     @Property(name = "serialPort2", type = SerialPortModel.class),
-    @Property(name = "serialPortList", type = SerialPortModel.class, array = true) })
+    @Property(name = "serialPortList", type = SerialPortModel.class, array = true),
+    @Property(name = "speedOptions", type = int.class, array=true),
+    })
 public final class GoGPSDef {
 
   private static final Logger l = Logger.getLogger(GoGPS_Fx.class.getName());

@@ -30,28 +30,46 @@
 	</nav>
 <body>
 <div class="container">
-  <table class = "table">
+  <table class = "table" data-bind="if: serialPortList().length>0">
 	  <thead>
-	    <tr></tr>
+	    <tr>
+	    </tr>
 	  </thead>
 	  <tbody>
 	    <tr>
-		  	 <td>Navigation</td>
-		  	 <td data-bind="if: serialPortList().length>0"><select class="form-control" data-bind="options: serialPortList, optionsText: 'name', value: serialPort1"></select></td-->
+	  	 <td>Navigation</td>
+	  	 <td><select class="form-control" data-bind="options: serialPortList, optionsText: 'name', value: serialPort1"></select></td>
+         <td><select class="form-control" data-bind="options: speedOptions, value: serialPort1().speed"></select></td>
        </tr>
-	  	 <!--tr>
-	      <td>Rover</td>
-	      <td><select class="form-control" data-bind="options: serialPortList, optionsText: 'name', optionsValue: 'name', value:serialPort2"></select></td>
-	    </tr-->
+      <tr>
+        <td>Rover</td>
+        <td><select class="form-control" data-bind="options: serialPortList, optionsText: 'name', value:serialPort2"></select></td>
+         <td><select class="form-control" data-bind="options: speedOptions, value: serialPort2().speed"></select></td>
+    </tr>
+   </tbody>
+  </table>
+  <table class = "table" data-bind="if: serialPortList().length>0">
+      <thead>
+        <tr>
+        </tr>
+      </thead>
+      <tbody>
+        <tr data-bind="with: serialPort1">
+         <td>Navigation</td>
+         <td data-bind="text: name"/>
+         <td data-bind="text: speed"/>
+       </tr>
+        <tr data-bind="with: serialPort2">
+         <td>Rover</td>
+         <td data-bind="text: name"/>
+         <td data-bind="text: speed"/>
+       </tr>
    </tbody>
   </table>
   <button class="btn pull-left" data-bind="click: getPortList">Refresh Port List</button>
 	<div data-bind="with:serialPort1" >
-	    Nav Port Name: <span data-bind="text: name"></span><br/>
 	    <em><button class="btn pull-right" data-bind="click: running()? stopUBXxTest : startUBXxTest, 
 	                             text:  running()? 'stop!' : 'go!' "></button></em></tr>
-	    <br/>
-	    <br/>
 	</div>
 </div>	
 </html>

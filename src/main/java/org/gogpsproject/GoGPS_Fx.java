@@ -1,13 +1,14 @@
 package org.gogpsproject;
 	
 import java.io.PrintStream;
+import java.util.Arrays;
 import java.util.logging.Logger;
 
 import gnu.io.CommDriver;
 import gnu.io.CommPortIdentifier;
 
-import org.gogpsproject.model.ConsoleError;
-import org.gogpsproject.model.ConsoleInfo;
+import org.gogpsproject.model.FirebugConsoleError;
+import org.gogpsproject.model.FirebugConsoleInfo;
 import org.gogpsproject.model.GoGPSDef;
 import org.gogpsproject.model.GoGPSModel;
 import org.gogpsproject.model.SerialPortDef;
@@ -41,17 +42,13 @@ public class GoGPS_Fx {
         GoGPSDef.cleanUp(goGPSModel);
       }
       goGPSModel = new GoGPSModel();
+      goGPSModel.getSpeedOptions().addAll( Arrays.asList(new Integer[]{9600, 115200}));
       Models.toRaw(goGPSModel);
       GoGPSDef.registerModel();
       goGPSModel.applyBindings();
       
-      System.out.println("Info");
-      System.err.println("Err");
-      System.setOut(new PrintStream(new ConsoleInfo(), true));
-      System.setErr(new PrintStream(new ConsoleError(), true));
-
-      System.out.println("Info");
-      System.err.println("Err");
+      System.setOut(new PrintStream(new FirebugConsoleInfo(), true));
+      System.setErr(new PrintStream(new FirebugConsoleError(), true));
 
       // test Serialio. If it fails, copy native library to root
       for( int i=0; i<2; i++ ){
@@ -63,11 +60,12 @@ public class GoGPS_Fx {
         catch (Throwable localThrowable){
           System.err.println(localThrowable + " thrown while loading " + "gnu.io.RXTXCommDriver");
           System.err.flush();
-          if( i == 0 )
+          if( i == 0 ){
             SerialPortDef.copyRxTxLibToRoot();
+            GoGPSDef.alert("RXTX lib copied to root, you might have to restart the app");
+          }
         }
       }
-  }    
-  
+    }    
 }
 
