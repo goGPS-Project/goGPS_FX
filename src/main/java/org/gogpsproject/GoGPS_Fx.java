@@ -5,6 +5,8 @@ import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.logging.Logger;
 
+import org.gogpsproject.model.DynModel;
+import org.gogpsproject.model.DynModels;
 import org.gogpsproject.model.GoGPSDef;
 import org.gogpsproject.model.GoGPSModel;
 import org.gogpsproject.model.Mode;
@@ -72,10 +74,8 @@ public class GoGPS_Fx {
       }
       goGPSModel = new GoGPSModel();
       
-      goGPSModel.getModes1().addAll( Arrays.asList(new Mode[]{ Modes.realTime, Modes.postProcessing }));
-      goGPSModel.getModes2().addAll( Arrays.asList(new Mode[]{ Modes.navigation, Modes.roverMonitor, Modes.masterMonitor, Modes.roverMasterMonitor}));
-      goGPSModel.getModes3().addAll( Arrays.asList(new Mode[]{ Modes.leastSquares, Modes.kalmanFilter}));
-      goGPSModel.getModes4().addAll( Arrays.asList(new Mode[]{ Modes.codeStandAlone, Modes.codeDD, Modes.codePhaseStandAlone, Modes.codePhaseDD}));
+      goGPSModel.getRunModes().addAll( Arrays.asList(new Mode[]{ Modes.standAlone, Modes.kalmanFilter, Modes.doubleDifferences }));
+      goGPSModel.getDynModels().addAll( Arrays.asList(new DynModel[]{ DynModels.staticm, DynModels.constantSpeed, DynModels.constantAcceleration }));
       
       goGPSModel.getSpeedOptions().addAll( Arrays.asList(new Integer[]{9600, 115200}));
       goGPSModel.getMeasurementRateOptions().addAll( Arrays.asList(new Integer[]{1, 2, 5, 10}));

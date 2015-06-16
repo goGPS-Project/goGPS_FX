@@ -38,10 +38,11 @@
 	  <tbody>
         <tr>
          <th>Mode</th>
-         <td><select class="form-control" data-bind="options: modes1, optionsText: 'name', value: selectedMode1"></select></td>
-         <td><select class="form-control" data-bind="options: modes2, optionsText: 'name', value: selectedMode1"></select></td>
-         <td><select class="form-control" data-bind="options: modes3, optionsText: 'name', value: selectedMode1"></select></td>
-         <td><select class="form-control" data-bind="options: modes4, optionsText: 'name', value: selectedMode1"></select></td>
+         <td><select class="form-control" data-bind="options: runModes, optionsText: 'name', value: selectedRunMode"></select></td>
+       </tr>
+        <tr>
+         <th>Dynamic Model</th>
+         <td><select class="form-control" data-bind="options: dynModels, optionsText: 'name', value: selectedDynModel"></select></td>
        </tr>
 	    <tr>
 	  	 <th>Navigation</th>
@@ -51,7 +52,7 @@
       <tr>
         <th>Rover</th>
         <td><select class="form-control" data-bind="options: serialPortList, optionsText: 'name', value:serialPort2"></select></td>
-         <td><select class="form-control" data-bind="options: speedOptions, value: serialPort2().speed"></select></td>
+        <td><select class="form-control" data-bind="options: speedOptions, value: serialPort2().speed"></select></td>
     </tr>
    </tbody>
   </table>

@@ -23,14 +23,10 @@ import net.java.html.json.Property;
 
 @Model(className = "GoGPSModel", targetId = "", properties = {
 
-    @Property(name = "modes1", type = Mode.class, array=true),
-    @Property(name = "selectedMode1", type = Mode.class),
-    @Property(name = "modes2", type = Mode.class, array=true),
-    @Property(name = "selectedMode2", type = Mode.class),
-    @Property(name = "modes3", type = Mode.class, array=true),
-    @Property(name = "selectedMode3", type = Mode.class),
-    @Property(name = "modes4", type = Mode.class, array=true),
-    @Property(name = "selectedMode4", type = Mode.class),
+    @Property(name = "runModes", type = Mode.class, array=true),
+    @Property(name = "selectedRunMode", type = Mode.class),
+    @Property(name = "dynModels", type = DynModel.class, array=true),
+    @Property(name = "selectedDynModel", type = DynModel.class),
     
     @Property(name = "serialPort1", type = SerialPortModel.class),
     @Property(name = "serialPort2", type = SerialPortModel.class),
@@ -151,9 +147,9 @@ public final class GoGPSDef {
     roverIn.init();
  
     GoGPS goGPSstandalone = new GoGPS(navigationIn, roverIn, null);
-    goGPSstandalone.setDynamicModel(GoGPS.DYN_MODEL_STATIC);
+    goGPSstandalone.setDynamicModel( model.getSelectedDynModel().getValue() );
     
-    goGPSstandalone.runThreadMode(GoGPS.RUN_MODE_STANDALONE);
+    goGPSstandalone.runThreadMode( model.getSelectedRunMode().getValue() );
     
     model.setRunning(true);
   }
