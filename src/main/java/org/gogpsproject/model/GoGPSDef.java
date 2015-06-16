@@ -1,12 +1,19 @@
 package org.gogpsproject.model;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.DataOutputStream;
+import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Logger;
 
+import org.gogpsproject.GoGPS;
 import org.gogpsproject.GoGPS_Fx;
+import org.gogpsproject.NavigationProducer;
+import org.gogpsproject.ObservationsBuffer;
+import org.gogpsproject.ObservationsProducer;
+import org.gogpsproject.model.SerialPortDef.UBXTest;
 import org.gogpsproject.parser.ublox.UBXSerialConnection;
 
 import net.java.html.json.ComputedProperty;
@@ -15,15 +22,43 @@ import net.java.html.json.Model;
 import net.java.html.json.Property;
 
 @Model(className = "GoGPSModel", targetId = "", properties = {
-    @Property(name = "javaLibraryPath", type = String.class),
+
+    @Property(name = "modes1", type = Mode.class, array=true),
+    @Property(name = "selectedMode1", type = Mode.class),
+    @Property(name = "modes2", type = Mode.class, array=true),
+    @Property(name = "selectedMode2", type = Mode.class),
+    @Property(name = "modes3", type = Mode.class, array=true),
+    @Property(name = "selectedMode3", type = Mode.class),
+    @Property(name = "modes4", type = Mode.class, array=true),
+    @Property(name = "selectedMode4", type = Mode.class),
+    
     @Property(name = "serialPort1", type = SerialPortModel.class),
     @Property(name = "serialPort2", type = SerialPortModel.class),
     @Property(name = "serialPortList", type = SerialPortModel.class, array = true),
     @Property(name = "speedOptions", type = int.class, array=true),
+    @Property(name = "measurementRateOptions", type = int.class, array=true),
+    @Property(name = "running", type = boolean.class)
     })
 public final class GoGPSDef {
 
   private static final Logger l = Logger.getLogger(GoGPS_Fx.class.getName());
+
+  static ObservationsProducer roverIn;
+  static NavigationProducer   navigationIn;
+  static ObservationsProducer masterIn;
+  
+  private static UBXSerialConnection ubxSerialConn1;
+  private static UBXSerialConnection ubxSerialConn2;
+  
+  private static int setEphemerisRate = 10;
+  private static int setIonosphereRate = 60;
+  private static boolean enableTimetag = true;
+  private static Boolean enableDebug = true;
+
+  private String fileNameOutLog = null;
+  private FileOutputStream fosOutLog = null;
+  private DataOutputStream outLog = null;//new XMLEncoder(os);
+
 
   @net.java.html.js.JavaScriptBody(args = { "msg" }, body = "alert(msg);")
   public static native void alert(String msg);
@@ -34,8 +69,8 @@ public final class GoGPSDef {
   public static void cleanUp(GoGPSModel model) throws InterruptedException {
     List<SerialPortModel> ports = model.getSerialPortList();
     for (SerialPortModel port : ports) {
-      if (port.isRunning()) {
-        SerialPortDef.stopUBXxTest(port);
+      if (port.isConnected()) {
+        stopUBXxTest(model);
       }
     }
   }
@@ -45,13 +80,13 @@ public final class GoGPSDef {
     List<SerialPortModel> ports = model.getSerialPortList();
 
     for (SerialPortModel port : ports) {
-      if (port.isRunning())
-        SerialPortDef.stopUBXxTest(port);
+      if (model.isRunning())
+        stopUBXxTest(model);
     }
     ports.clear();
 
     for (String name : UBXSerialConnection.getPortList(true)) {
-      SerialPortModel port = new SerialPortModel(name, 9600, false);
+      SerialPortModel port = new SerialPortModel(name, 9600, 1, false);
       ports.add(port);
     }
     if (ports.size() > 0) {
@@ -83,13 +118,59 @@ public final class GoGPSDef {
       + "};")
   public static native void registerModel();
 
-  // @ComputedProperty
-  // public static String getLibPath( GoGPSModel model ){
-  // return ( System.getProperty("java.library.path") );
-  // }
+  @Function 
+  static void startUBXxTest( GoGPSModel model ) throws Exception {
+    System.out.println("Info");
+    System.err.println("Err");
+    
+    //force dot as decimal separator
+    Locale.setDefault(new Locale("en", "US"));
 
-  @Function
-  public static void getLibPath(GoGPSModel model) {
-    model.setJavaLibraryPath(System.getProperty("java.library.path"));
+    if( model.isRunning() ) 
+      stopUBXxTest( model );
+
+    l.info("Start UBX test" );
+
+    SerialPortModel port1 = model.getSerialPort1();
+    
+    ubxSerialConn1 = new UBXSerialConnection( port1.getName(), port1.getSpeed() );
+
+    UBXTest test = new UBXTest();
+    ubxSerialConn1.setMeasurementRate( port1.getMeasurementRate() );
+    ubxSerialConn1.enableEphemeris(setEphemerisRate);
+    ubxSerialConn1.enableIonoParam(setIonosphereRate);
+    ubxSerialConn1.enableTimetag(enableTimetag);
+    ubxSerialConn1.enableDebug(enableDebug);
+    ubxSerialConn1.enableNmeaSentences(new ArrayList<String>());
+
+    ubxSerialConn1.init();
+    ubxSerialConn1.addStreamEventListener(test);
+    
+    roverIn = new ObservationsBuffer( ubxSerialConn1, "./roverOut.dat" );
+    navigationIn = (NavigationProducer) roverIn;
+    roverIn.init();
+ 
+    GoGPS goGPSstandalone = new GoGPS(navigationIn, roverIn, null);
+    goGPSstandalone.setDynamicModel(GoGPS.DYN_MODEL_STATIC);
+    
+    goGPSstandalone.runThreadMode(GoGPS.RUN_MODE_STANDALONE);
+    
+    model.setRunning(true);
   }
+
+  @Function 
+  static void stopUBXxTest( GoGPSModel model ) throws InterruptedException {
+    if( roverIn != null ){
+      System.out.println("Stop Rover");
+      roverIn.release( true, 10000 ); // release and close rover
+      roverIn = null;
+    }
+    if( ubxSerialConn1 != null ){
+      l.info("Stop UBX");
+      ubxSerialConn1.release( true, 10000 );
+      ubxSerialConn1 = null;
+    }
+    model.setRunning(false);
+  }
+  
 }

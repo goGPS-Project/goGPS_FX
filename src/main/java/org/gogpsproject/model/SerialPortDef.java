@@ -31,28 +31,13 @@ import net.java.html.json.Property;
 @Model(className = "SerialPortModel", targetId="", properties = {
     @Property(name = "name", type = String.class ),
     @Property(name = "speed", type = int.class),
-    @Property(name = "running", type = boolean.class)
+    @Property(name = "measurementRate", type = int.class),
+    @Property(name = "connected", type = boolean.class),
 })
 public class SerialPortDef {
 
   private static final Logger l = Logger.getLogger(SerialPortDef.class.getName());
 
-  private static UBXSerialConnection ubxSerialConn1;
-  private static ObservationsBuffer roverIn;
-  private static NavigationProducer navigationIn;
-  
-  private static int setMeasurementRate = 1;
-  private static int setEphemerisRate = 10;
-  private static int setIonosphereRate = 60;
-  private static boolean enableTimetag = true;
-  private static Boolean enableDebug = true;
-
-  
-  private String fileNameOutLog = null;
-  private FileOutputStream fosOutLog = null;
-  private DataOutputStream outLog = null;//new XMLEncoder(os);
-  
-  
   public static enum OSType {
     Windows32, Windows64, MacOS, Linux32, Linux64, Other
   };
@@ -225,58 +210,5 @@ public class SerialPortDef {
     }
   }
 
-  @Function 
-  static void stopUBXxTest( SerialPortModel model ) throws InterruptedException {
-    if( roverIn != null ){
-      System.out.println("Stop Rover");
-      roverIn.release( true, 10000 ); // release and close rover
-      roverIn = null;
-    }
-    if( ubxSerialConn1 != null ){
-      l.info("Stop UBX");
-      ubxSerialConn1.release( true, 10000 );
-      ubxSerialConn1 = null;
-    }
-    model.setRunning(false);
-  }
-  
-  @Function 
-  static void startUBXxTest( SerialPortModel model ) throws Exception {
-    System.out.println("Info");
-    System.err.println("Err");
-    
-    //force dot as decimal separator
-    Locale.setDefault(new Locale("en", "US"));
-
-    if( model.isRunning() ) 
-      stopUBXxTest( model );
-
-    l.info("Start UBX test" );
-
-    ubxSerialConn1 = new UBXSerialConnection( model.getName(), model.getSpeed() );
-
-    UBXTest test = new UBXTest();
-    ubxSerialConn1.setMeasurementRate(1/*setMeasurementRate*/);
-    ubxSerialConn1.enableEphemeris(setEphemerisRate);
-    ubxSerialConn1.enableIonoParam(setIonosphereRate);
-    ubxSerialConn1.enableTimetag(enableTimetag);
-    ubxSerialConn1.enableDebug(enableDebug);
-    ubxSerialConn1.enableNmeaSentences(new ArrayList<String>());
-
-    ubxSerialConn1.init();
-    ubxSerialConn1.addStreamEventListener(test);
-    
-    roverIn = new ObservationsBuffer( ubxSerialConn1, "./roverOut.dat" );
-    navigationIn = roverIn;
-    roverIn.init();
- 
-    GoGPS goGPSstandalone = new GoGPS(navigationIn, roverIn, null);
-    goGPSstandalone.setDynamicModel(GoGPS.DYN_MODEL_STATIC);
-    
-    goGPSstandalone.runThreadMode(GoGPS.RUN_MODE_STANDALONE);
-    
-    model.setRunning(true);
-  }
-  
 }
 

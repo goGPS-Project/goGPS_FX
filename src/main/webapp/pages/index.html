@@ -16,7 +16,7 @@
 	<nav class="navbar navbar-default">
 		<div class="container-fluid">
 			<div class="navbar-header">
-				<a class="navbar-brand" href="#">goGPS</a>
+				<em><a class="navbar-brand" href="#">goGPS</a></em>
 			</div>
 			<div>
 				<ul class="nav navbar-nav">
@@ -29,26 +29,33 @@
 		</div>
 	</nav>
 <body>
-<div class="container">
+<div class="container-fluid">
   <table class = "table" data-bind="if: serialPortList().length>0">
 	  <thead>
 	    <tr>
 	    </tr>
 	  </thead>
 	  <tbody>
+        <tr>
+         <th>Mode</th>
+         <td><select class="form-control" data-bind="options: modes1, optionsText: 'name', value: selectedMode1"></select></td>
+         <td><select class="form-control" data-bind="options: modes2, optionsText: 'name', value: selectedMode1"></select></td>
+         <td><select class="form-control" data-bind="options: modes3, optionsText: 'name', value: selectedMode1"></select></td>
+         <td><select class="form-control" data-bind="options: modes4, optionsText: 'name', value: selectedMode1"></select></td>
+       </tr>
 	    <tr>
-	  	 <td>Navigation</td>
+	  	 <th>Navigation</th>
 	  	 <td><select class="form-control" data-bind="options: serialPortList, optionsText: 'name', value: serialPort1"></select></td>
          <td><select class="form-control" data-bind="options: speedOptions, value: serialPort1().speed"></select></td>
        </tr>
       <tr>
-        <td>Rover</td>
+        <th>Rover</th>
         <td><select class="form-control" data-bind="options: serialPortList, optionsText: 'name', value:serialPort2"></select></td>
          <td><select class="form-control" data-bind="options: speedOptions, value: serialPort2().speed"></select></td>
     </tr>
    </tbody>
   </table>
-  <table class = "table" data-bind="if: serialPortList().length>0">
+  <!--table class = "table" data-bind="if: serialPortList().length>0">
       <thead>
         <tr>
         </tr>
@@ -65,10 +72,10 @@
          <td data-bind="text: speed"/>
        </tr>
    </tbody>
-  </table>
-  <button class="btn pull-left" data-bind="click: getPortList">Refresh Port List</button>
-	<div data-bind="with:serialPort1" >
-	    <em><button class="btn pull-right" data-bind="click: running()? stopUBXxTest : startUBXxTest, 
+  </table-->
+  <button class="pull-left" data-bind="click: getPortList">Refresh Port List</button>
+	<div>
+	    <em><button class="pull-right" data-bind="click: running()? stopUBXxTest : startUBXxTest, 
 	                             text:  running()? 'stop!' : 'go!' "></button></em></tr>
 	</div>
 </div>	
