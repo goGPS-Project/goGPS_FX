@@ -52,10 +52,12 @@
             <!-- ko foreach: observationProducers -->
                 <input type="radio" data-bind="checkedValue: $data, checked: $root.selectedObservationProducer" />
                 <span data-bind="text: name"></span>
+                <span data-bind="if: serialPort()">
+                    <select class="form-control" data-bind="options: $root.serialPortList, optionsText: 'name', value:serialPort"></select>
+                    <select class="form-control" data-bind="options: $root.speedOptions, value: serialPort().speed"></select>
+                </span>
             <!-- /ko -->
           </td>
-          <!--td data-bind="if: serialPortList().length>0"><select class="form-control" data-bind="options: serialPortList, optionsText: 'name', value:selectedObservationProducer().serialPort1"></select></td>
-          <td data-bind="if: serialPortList().length>0"><select class="form-control" data-bind="options: speedOptions, value: selectedNavigationProducer().serialPort().speed"></select></td-->
         </tr>
         <tr>
           <th>Navigation</th>
@@ -63,39 +65,19 @@
             <!-- ko foreach: navigationProducers -->
                 <input type="radio" data-bind="checkedValue: $data, checked: $root.selectedNavigationProducer" />
                 <span data-bind="text: name"></span>
+                <span data-bind="if: serialPort()">
+                    <select class="form-control" data-bind="options: $root.serialPortList, optionsText: 'name', value:serialPort"></select>
+                    <select class="form-control" data-bind="options: $root.speedOptions, value: serialPort().speed"></select>
+                </span>
             <!-- /ko -->
-            <!--label class="radio-inline"><input data-bind="enable: serialPortList().length>1" type="radio" name="optradio">Serial</label> 
-            <label class="radio-inline"><input type="radio" name="optradio">Rinex Navigation File</label--> 
           </td>
-          <td data-bind="if: serialPortList().length>1"><select class="form-control" data-bind="options: serialPortList, optionsText: 'name', value: serialPort1"></select></td>
-          <td data-bind="if: serialPortList().length>1"><select class="form-control" data-bind="options: speedOptions, value: serialPort1().speed"></select></td>
         </tr>
       </tbody>
     </table>
-    <!--table class = "table" data-bind="if: serialPortList().length>0">
-      <thead>
-        <tr>
-        </tr>
-      </thead>
-      <tbody>
-        <tr data-bind="with: serialPort1">
-         <td>Navigation</td>
-         <td data-bind="text: name"/>
-         <td data-bind="text: speed"/>
-       </tr>
-        <tr data-bind="with: serialPort2">
-         <td>Rover</td>
-         <td data-bind="text: name"/>
-         <td data-bind="text: speed"/>
-       </tr>
-   </tbody>
-  </table-->
-    <button class="pull-left" data-bind="click: getPortList">Refresh
-      Port List</button>
+    <button class="pull-left" data-bind="click: getPortList">Refresh Port List</button>
     <div>
       <em><button class="pull-right"
-          data-bind="click: running()? stop : start, 
-	                             text:  running()? 'stop!' : 'go!' "></button></em>
+          data-bind="click: running()? stop : start, text:  running()? 'stop!' : 'go!' "></button></em>
       </tr>
     </div>
   </div>

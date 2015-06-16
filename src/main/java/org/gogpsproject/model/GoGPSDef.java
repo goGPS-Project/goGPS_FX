@@ -105,12 +105,13 @@ public final class GoGPSDef {
       Producers.serialNavigationProducer.setSerialPort(ports.get(0));
       model.getNavigationProducers().add( Producers.serialNavigationProducer);
     } else
-      Producers.serialObservationProducer.setSerialPort(null);
+      Producers.serialNavigationProducer.setSerialPort(null);
     
     model.getObservationProducers().add( Producers.rinexObservationProducer);
     model.getNavigationProducers().add( Producers.rinexNavigationProducer);
     
-//    .addAll( Arrays.asList( new Producer[]{ Producers.serialProducer))
+    model.setSelectedObservationProducer(model.getObservationProducers().get(0));
+    model.setSelectedNavigationProducer(model.getNavigationProducers().get(0));
   }
 
   /** Shows direct interaction with JavaScript */
