@@ -76,6 +76,8 @@ public class GoGPS_Fx {
       
       goGPSModel.getRunModes().addAll( Arrays.asList(new Mode[]{ Modes.standAlone, Modes.kalmanFilter, Modes.doubleDifferences }));
       goGPSModel.getDynModels().addAll( Arrays.asList(new DynModel[]{ DynModels.staticm, DynModels.constantSpeed, DynModels.constantAcceleration }));
+      goGPSModel.setSelectedRunMode(Modes.standAlone);
+      goGPSModel.setSelectedDynModel(DynModels.staticm);
       
       goGPSModel.getSpeedOptions().addAll( Arrays.asList(new Integer[]{9600, 115200}));
       goGPSModel.getMeasurementRateOptions().addAll( Arrays.asList(new Integer[]{1, 2, 5, 10}));

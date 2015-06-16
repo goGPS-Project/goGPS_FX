@@ -7,56 +7,63 @@
 
 <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
 
-<script type='text/javascript' src='http://getfirebug.com/releases/lite/latest/firebug-lite-debug.js'></script>
+<script type='text/javascript'
+  src='http://getfirebug.com/releases/lite/latest/firebug-lite-debug.js'></script>
 <!--script type='text/javascript' src='js/GoGPS.js'></script-->
 <script src="js/jquery-2.1.4.min.js"></script>
 <script src="bootstrap/js/bootstrap.js"></script>
 </head>
 <body data-bind="Model">
-	<nav class="navbar navbar-default">
-		<div class="container-fluid">
-			<div class="navbar-header">
-				<em><a class="navbar-brand" href="#">goGPS</a></em>
-			</div>
-			<div>
-				<ul class="nav navbar-nav">
-					<li class="active"><a href="index.html">Reload</a></li>
-					<li><a href="#">Connect</a></li>
-					<li><a href="#">Page 2</a></li>
-					<li><a href="#">Page 3</a></li>
-				</ul>
-			</div>
-		</div>
-	</nav>
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <em><a class="navbar-brand" href="#">goGPS</a></em>
+      </div>
+      <div>
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="index.html">Reload</a></li>
+          <li><a href="#">Connect</a></li>
+          <li><a href="#">Page 2</a></li>
+          <li><a href="#">Page 3</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 <body>
-<div class="container-fluid">
-  <table class = "table" data-bind="if: serialPortList().length>0">
-	  <thead>
-	    <tr>
-	    </tr>
-	  </thead>
-	  <tbody>
+  <div class="container-fluid">
+    <table class="table" data-bind="if: serialPortList().length>0">
+      <thead>
         <tr>
-         <th>Mode</th>
-         <td><select class="form-control" data-bind="options: runModes, optionsText: 'name', value: selectedRunMode"></select></td>
-       </tr>
+        </tr>
+      </thead>
+      <tbody>
         <tr>
-         <th>Dynamic Model</th>
-         <td><select class="form-control" data-bind="options: dynModels, optionsText: 'name', value: selectedDynModel"></select></td>
-       </tr>
-	    <tr>
-	  	 <th>Navigation</th>
-	  	 <td><select class="form-control" data-bind="options: serialPortList, optionsText: 'name', value: serialPort1"></select></td>
-         <td><select class="form-control" data-bind="options: speedOptions, value: serialPort1().speed"></select></td>
-       </tr>
-      <tr>
-        <th>Rover</th>
-        <td><select class="form-control" data-bind="options: serialPortList, optionsText: 'name', value:serialPort2"></select></td>
-        <td><select class="form-control" data-bind="options: speedOptions, value: serialPort2().speed"></select></td>
-    </tr>
-   </tbody>
-  </table>
-  <!--table class = "table" data-bind="if: serialPortList().length>0">
+          <th>Mode</th>
+          <td><select class="form-control"
+            data-bind="options: runModes, optionsText: 'name', value: selectedRunMode"></select></td>
+        </tr>
+        <tr>
+          <th>Dynamic Model</th>
+          <td><select class="form-control"
+            data-bind="options: dynModels, optionsText: 'name', value: selectedDynModel"></select></td>
+        </tr>
+        <tr data-bind="if: serialPortList().length>0" data-bind="if: serialPortList().length>0">
+          <th>Rover</th>
+          <td><select class="form-control"
+            data-bind="options: serialPortList, optionsText: 'name', value:serialPort1"></select></td>
+          <td><select class="form-control"
+            data-bind="options: speedOptions, value: serialPort1().speed"></select></td>
+        </tr>
+        <tr data-bind="if: serialPortList().length>1">
+          <th>Navigation</th>
+          <td><select class="form-control"
+            data-bind="options: serialPortList, optionsText: 'name', value: serialPort1"></select></td>
+          <td><select class="form-control"
+            data-bind="options: speedOptions, value: serialPort1().speed"></select></td>
+        </tr>
+      </tbody>
+    </table>
+    <!--table class = "table" data-bind="if: serialPortList().length>0">
       <thead>
         <tr>
         </tr>
@@ -74,10 +81,13 @@
        </tr>
    </tbody>
   </table-->
-  <button class="pull-left" data-bind="click: getPortList">Refresh Port List</button>
-	<div>
-	    <em><button class="pull-right" data-bind="click: running()? stopUBXxTest : startUBXxTest, 
-	                             text:  running()? 'stop!' : 'go!' "></button></em></tr>
-	</div>
-</div>	
+    <button class="pull-left" data-bind="click: getPortList">Refresh
+      Port List</button>
+    <div>
+      <em><button class="pull-right"
+          data-bind="click: running()? stopUBXxTest : startUBXxTest, 
+	                             text:  running()? 'stop!' : 'go!' "></button></em>
+    </tr>
+  </div>
+  </div>
 </html>

@@ -12,15 +12,10 @@ import java.util.Locale;
 import java.util.Vector;
 import java.util.logging.Logger;
 
-import org.gogpsproject.Coordinates;
-import org.gogpsproject.EphGps;
 import org.gogpsproject.GoGPS;
 import org.gogpsproject.GoGPS_Fx;
-import org.gogpsproject.IonoGps;
 import org.gogpsproject.NavigationProducer;
-import org.gogpsproject.Observations;
 import org.gogpsproject.ObservationsBuffer;
-import org.gogpsproject.StreamEventListener;
 import org.gogpsproject.parser.ublox.UBXSerialConnection;
 
 import net.java.html.json.ComputedProperty;
@@ -169,45 +164,6 @@ public class SerialPortDef {
       Files.copy( new File(from).toPath(), new File(to).toPath() );
     }
     catch( java.nio.file.FileAlreadyExistsException e){};
-  }
-
-  public static class UBXTest implements StreamEventListener{
-
-    @Override
-    public void streamClosed() {
-      System.out.println("streamClosed");
-    }
-
-    @Override
-    public void addObservations(Observations o) {
-      System.out.println("addObservations");
-    }
-
-    @Override
-    public void addIonospheric(IonoGps iono) {
-      System.out.println( "Iono" + iono.toString());
-    }
-
-    @Override
-    public void addEphemeris(EphGps eph) {
-//      System.out.println("Eph" + eph.toString());
-    }
-
-    @Override
-    public void setDefinedPosition(Coordinates definedPosition) {
-      System.out.println("setDefinedPosition");
-    }
-
-    @Override
-    public Observations getCurrentObservations() {
-//      System.out.println("streamClosed");
-      return null;
-    }
-
-    @Override
-    public void pointToNextObservations() {
-      System.out.println("pointToNextObservations");
-    }
   }
 
 }

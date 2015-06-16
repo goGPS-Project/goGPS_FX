@@ -13,7 +13,7 @@ import org.gogpsproject.GoGPS_Fx;
 import org.gogpsproject.NavigationProducer;
 import org.gogpsproject.ObservationsBuffer;
 import org.gogpsproject.ObservationsProducer;
-import org.gogpsproject.model.SerialPortDef.UBXTest;
+import org.gogpsproject.ConsoleStreamer;
 import org.gogpsproject.parser.ublox.UBXSerialConnection;
 
 import net.java.html.json.ComputedProperty;
@@ -131,7 +131,6 @@ public final class GoGPSDef {
     
     ubxSerialConn1 = new UBXSerialConnection( port1.getName(), port1.getSpeed() );
 
-    UBXTest test = new UBXTest();
     ubxSerialConn1.setMeasurementRate( port1.getMeasurementRate() );
     ubxSerialConn1.enableEphemeris(setEphemerisRate);
     ubxSerialConn1.enableIonoParam(setIonosphereRate);
@@ -140,16 +139,17 @@ public final class GoGPSDef {
     ubxSerialConn1.enableNmeaSentences(new ArrayList<String>());
 
     ubxSerialConn1.init();
-    ubxSerialConn1.addStreamEventListener(test);
+    ConsoleStreamer listener = new ConsoleStreamer();
+    ubxSerialConn1.addStreamEventListener(listener);
     
     roverIn = new ObservationsBuffer( ubxSerialConn1, "./roverOut.dat" );
     navigationIn = (NavigationProducer) roverIn;
     roverIn.init();
  
-    GoGPS goGPSstandalone = new GoGPS(navigationIn, roverIn, null);
-    goGPSstandalone.setDynamicModel( model.getSelectedDynModel().getValue() );
+    GoGPS goGPS = new GoGPS(navigationIn, roverIn, null);
+    goGPS.setDynamicModel( model.getSelectedDynModel().getValue() );
     
-    goGPSstandalone.runThreadMode( model.getSelectedRunMode().getValue() );
+    goGPS.runThreadMode( model.getSelectedRunMode().getValue() );
     
     model.setRunning(true);
   }
