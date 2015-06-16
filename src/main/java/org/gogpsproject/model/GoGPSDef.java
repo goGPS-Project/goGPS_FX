@@ -8,12 +8,16 @@ import java.util.List;
 import java.util.Locale;
 import java.util.logging.Logger;
 
+import org.gogpsproject.Coordinates;
+import org.gogpsproject.EphGps;
 import org.gogpsproject.GoGPS;
 import org.gogpsproject.GoGPS_Fx;
+import org.gogpsproject.IonoGps;
 import org.gogpsproject.NavigationProducer;
+import org.gogpsproject.Observations;
 import org.gogpsproject.ObservationsBuffer;
 import org.gogpsproject.ObservationsProducer;
-import org.gogpsproject.ConsoleStreamer;
+import org.gogpsproject.StreamEventListener;
 import org.gogpsproject.parser.ublox.UBXSerialConnection;
 
 import net.java.html.json.ComputedProperty;
@@ -27,9 +31,11 @@ import net.java.html.json.Property;
     @Property(name = "selectedRunMode", type = Mode.class),
     @Property(name = "dynModels", type = DynModel.class, array=true),
     @Property(name = "selectedDynModel", type = DynModel.class),
+    @Property(name = "observationProducers", type = ProducerM.class, array=true),
+    @Property(name = "selectedObservationProducer", type = ProducerM.class),
+    @Property(name = "navigationProducers", type = ProducerM.class, array=true),
+    @Property(name = "selectedNavigationProducer", type = ProducerM.class),
     
-    @Property(name = "serialPort1", type = SerialPortModel.class),
-    @Property(name = "serialPort2", type = SerialPortModel.class),
     @Property(name = "serialPortList", type = SerialPortModel.class, array = true),
     @Property(name = "speedOptions", type = int.class, array=true),
     @Property(name = "measurementRateOptions", type = int.class, array=true),
@@ -66,7 +72,7 @@ public final class GoGPSDef {
     List<SerialPortModel> ports = model.getSerialPortList();
     for (SerialPortModel port : ports) {
       if (port.isConnected()) {
-        stopUBXxTest(model);
+        stop(model);
       }
     }
   }
@@ -77,7 +83,7 @@ public final class GoGPSDef {
 
     for (SerialPortModel port : ports) {
       if (model.isRunning())
-        stopUBXxTest(model);
+        stop(model);
     }
     ports.clear();
 
@@ -85,14 +91,26 @@ public final class GoGPSDef {
       SerialPortModel port = new SerialPortModel(name, 9600, 1, false);
       ports.add(port);
     }
+
+    model.getObservationProducers().clear();
+    model.getNavigationProducers().clear();
+
     if (ports.size() > 0) {
-      model.setSerialPort1(ports.get(0));
+      Producers.serialObservationProducer.setSerialPort(ports.get(0));
+      model.getObservationProducers().add( Producers.serialObservationProducer );
     } else
-      model.setSerialPort1(null);
+      Producers.serialObservationProducer.setSerialPort(null);
+    
     if (ports.size() > 1) {
-      model.setSerialPort2(ports.get(1));
+      Producers.serialNavigationProducer.setSerialPort(ports.get(0));
+      model.getNavigationProducers().add( Producers.serialNavigationProducer);
     } else
-      model.setSerialPort2(null);
+      Producers.serialObservationProducer.setSerialPort(null);
+    
+    model.getObservationProducers().add( Producers.rinexObservationProducer);
+    model.getNavigationProducers().add( Producers.rinexNavigationProducer);
+    
+//    .addAll( Arrays.asList( new Producer[]{ Producers.serialProducer))
   }
 
   /** Shows direct interaction with JavaScript */
@@ -115,19 +133,20 @@ public final class GoGPSDef {
   public static native void registerModel();
 
   @Function 
-  static void startUBXxTest( GoGPSModel model ) throws Exception {
-    System.out.println("Info");
-    System.err.println("Err");
+  static void start( GoGPSModel model ) throws Exception {
+    l.info("Info");
+    l.warning("warning");
+    l.severe("Severe");
     
     //force dot as decimal separator
     Locale.setDefault(new Locale("en", "US"));
 
     if( model.isRunning() ) 
-      stopUBXxTest( model );
+      stop( model );
 
     l.info("Start UBX test" );
 
-    SerialPortModel port1 = model.getSerialPort1();
+    SerialPortModel port1 = Producers.serialObservationProducer.getSerialPort();
     
     ubxSerialConn1 = new UBXSerialConnection( port1.getName(), port1.getSpeed() );
 
@@ -155,7 +174,7 @@ public final class GoGPSDef {
   }
 
   @Function 
-  static void stopUBXxTest( GoGPSModel model ) throws InterruptedException {
+  static void stop( GoGPSModel model ) throws InterruptedException {
     if( roverIn != null ){
       System.out.println("Stop Rover");
       roverIn.release( true, 10000 ); // release and close rover
@@ -168,5 +187,43 @@ public final class GoGPSDef {
     }
     model.setRunning(false);
   }
-  
+ 
+  public static class ConsoleStreamer implements StreamEventListener{
+
+    @Override
+    public void streamClosed() {
+      System.out.println("streamClosed");
+    }
+
+    @Override
+    public void addObservations(Observations o) {
+      System.out.println("addObservations");
+    }
+
+    @Override
+    public void addIonospheric(IonoGps iono) {
+      System.out.println( "Iono" + iono.toString());
+    }
+
+    @Override
+    public void addEphemeris(EphGps eph) {
+      System.out.println("Eph" + eph.toString());
+    }
+
+    @Override
+    public void setDefinedPosition(Coordinates definedPosition) {
+      System.out.println("setDefinedPosition");
+    }
+
+    @Override
+    public Observations getCurrentObservations() {
+      System.out.println("streamClosed");
+      return null;
+    }
+
+    @Override
+    public void pointToNextObservations() {
+      System.out.println("pointToNextObservations");
+    }
+  }
 }

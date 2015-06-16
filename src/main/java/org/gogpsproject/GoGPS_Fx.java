@@ -11,6 +11,7 @@ import org.gogpsproject.model.GoGPSDef;
 import org.gogpsproject.model.GoGPSModel;
 import org.gogpsproject.model.Mode;
 import org.gogpsproject.model.Modes;
+import org.gogpsproject.model.Producers;
 import org.gogpsproject.model.SerialPortDef;
 
 import net.java.html.boot.BrowserBuilder;
