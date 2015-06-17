@@ -24,10 +24,10 @@ public class Producers {
   public static Producer rinexNavigationProducer;
   
   public static void init(){
-    serialObservationProducer = new Producer( SERIAL, "Serial", null, "" );
-    rinexObservationProducer  = new Producer( FILE,   "Rinex Observation File", null, "");
+    serialObservationProducer = new Producer( SERIAL, "Serial (Ublox)", null, "" );
+    rinexObservationProducer  = new Producer( FILE,   "Rinex Observation File", null, "./data/UB110350.15o");
     serialNavigationProducer  = new Producer( SERIAL, "Serial", null, "");
-    rinexNavigationProducer   = new Producer( FTP,    "Rinex FTP File", null, "" );
+    rinexNavigationProducer   = new Producer( FTP,    "Rinex FTP", null, "" );
   }
 }
 

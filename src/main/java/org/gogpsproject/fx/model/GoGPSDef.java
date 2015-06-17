@@ -1,6 +1,7 @@
 package org.gogpsproject.fx.model;
 
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,7 +24,12 @@ import org.gogpsproject.fx.model.GoGPSModel;
 import org.gogpsproject.fx.model.Mode;
 import org.gogpsproject.fx.model.Producer;
 import org.gogpsproject.fx.model.SerialPortModel;
+import org.gogpsproject.parser.rinex.RinexNavigation;
+import org.gogpsproject.parser.rinex.RinexObservationParser;
+import org.gogpsproject.parser.rinex.SnapshotRinexObservationParser;
 import org.gogpsproject.parser.ublox.UBXSerialConnection;
+import org.gogpsproject.producer.KmlProducer;
+import org.gogpsproject.producer.TxtProducer;
 
 import net.java.html.json.ComputedProperty;
 import net.java.html.json.Function;
@@ -40,10 +46,11 @@ import net.java.html.json.Property;
     @Property(name = "selectedObservationProducer", type = Producer.class),
     @Property(name = "navigationProducers", type = Producer.class, array=true),
     @Property(name = "selectedNavigationProducer", type = Producer.class),
-
+    @Property(name = "outputFolder", type = String.class),
     @Property(name = "serialPortList", type = SerialPortModel.class, array = true),
     @Property(name = "speedOptions", type = int.class, array=true),
     @Property(name = "measurementRateOptions", type = int.class, array=true),
+    
     @Property(name = "running", type = boolean.class)
     })
 public final class GoGPSDef {
@@ -149,31 +156,59 @@ public final class GoGPSDef {
       stop( model );
 
     l.info("Start UBX test" );
+    Producer observation = model.getSelectedObservationProducer(); 
+    switch ( observation.getType() ){
+      case Producers.SERIAL :
+        SerialPortModel port1 = observation.getSerialPort();
+        ubxSerialConn1 = new UBXSerialConnection( port1.getName(), port1.getSpeed() );
 
-    SerialPortModel port1 = Producers.serialObservationProducer.getSerialPort();
+        ubxSerialConn1.setMeasurementRate( port1.getMeasurementRate() );
+        ubxSerialConn1.enableEphemeris(setEphemerisRate);
+        ubxSerialConn1.enableIonoParam(setIonosphereRate);
+        ubxSerialConn1.enableTimetag(enableTimetag);
+        ubxSerialConn1.enableDebug(enableDebug);
+        ubxSerialConn1.enableNmeaSentences(new ArrayList<String>());
+
+        ubxSerialConn1.init();
+        ConsoleStreamer listener = new ConsoleStreamer();
+        ubxSerialConn1.addStreamEventListener(listener);
+        roverIn = new ObservationsBuffer( ubxSerialConn1, "./roverOut.dat" );
+        
+        break;
+        case Producers.FILE:
+          roverIn = new RinexObservationParser(new File( observation.getFilename() ));
+        break;
+    }
     
-    ubxSerialConn1 = new UBXSerialConnection( port1.getName(), port1.getSpeed() );
-
-    ubxSerialConn1.setMeasurementRate( port1.getMeasurementRate() );
-    ubxSerialConn1.enableEphemeris(setEphemerisRate);
-    ubxSerialConn1.enableIonoParam(setIonosphereRate);
-    ubxSerialConn1.enableTimetag(enableTimetag);
-    ubxSerialConn1.enableDebug(enableDebug);
-    ubxSerialConn1.enableNmeaSentences(new ArrayList<String>());
-
-    ubxSerialConn1.init();
-    ConsoleStreamer listener = new ConsoleStreamer();
-    ubxSerialConn1.addStreamEventListener(listener);
+    Producer navigation = model.getSelectedNavigationProducer();
+    switch(navigation.getType()){
+      case Producers.SERIAL:
+          // TODO
+        navigationIn = (NavigationProducer) roverIn;
+       break;
+      case Producers.FILE:
+        // TODO
+        break;
+      case Producers.FTP:
+        navigationIn = new RinexNavigation( RinexNavigation.GARNER_NAVIGATION_AUTO );
+        break;
+    }
     
-    roverIn = new ObservationsBuffer( ubxSerialConn1, "./roverOut.dat" );
-    navigationIn = (NavigationProducer) roverIn;
-    roverIn.init();
- 
     GoGPS goGPS = new GoGPS(navigationIn, roverIn, null);
     goGPS.setDynamicModel( model.getSelectedDynModel().getValue() );
-    
     goGPS.runThreadMode( model.getSelectedRunMode().getValue() );
-    
+
+    String outFolder = model.getOutputFolder();
+    String outPathTxt = outFolder + "/out.txt";
+    String outPathKml = outFolder + "/out.kml";
+    TxtProducer txt = new TxtProducer(outPathTxt);
+    double goodDopThreshold = 10;
+    int timeSampleDelaySec = 30; // should be tuned according to the dataset; use '0' to disable timestamps in the KML 
+    KmlProducer kml = new KmlProducer(outPathKml, goodDopThreshold, timeSampleDelaySec );
+    goGPS.addPositionConsumerListener(txt);
+    goGPS.addPositionConsumerListener(kml);
+
+    roverIn.init();
     model.setRunning(true);
   }
 
