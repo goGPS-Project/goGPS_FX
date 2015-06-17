@@ -25,6 +25,7 @@ import org.gogpsproject.fx.model.Mode;
 import org.gogpsproject.fx.model.Producer;
 import org.gogpsproject.fx.model.SerialPortModel;
 import org.gogpsproject.parser.rinex.RinexNavigation;
+import org.gogpsproject.parser.rinex.RinexNavigationParser;
 import org.gogpsproject.parser.rinex.RinexObservationParser;
 import org.gogpsproject.parser.ublox.UBXSerialConnection;
 import org.gogpsproject.producer.KmlProducer;
@@ -35,6 +36,10 @@ import net.java.html.json.Function;
 import net.java.html.json.Model;
 import net.java.html.json.Property;
 
+/**
+ * @author EZ
+ * It defines GoGPSModel, the root of our model tree, it maps to a "goGPS" javascript object
+ */
 @Model(className = "GoGPSModel", targetId = "", properties = {
 
     @Property(name = "runModes", type = Mode.class, array=true),
@@ -72,19 +77,21 @@ public final class GoGPSDef {
   private FileOutputStream fosOutLog = null;
   private DataOutputStream outLog = null;//new XMLEncoder(os);
 
-
-  public static GoGPSModel init(){
-    GoGPSModel goGPSModel = new GoGPSModel();
-
+  /**
+   * Called by onPageLoad(), it builds goGPSModel and its descendants
+   * and populates it with default values
+   * @param goGPSModel
+   */
+  @Function
+  public static void init( GoGPSModel goGPSModel ){
     goGPSModel.getRunModes().addAll( Modes.get() );
     goGPSModel.getDynModels().addAll( DynModels.get() );
     goGPSModel.setSelectedRunMode(Modes.standAlone);
     goGPSModel.setSelectedDynModel(DynModels.staticm);
-    Producers.init();
     goGPSModel.getSpeedOptions().addAll( Arrays.asList(new Integer[]{9600, 115200}));
     goGPSModel.getMeasurementRateOptions().addAll( Arrays.asList(new Integer[]{1, 2, 5, 10}));
     goGPSModel.setOutputFolder("./out");
-    return goGPSModel;
+    Producers.init();
   }
   
   @net.java.html.js.JavaScriptBody(args = { "msg" }, body = "alert(msg);")
@@ -102,6 +109,12 @@ public final class GoGPSDef {
     }
   }
 
+  /**
+   * This method scans for available serial ports. 
+   * Not only that, it populates the list of available Observation and Navigation producers
+   * @param model
+   * @throws Exception
+   */
   @Function
   public static void getPortList(GoGPSModel model) throws Exception {
     List<SerialPortModel> ports = model.getSerialPortList();
@@ -121,23 +134,23 @@ public final class GoGPSDef {
     if (ports.size() > 0) {
       Producers.serialObservationProducer.setSerialPort(ports.get(0));
       model.getObservationProducers().add( Producers.serialObservationProducer );
-    } else
-      Producers.serialObservationProducer.setSerialPort(null);
-    
-    if (ports.size() > 1) {
-      Producers.serialNavigationProducer.setSerialPort(ports.get(1));
+      Producers.serialNavigationProducer.setSerialPort(ports.get(0));
       model.getNavigationProducers().add( Producers.serialNavigationProducer);
-    } else
+    } else {
+      Producers.serialObservationProducer.setSerialPort(null);
       Producers.serialNavigationProducer.setSerialPort(null);
+    }
     
-    model.getObservationProducers().add( Producers.rinexObservationProducer);
-    model.getNavigationProducers().add( Producers.rinexNavigationProducer);
+    model.getObservationProducers().add( Producers.rinexObservationProducer );
+    model.getNavigationProducers().add( Producers.rinexNavigationProducer );
+    model.getNavigationProducers().add( Producers.ftpNavigationProducer );
     
     model.setSelectedObservationProducer(model.getObservationProducers().get(0));
     model.setSelectedNavigationProducer(model.getNavigationProducers().get(0));
   }
 
-  /** Shows direct interaction with JavaScript */
+  /*
+   * Some DukeScript example code, I'll keep it here for now
   @net.java.html.js.JavaScriptBody(args = { "msg", "callback" }, javacall = true, body = "if (confirm(msg)) {\n"
       + "  callback.@java.lang.Runnable::run()();\n" + "}\n")
   static native void confirmByUser(String msg, Runnable callback);
@@ -149,7 +162,11 @@ public final class GoGPSDef {
       + "    y = w.innerHeight|| e.clientHeight|| g.clientHeight;\n" + "\n"
       + "return 'Screen size is ' + x + ' times ' + y;\n")
   static native String screenSize();
-
+  */
+  
+  /**
+   * Creates a "goGPS" javascript object, for debugging from the Firebug command line
+   */
   @net.java.html.js.JavaScriptBody(args = {}, body = "ko.bindingHandlers.Model = {"
       + "init: function( element, valueAccessor, allBindingsAccessor, viewModel ){"
       + "goGPS = viewModel;" + "}" 
@@ -158,9 +175,6 @@ public final class GoGPSDef {
 
   @Function 
   static void start( GoGPSModel model ) throws Exception {
-    l.info("Info");
-    l.warning("warning");
-    l.severe("Severe");
     
     //force dot as decimal separator
     Locale.setDefault(new Locale("en", "US"));
@@ -168,7 +182,7 @@ public final class GoGPSDef {
     if( model.isRunning() ) 
       stop( model );
 
-    l.info("Start UBX test" );
+    l.info("Start goGPS" );
     Producer observation = model.getSelectedObservationProducer(); 
     switch ( observation.getType() ){
       case Producers.SERIAL :
@@ -196,14 +210,31 @@ public final class GoGPSDef {
     Producer navigation = model.getSelectedNavigationProducer();
     switch(navigation.getType()){
       case Producers.SERIAL:
-          // TODO
-        navigationIn = (NavigationProducer) roverIn;
+        if( navigation.getSerialPort() == observation.getSerialPort() ) {
+          navigationIn = (NavigationProducer) roverIn;
+        } 
+        else {
+          SerialPortModel port2 = navigation.getSerialPort();
+          ubxSerialConn2 = new UBXSerialConnection( port2.getName(), port2.getSpeed() );
+
+          ubxSerialConn2.setMeasurementRate( port2.getMeasurementRate() );
+          ubxSerialConn2.enableEphemeris(setEphemerisRate);
+          ubxSerialConn2.enableIonoParam(setIonosphereRate);
+          ubxSerialConn2.enableTimetag(enableTimetag);
+          ubxSerialConn2.enableDebug(enableDebug);
+          ubxSerialConn2.enableNmeaSentences(new ArrayList<String>());
+
+          ubxSerialConn2.init();
+          ConsoleStreamer listener = new ConsoleStreamer();
+          ubxSerialConn2.addStreamEventListener(listener);
+          navigationIn = new ObservationsBuffer( ubxSerialConn2, "./navigationOut.dat" );
+        }
        break;
       case Producers.FILE:
-        // TODO
+          navigationIn = new RinexNavigationParser(new File( navigation.getFilename() ));
         break;
       case Producers.FTP:
-        navigationIn = new RinexNavigation( RinexNavigation.GARNER_NAVIGATION_AUTO );
+          navigationIn = new RinexNavigation( RinexNavigation.GARNER_NAVIGATION_AUTO );
         break;
     }
     

@@ -47,7 +47,8 @@ public class GoGPS_Fx {
 //      }
       BrwsrCtx ctx = BrwsrCtx.findDefault(GoGPS_Fx.class);
     
-      goGPSModel = GoGPSDef.init();
+      goGPSModel = new GoGPSModel();
+      GoGPSDef.init(goGPSModel);
       
       Models.toRaw(goGPSModel);
       GoGPSDef.registerModel();
