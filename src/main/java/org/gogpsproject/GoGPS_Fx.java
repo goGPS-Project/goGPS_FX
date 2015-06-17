@@ -18,6 +18,7 @@ import net.java.html.boot.BrowserBuilder;
 import net.java.html.js.JavaScriptBody;
 import net.java.html.js.JavaScriptResource;
 import net.java.html.json.Models;
+import netscape.javascript.JSException;
 
 public class GoGPS_Fx {
   private static final Logger logger = Logger.getLogger(GoGPS_Fx.class.getName());
@@ -70,16 +71,16 @@ public class GoGPS_Fx {
   }
   
   public static void onPageLoad() throws Exception {
-      if( goGPSModel != null ){
-        GoGPSDef.cleanUp(goGPSModel);
-      }
+//      if( goGPSModel != null ){
+//        GoGPSDef.cleanUp(goGPSModel);
+//      }
       goGPSModel = new GoGPSModel();
       
-      goGPSModel.getRunModes().addAll( Arrays.asList(new Mode[]{ Modes.standAlone, Modes.kalmanFilter, Modes.doubleDifferences }));
-      goGPSModel.getDynModels().addAll( Arrays.asList(new DynModel[]{ DynModels.staticm, DynModels.constantSpeed, DynModels.constantAcceleration }));
+      goGPSModel.getRunModes().addAll( Modes.get() );
+      goGPSModel.getDynModels().addAll( DynModels.get() );
       goGPSModel.setSelectedRunMode(Modes.standAlone);
       goGPSModel.setSelectedDynModel(DynModels.staticm);
-      
+      Producers.init();
       goGPSModel.getSpeedOptions().addAll( Arrays.asList(new Integer[]{9600, 115200}));
       goGPSModel.getMeasurementRateOptions().addAll( Arrays.asList(new Integer[]{1, 2, 5, 10}));
       Models.toRaw(goGPSModel);
@@ -94,6 +95,10 @@ public class GoGPS_Fx {
         try {
           GoGPSDef.getPortList( goGPSModel );
           System.out.println("RXTX Ok");
+          break;
+        }
+        catch( JSException jse ){
+          System.err.println(jse);
           break;
         }
         catch (Throwable localThrowable){

@@ -81,10 +81,8 @@ public final class GoGPSDef {
   public static void getPortList(GoGPSModel model) throws Exception {
     List<SerialPortModel> ports = model.getSerialPortList();
 
-    for (SerialPortModel port : ports) {
-      if (model.isRunning())
-        stop(model);
-    }
+    if (model.isRunning())
+      stop(model);
     ports.clear();
 
     for (String name : UBXSerialConnection.getPortList(true)) {
@@ -102,7 +100,7 @@ public final class GoGPSDef {
       Producers.serialObservationProducer.setSerialPort(null);
     
     if (ports.size() > 1) {
-      Producers.serialNavigationProducer.setSerialPort(ports.get(0));
+      Producers.serialNavigationProducer.setSerialPort(ports.get(1));
       model.getNavigationProducers().add( Producers.serialNavigationProducer);
     } else
       Producers.serialNavigationProducer.setSerialPort(null);
@@ -187,6 +185,7 @@ public final class GoGPSDef {
       ubxSerialConn1 = null;
     }
     model.setRunning(false);
+//    for (SerialPortModel port : ports) {
   }
  
   public static class ConsoleStreamer implements StreamEventListener{

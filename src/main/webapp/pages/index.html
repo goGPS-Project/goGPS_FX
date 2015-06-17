@@ -14,8 +14,8 @@
 <script src="bootstrap/js/bootstrap.js"></script>
 </head>
 <body data-bind="Model">
-  <nav class="navbar navbar-default">
-    <div class="container-fluid">
+  <div class="container">
+    <nav class="navbar navbar-default">
       <div class="navbar-header">
         <em><a class="navbar-brand" href="#">goGPS</a></em>
       </div>
@@ -27,58 +27,72 @@
           <li><a href="#">Page 3</a></li>
         </ul>
       </div>
-    </div>
-  </nav>
-<body>
-  <div class="container-fluid">
-    <table class="table" data-bind="if: serialPortList().length>0">
-      <tbody>
-        <tr>
-          <th>Mode</th>
-          <td><select class="form-control" data-bind="options: runModes, optionsText: 'name', value: selectedRunMode"></select>
-          </td>
-          <td></td>
-          <td></td>
-        </tr>
-        <tr>
-          <th>Dynamic Model</th>
-          <td><select class="form-control" data-bind="options: dynModels, optionsText: 'name', value: selectedDynModel"></select></td>
-          <td></td>
-          <td></td>
-        </tr>
-        <tr>
-          <th>Rover</th>
-          <td>
-            <!-- ko foreach: observationProducers -->
-                <input type="radio" data-bind="checkedValue: $data, checked: $root.selectedObservationProducer" />
-                <span data-bind="text: name"></span>
-                <span data-bind="if: serialPort()">
-                    <select class="form-control" data-bind="options: $root.serialPortList, optionsText: 'name', value:serialPort"></select>
-                    <select class="form-control" data-bind="options: $root.speedOptions, value: serialPort().speed"></select>
-                </span>
-            <!-- /ko -->
-          </td>
-        </tr>
-        <tr>
-          <th>Navigation</th>
-          <td>
-            <!-- ko foreach: navigationProducers -->
-                <input type="radio" data-bind="checkedValue: $data, checked: $root.selectedNavigationProducer" />
-                <span data-bind="text: name"></span>
-                <span data-bind="if: serialPort()">
-                    <select class="form-control" data-bind="options: $root.serialPortList, optionsText: 'name', value:serialPort"></select>
-                    <select class="form-control" data-bind="options: $root.speedOptions, value: serialPort().speed"></select>
-                </span>
-            <!-- /ko -->
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    </nav>
+    <div class="table">
+      <div class="row">
+        <div class="col-sm-1">
+            <h4>Mode</h4>
+        </div>
+        <div class="col-sm-3">
+            <select class="form-control" data-bind="options: runModes, optionsText: 'name', value: selectedRunMode" ></select>
+        </div>
+        <div class="col-sm-1"></div>
+        <div class="col-sm-3">
+            <h4>Dynamic Model</h4>
+        </div>
+        <div class="col-sm-3 other">
+            <select class="form-control" data-bind="options: dynModels, optionsText: 'name', value: selectedDynModel"></select>
+        </div>
+      </div>
+      <div class="row">
+          <div class="col-sm-1">
+            <h4>Rover</h4>
+          </div>
+          <div class="col-sm-7">
+            <div data-bind="foreach: observationProducers">
+                <div class="row"></div>
+                  <div class="col-sm-1">
+                    <input type="radio" data-bind="checkedValue: $data, checked: $root.selectedObservationProducer" />
+                  </div>
+                  <div class="col-sm-4 other">
+                    <span data-bind="text: name"></span>
+                 </div>
+                <div class="col-sm-3" data-bind="if: serialPort">
+                     <select class="form-control" data-bind="options: $root.serialPortList, optionsText: 'name', value: serialPort"></select>
+                </div>
+                 <div class="col-sm-3" data-bind="if: serialPort">
+                    <select class="form-control" data-bind="options: $root.speedOptions, value: $data.serialPort().speed"></select>
+                 </div>
+             </div>
+          </div>
+      </div>
+      <div class="row">
+          <div class="col-sm-1">
+            <h4>Navigation</h4>
+          </div>
+          <div class="col-sm-7">
+            <div data-bind="foreach: navigationProducers">
+                <div class="row"></div>
+                  <div class="col-sm-1">
+                    <input type="radio" data-bind="checkedValue: $data, checked: $root.selectedNavigationProducer" />
+                  </div>
+                  <div class="col-sm-4 other">
+                    <span data-bind="text: name"></span>
+                 </div>
+                <div class="col-sm-3" data-bind="if: serialPort">
+                     <select class="form-control" data-bind="options: $root.serialPortList, optionsText: 'name', value: serialPort"></select>
+                </div>
+                 <div class="col-sm-3" data-bind="if: serialPort">
+                    <select class="form-control" data-bind="options: $root.speedOptions, value: $data.serialPort().speed"></select>
+                 </div>
+             </div>
+          </div>
+     </div>
     <button class="pull-left" data-bind="click: getPortList">Refresh Port List</button>
     <div>
       <em><button class="pull-right"
           data-bind="click: running()? stop : start, text:  running()? 'stop!' : 'go!' "></button></em>
-      </tr>
     </div>
+   </div>
   </div>
 </html>
