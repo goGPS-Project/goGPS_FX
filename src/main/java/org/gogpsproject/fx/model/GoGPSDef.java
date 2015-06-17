@@ -26,7 +26,6 @@ import org.gogpsproject.fx.model.Producer;
 import org.gogpsproject.fx.model.SerialPortModel;
 import org.gogpsproject.parser.rinex.RinexNavigation;
 import org.gogpsproject.parser.rinex.RinexObservationParser;
-import org.gogpsproject.parser.rinex.SnapshotRinexObservationParser;
 import org.gogpsproject.parser.ublox.UBXSerialConnection;
 import org.gogpsproject.producer.KmlProducer;
 import org.gogpsproject.producer.TxtProducer;
