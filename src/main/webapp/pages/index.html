@@ -17,40 +17,42 @@
   <div class="container">
     <nav class="navbar navbar-default">
       <div class="navbar-header">
-        <em><a class="navbar-brand" href="#">goGPS</a></em>
+        <em><a class="navbar-brand active" href="#">goGPS</a></em>
       </div>
       <div>
         <ul class="nav navbar-nav">
-          <li class="active"><a href="index.html">Reload</a></li>
-          <li><a href="#">Connect</a></li>
-          <li><a href="#">Page 2</a></li>
-          <li><a href="#">Page 3</a></li>
+          <li><a href="index.html">Reload Page</a></li>
+          <li><a data-bind="click: getPortList, clickBubble: false" href="#">Refresh Port List</a></li>
+          <li><a data-bind="click: running()? stop : start, text:  running()? 'stop!' : 'go!' " href="#"><em>go!</em></a></li>
         </ul>
       </div>
     </nav>
     <div class="table">
-      <div class="row">
-        <div class="col-sm-1">
-            <h4>Mode</h4>
+      <div class="row table-bordered">
+        <div class="col-sm-5  table-bordered">
+          <div class="col-sm-3">
+              <h4>Mode</h4>
+          </div>
+          <div class="col-sm-8 other">
+              <select class="form-control" data-bind="options: runModes, optionsText: 'name', value: selectedRunMode" ></select>
+          </div>
         </div>
-        <div class="col-sm-3">
-            <select class="form-control" data-bind="options: runModes, optionsText: 'name', value: selectedRunMode" ></select>
+        <div class="col-sm-7  table-bordered">
+          <div class="col-sm-5">
+              <h4>Dynamic Model</h4>
+          </div>
+          <div class="col-sm-6 other">
+              <select class="form-control" data-bind="options: dynModels, optionsText: 'name', value: selectedDynModel"></select>
         </div>
-        <div class="col-sm-1"></div>
-        <div class="col-sm-3">
-            <h4>Dynamic Model</h4>
-        </div>
-        <div class="col-sm-3 other">
-            <select class="form-control" data-bind="options: dynModels, optionsText: 'name', value: selectedDynModel"></select>
         </div>
       </div>
-      <div class="row">
-          <div class="col-sm-1">
+      <div class="row  table-bordered">
+          <div class="col-sm-5">
             <h4>Rover</h4>
           </div>
           <div class="col-sm-7">
             <div data-bind="foreach: observationProducers">
-                <div class="row"></div>
+                <div class="row table-bordered">
                   <div class="col-sm-1">
                     <input type="radio" data-bind="checkedValue: $data, checked: $root.selectedObservationProducer" />
                   </div>
@@ -63,16 +65,17 @@
                  <div class="col-sm-3" data-bind="if: serialPort">
                     <select class="form-control" data-bind="options: $root.speedOptions, value: $data.serialPort().speed"></select>
                  </div>
+               </div>  
              </div>
           </div>
       </div>
-      <div class="row">
-          <div class="col-sm-1">
+      <div class="row  table-bordered">
+          <div class="col-sm-5">
             <h4>Navigation</h4>
           </div>
           <div class="col-sm-7">
             <div data-bind="foreach: navigationProducers">
-                <div class="row"></div>
+                <div class="row  table-bordered">
                   <div class="col-sm-1">
                     <input type="radio" data-bind="checkedValue: $data, checked: $root.selectedNavigationProducer" />
                   </div>
@@ -86,13 +89,9 @@
                     <select class="form-control" data-bind="options: $root.speedOptions, value: $data.serialPort().speed"></select>
                  </div>
              </div>
+           </div>
           </div>
      </div>
-    <button class="pull-left" data-bind="click: getPortList">Refresh Port List</button>
-    <div>
-      <em><button class="pull-right"
-          data-bind="click: running()? stop : start, text:  running()? 'stop!' : 'go!' "></button></em>
-    </div>
    </div>
   </div>
 </html>
