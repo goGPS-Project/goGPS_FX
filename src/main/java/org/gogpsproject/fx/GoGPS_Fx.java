@@ -1,12 +1,13 @@
 package org.gogpsproject.fx;
 	
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.logging.Logger;
 
 import org.gogpsproject.fx.model.DynModel;
 import org.gogpsproject.fx.model.DynModels;
+import org.gogpsproject.fx.model.FirebugConsole;
+import org.gogpsproject.fx.model.FirebugConsole.FirebugConsoleInfo;
 import org.gogpsproject.fx.model.GoGPSDef;
 import org.gogpsproject.fx.model.GoGPSModel;
 import org.gogpsproject.fx.model.Mode;
@@ -24,59 +25,6 @@ import netscape.javascript.JSException;
 public class GoGPS_Fx {
   private static final Logger logger = Logger.getLogger(GoGPS_Fx.class.getName());
   static GoGPSModel goGPSModel;
-  
-  public abstract static class FirebugConsole extends OutputStream {
-    protected final BrwsrCtx ctx;
-
-    public FirebugConsole( BrwsrCtx ctx ){
-      this.ctx = ctx;
-    }
-    abstract void logNative( String msg );
-
-    void log(String msg) {
-      ctx.execute(new Runnable(){
-        @Override
-        public void run() {
-          logNative(msg);
-        }
-      });
-    }
-
-    StringBuilder sb = new StringBuilder();
-
-    @Override
-    public void write(int i) {
-      sb.append((char)i);
-    }
-
-    @Override
-    public void flush() {
-      if( sb.length() >0 && !sb.toString().equals("\r\n"))
-        log(sb.toString());
-      sb = new StringBuilder();
-    }  
-  }
-
-  public static class FirebugConsoleInfo extends FirebugConsole{
-    public FirebugConsoleInfo(BrwsrCtx ctx) {
-      super(ctx);
-    }
-
-    @net.java.html.js.JavaScriptBody(args = { "msg" }, body = ""
-        + "Firebug.Console.log(msg);")
-    public native void logNative( String msg );
-
-  }
-  
-  public static class FirebugConsoleError extends FirebugConsole{
-    public FirebugConsoleError(BrwsrCtx ctx) {
-      super(ctx);
-    }
-
-    @net.java.html.js.JavaScriptBody(args = { "msg" }, body = ""
-        + "Firebug.Console.error(msg);")
-    public native void logNative( String msg );
-  }
   
   public static void main(String... args) throws Exception {
     System.out.println("Library Path is " + System.getProperty("java.library.path"));
@@ -99,16 +47,8 @@ public class GoGPS_Fx {
 //      }
       BrwsrCtx ctx = BrwsrCtx.findDefault(GoGPS_Fx.class);
     
-      goGPSModel = new GoGPSModel();
+      goGPSModel = GoGPSDef.init();
       
-      goGPSModel.getRunModes().addAll( Modes.get() );
-      goGPSModel.getDynModels().addAll( DynModels.get() );
-      goGPSModel.setSelectedRunMode(Modes.standAlone);
-      goGPSModel.setSelectedDynModel(DynModels.staticm);
-      Producers.init();
-      goGPSModel.getSpeedOptions().addAll( Arrays.asList(new Integer[]{9600, 115200}));
-      goGPSModel.getMeasurementRateOptions().addAll( Arrays.asList(new Integer[]{1, 2, 5, 10}));
-      goGPSModel.setOutputFolder("./out");
       Models.toRaw(goGPSModel);
       GoGPSDef.registerModel();
       goGPSModel.applyBindings();

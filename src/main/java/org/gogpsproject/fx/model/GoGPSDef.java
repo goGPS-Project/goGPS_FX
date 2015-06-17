@@ -73,6 +73,20 @@ public final class GoGPSDef {
   private DataOutputStream outLog = null;//new XMLEncoder(os);
 
 
+  public static GoGPSModel init(){
+    GoGPSModel goGPSModel = new GoGPSModel();
+
+    goGPSModel.getRunModes().addAll( Modes.get() );
+    goGPSModel.getDynModels().addAll( DynModels.get() );
+    goGPSModel.setSelectedRunMode(Modes.standAlone);
+    goGPSModel.setSelectedDynModel(DynModels.staticm);
+    Producers.init();
+    goGPSModel.getSpeedOptions().addAll( Arrays.asList(new Integer[]{9600, 115200}));
+    goGPSModel.getMeasurementRateOptions().addAll( Arrays.asList(new Integer[]{1, 2, 5, 10}));
+    goGPSModel.setOutputFolder("./out");
+    return goGPSModel;
+  }
+  
   @net.java.html.js.JavaScriptBody(args = { "msg" }, body = "alert(msg);")
   public static native void alert(String msg);
 
