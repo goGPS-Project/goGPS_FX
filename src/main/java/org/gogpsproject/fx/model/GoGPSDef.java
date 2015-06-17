@@ -152,7 +152,7 @@ public final class GoGPSDef {
 
   @net.java.html.js.JavaScriptBody(args = {}, body = "ko.bindingHandlers.Model = {"
       + "init: function( element, valueAccessor, allBindingsAccessor, viewModel ){"
-      + "Model = viewModel;" + "}" 
+      + "goGPS = viewModel;" + "}" 
       + "};")
   public static native void registerModel();
 
