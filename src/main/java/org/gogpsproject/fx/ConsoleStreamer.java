@@ -1,4 +1,4 @@
-package org.gogpsproject;
+package org.gogpsproject.fx;
 
 import org.gogpsproject.Coordinates;
 import org.gogpsproject.EphGps;

@@ -1,4 +1,4 @@
-package org.gogpsproject.model;
+package org.gogpsproject.fx.model;
 
 import java.io.DataOutputStream;
 import java.io.File;
@@ -13,9 +13,9 @@ import java.util.Vector;
 import java.util.logging.Logger;
 
 import org.gogpsproject.GoGPS;
-import org.gogpsproject.GoGPS_Fx;
 import org.gogpsproject.NavigationProducer;
 import org.gogpsproject.ObservationsBuffer;
+import org.gogpsproject.fx.GoGPS_Fx;
 import org.gogpsproject.parser.ublox.UBXSerialConnection;
 
 import net.java.html.json.ComputedProperty;

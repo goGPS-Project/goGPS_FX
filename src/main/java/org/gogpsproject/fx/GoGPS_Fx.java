@@ -1,18 +1,18 @@
-package org.gogpsproject;
+package org.gogpsproject.fx;
 	
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.logging.Logger;
 
-import org.gogpsproject.model.DynModel;
-import org.gogpsproject.model.DynModels;
-import org.gogpsproject.model.GoGPSDef;
-import org.gogpsproject.model.GoGPSModel;
-import org.gogpsproject.model.Mode;
-import org.gogpsproject.model.Modes;
-import org.gogpsproject.model.Producers;
-import org.gogpsproject.model.SerialPortDef;
+import org.gogpsproject.fx.model.DynModel;
+import org.gogpsproject.fx.model.DynModels;
+import org.gogpsproject.fx.model.GoGPSDef;
+import org.gogpsproject.fx.model.GoGPSModel;
+import org.gogpsproject.fx.model.Mode;
+import org.gogpsproject.fx.model.Modes;
+import org.gogpsproject.fx.model.Producers;
+import org.gogpsproject.fx.model.SerialPortDef;
 
 import net.java.html.boot.BrowserBuilder;
 import net.java.html.js.JavaScriptBody;

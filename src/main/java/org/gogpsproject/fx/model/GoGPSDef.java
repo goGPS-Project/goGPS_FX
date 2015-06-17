@@ -1,4 +1,4 @@
-package org.gogpsproject.model;
+package org.gogpsproject.fx.model;
 
 import java.io.DataOutputStream;
 import java.io.FileOutputStream;
@@ -11,13 +11,18 @@ import java.util.logging.Logger;
 import org.gogpsproject.Coordinates;
 import org.gogpsproject.EphGps;
 import org.gogpsproject.GoGPS;
-import org.gogpsproject.GoGPS_Fx;
 import org.gogpsproject.IonoGps;
 import org.gogpsproject.NavigationProducer;
 import org.gogpsproject.Observations;
 import org.gogpsproject.ObservationsBuffer;
 import org.gogpsproject.ObservationsProducer;
 import org.gogpsproject.StreamEventListener;
+import org.gogpsproject.fx.GoGPS_Fx;
+import org.gogpsproject.fx.model.DynModel;
+import org.gogpsproject.fx.model.GoGPSModel;
+import org.gogpsproject.fx.model.Mode;
+import org.gogpsproject.fx.model.Producer;
+import org.gogpsproject.fx.model.SerialPortModel;
 import org.gogpsproject.parser.ublox.UBXSerialConnection;
 
 import net.java.html.json.ComputedProperty;
@@ -31,11 +36,11 @@ import net.java.html.json.Property;
     @Property(name = "selectedRunMode", type = Mode.class),
     @Property(name = "dynModels", type = DynModel.class, array=true),
     @Property(name = "selectedDynModel", type = DynModel.class),
-    @Property(name = "observationProducers", type = ProducerM.class, array=true),
-    @Property(name = "selectedObservationProducer", type = ProducerM.class),
-    @Property(name = "navigationProducers", type = ProducerM.class, array=true),
-    @Property(name = "selectedNavigationProducer", type = ProducerM.class),
-    
+    @Property(name = "observationProducers", type = Producer.class, array=true),
+    @Property(name = "selectedObservationProducer", type = Producer.class),
+    @Property(name = "navigationProducers", type = Producer.class, array=true),
+    @Property(name = "selectedNavigationProducer", type = Producer.class),
+
     @Property(name = "serialPortList", type = SerialPortModel.class, array = true),
     @Property(name = "speedOptions", type = int.class, array=true),
     @Property(name = "measurementRateOptions", type = int.class, array=true),

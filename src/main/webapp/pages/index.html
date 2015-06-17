@@ -59,12 +59,15 @@
                   <div class="col-sm-4 other">
                     <span data-bind="text: name"></span>
                  </div>
-                <div class="col-sm-3" data-bind="if: serialPort">
+                <div class="col-sm-3" data-bind="if: type()=='serial'">
                      <select class="form-control" data-bind="options: $root.serialPortList, optionsText: 'name', value: serialPort"></select>
                 </div>
-                 <div class="col-sm-3" data-bind="if: serialPort">
+                <div class="col-sm-3" data-bind="if: type()=='serial'">
                     <select class="form-control" data-bind="options: $root.speedOptions, value: $data.serialPort().speed"></select>
-                 </div>
+                </div>
+                <div class="col-sm-5" data-bind="if: type()=='file'">
+                    <select class="form-control" data-bind="text: filename"></select>
+                </div>
                </div>  
              </div>
           </div>
@@ -82,12 +85,15 @@
                   <div class="col-sm-4 other">
                     <span data-bind="text: name"></span>
                  </div>
-                <div class="col-sm-3" data-bind="if: serialPort">
+                <div class="col-sm-3" data-bind="if: type()=='serial'">
                      <select class="form-control" data-bind="options: $root.serialPortList, optionsText: 'name', value: serialPort"></select>
                 </div>
-                 <div class="col-sm-3" data-bind="if: serialPort">
+                 <div class="col-sm-3" data-bind="if: type()=='serial'">
                     <select class="form-control" data-bind="options: $root.speedOptions, value: $data.serialPort().speed"></select>
                  </div>
+                 <div class="col-sm-5" data-bind="if: type()=='file'">
+                    <select class="form-control" data-bind="text: filename"></select>
+                </div>                 
              </div>
            </div>
           </div>

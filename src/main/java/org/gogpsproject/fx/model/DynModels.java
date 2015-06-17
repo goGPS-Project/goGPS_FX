@@ -1,9 +1,10 @@
-package org.gogpsproject.model;
+package org.gogpsproject.fx.model;
 
 import java.util.Arrays;
 import java.util.List;
 
 import org.gogpsproject.GoGPS;
+import org.gogpsproject.fx.model.DynModel;
 
 import net.java.html.json.Model;
 import net.java.html.json.Property;

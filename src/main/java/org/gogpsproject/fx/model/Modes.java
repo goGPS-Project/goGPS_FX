@@ -1,9 +1,10 @@
-package org.gogpsproject.model;
+package org.gogpsproject.fx.model;
 
 import java.util.Arrays;
 import java.util.List;
 
 import org.gogpsproject.GoGPS;
+import org.gogpsproject.fx.model.Mode;
 
 import net.java.html.json.Model;
 import net.java.html.json.Property;
@@ -18,9 +19,9 @@ public class Modes {
   public static Mode kalmanFilter;
 
   public static List<Mode> get(){
-    standAlone     = new Mode("Stand-alone",   GoGPS.RUN_MODE_STANDALONE);
-    doubleDifferences         = new Mode("Double difference", GoGPS.RUN_MODE_DOUBLE_DIFF);
-    kalmanFilter   = new Mode("Kalman filter", GoGPS.RUN_MODE_KALMAN_FILTER);
+    standAlone        = new Mode("Stand-alone",       GoGPS.RUN_MODE_STANDALONE);
+    doubleDifferences = new Mode("Double difference", GoGPS.RUN_MODE_DOUBLE_DIFF);
+    kalmanFilter      = new Mode("Kalman filter",     GoGPS.RUN_MODE_KALMAN_FILTER);
     
     return Arrays.asList(new Mode[]{ standAlone, kalmanFilter, doubleDifferences });
   }
