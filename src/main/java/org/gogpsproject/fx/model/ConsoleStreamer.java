@@ -23,12 +23,12 @@ public class ConsoleStreamer implements StreamEventListener{
   @Override
   public void addObservations( Observations o) {
     model.getSatellites().clear();
-    for( int i = 0; i<o.getNumSat(); i++ ){
-      int satId = o.getSatID(i);
-      ObservationSet os = o.getSatByID(satId);
-      SatelliteModel sat = new SatelliteModel(satId, os.getSignalStrength(0), os.getCodeC(0), os.getDoppler(0), os.getCodeP(0) );
-      model.getSatellites().add(sat);
-    }
+//    for( int i = 0; i<o.getNumSat(); i++ ){
+//      int satId = o.getSatID(i);
+//      ObservationSet os = o.getSatByID(satId);
+//      SatelliteModel sat = new SatelliteModel(satId, os.getSignalStrength(0), os.getCodeC(0), os.getDoppler(0), os.getCodeP(0) );
+//      model.getSatellites().add(sat);
+//    }
   }
 
   @Override
