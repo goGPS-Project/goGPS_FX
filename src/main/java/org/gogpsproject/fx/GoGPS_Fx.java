@@ -4,15 +4,9 @@ import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.logging.Logger;
 
-import org.gogpsproject.fx.model.DynModel;
-import org.gogpsproject.fx.model.DynModels;
-import org.gogpsproject.fx.model.FirebugConsole;
 import org.gogpsproject.fx.model.FirebugConsole.FirebugConsoleInfo;
 import org.gogpsproject.fx.model.GoGPSDef;
 import org.gogpsproject.fx.model.GoGPSModel;
-import org.gogpsproject.fx.model.Mode;
-import org.gogpsproject.fx.model.Modes;
-import org.gogpsproject.fx.model.Producers;
 import org.gogpsproject.fx.model.SerialPortDef;
 
 import net.java.html.BrwsrCtx;
@@ -34,10 +28,10 @@ public class GoGPS_Fx {
     System.setProperty("browser.rootdir", rootdir ); 
     
     BrowserBuilder.newBrowser().
-                   loadPage("pages/index.html").
-                   loadClass(GoGPS_Fx.class).
-                   invoke("onPageLoad").
-                   showAndWait();
+    loadPage("pages/index.html").
+    loadClass(GoGPS_Fx.class).
+    invoke("onPageLoad").
+    showAndWait();
     System.exit(0);
   }
   

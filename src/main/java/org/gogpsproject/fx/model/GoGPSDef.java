@@ -9,15 +9,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.logging.Logger;
 
-import org.gogpsproject.Coordinates;
-import org.gogpsproject.EphGps;
 import org.gogpsproject.GoGPS;
-import org.gogpsproject.IonoGps;
 import org.gogpsproject.NavigationProducer;
-import org.gogpsproject.Observations;
 import org.gogpsproject.ObservationsBuffer;
 import org.gogpsproject.ObservationsProducer;
-import org.gogpsproject.StreamEventListener;
 import org.gogpsproject.fx.GoGPS_Fx;
 import org.gogpsproject.fx.model.DynModel;
 import org.gogpsproject.fx.model.GoGPSModel;
@@ -54,7 +49,9 @@ import net.java.html.json.Property;
     @Property(name = "serialPortList", type = SerialPortModel.class, array = true),
     @Property(name = "speedOptions", type = int.class, array=true),
     @Property(name = "measurementRateOptions", type = int.class, array=true),
-    
+
+    @Property(name = "satellites", type = SatelliteModel.class, array=true),
+
     @Property(name = "running", type = boolean.class)
     })
 public final class GoGPSDef {
@@ -149,8 +146,7 @@ public final class GoGPSDef {
     model.setSelectedNavigationProducer(model.getNavigationProducers().get(0));
   }
 
-  /*
-   * Some DukeScript example code, I'll keep it here for now
+  /* Some DukeScript example code, I'll keep it here for now */
   @net.java.html.js.JavaScriptBody(args = { "msg", "callback" }, javacall = true, body = "if (confirm(msg)) {\n"
       + "  callback.@java.lang.Runnable::run()();\n" + "}\n")
   static native void confirmByUser(String msg, Runnable callback);
@@ -162,7 +158,6 @@ public final class GoGPSDef {
       + "    y = w.innerHeight|| e.clientHeight|| g.clientHeight;\n" + "\n"
       + "return 'Screen size is ' + x + ' times ' + y;\n")
   static native String screenSize();
-  */
   
   /**
    * Creates a "goGPS" javascript object, for debugging from the Firebug command line
@@ -197,7 +192,7 @@ public final class GoGPSDef {
         ubxSerialConn1.enableNmeaSentences(new ArrayList<String>());
 
         ubxSerialConn1.init();
-        ConsoleStreamer listener = new ConsoleStreamer();
+        ConsoleStreamer listener = new ConsoleStreamer(model);
         ubxSerialConn1.addStreamEventListener(listener);
         roverIn = new ObservationsBuffer( ubxSerialConn1, "./roverOut.dat" );
         
@@ -225,7 +220,7 @@ public final class GoGPSDef {
           ubxSerialConn2.enableNmeaSentences(new ArrayList<String>());
 
           ubxSerialConn2.init();
-          ConsoleStreamer listener = new ConsoleStreamer();
+          ConsoleStreamer listener = new ConsoleStreamer(model);
           ubxSerialConn2.addStreamEventListener(listener);
           navigationIn = new ObservationsBuffer( ubxSerialConn2, "./navigationOut.dat" );
         }
@@ -240,20 +235,26 @@ public final class GoGPSDef {
     
     GoGPS goGPS = new GoGPS(navigationIn, roverIn, null);
     goGPS.setDynamicModel( model.getSelectedDynModel().getValue() );
-    goGPS.runThreadMode( model.getSelectedRunMode().getValue() );
 
     String outFolder = model.getOutputFolder();
     String outPathTxt = outFolder + "/out.txt";
     String outPathKml = outFolder + "/out.kml";
     TxtProducer txt = new TxtProducer(outPathTxt);
+    ConsoleProducer console = new ConsoleProducer();
     double goodDopThreshold = 10;
     int timeSampleDelaySec = 30; // should be tuned according to the dataset; use '0' to disable timestamps in the KML 
     KmlProducer kml = new KmlProducer(outPathKml, goodDopThreshold, timeSampleDelaySec );
     goGPS.addPositionConsumerListener(txt);
     goGPS.addPositionConsumerListener(kml);
+    goGPS.addPositionConsumerListener(console);
 
     roverIn.init();
+    if( navigationIn!=roverIn )
+      navigationIn.init();
+    
     model.setRunning(true);
+    goGPS.runThreadMode( model.getSelectedRunMode().getValue() );
+    
   }
 
   @Function 
@@ -270,44 +271,5 @@ public final class GoGPSDef {
     }
     model.setRunning(false);
 //    for (SerialPortModel port : ports) {
-  }
- 
-  public static class ConsoleStreamer implements StreamEventListener{
-
-    @Override
-    public void streamClosed() {
-      System.out.println("streamClosed");
-    }
-
-    @Override
-    public void addObservations(Observations o) {
-      System.out.println("addObservations");
-    }
-
-    @Override
-    public void addIonospheric(IonoGps iono) {
-      System.out.println( "Iono" + iono.toString());
-    }
-
-    @Override
-    public void addEphemeris(EphGps eph) {
-      System.out.println("Eph" + eph.toString());
-    }
-
-    @Override
-    public void setDefinedPosition(Coordinates definedPosition) {
-      System.out.println("setDefinedPosition");
-    }
-
-    @Override
-    public Observations getCurrentObservations() {
-      System.out.println("streamClosed");
-      return null;
-    }
-
-    @Override
-    public void pointToNextObservations() {
-      System.out.println("pointToNextObservations");
-    }
   }
 }
