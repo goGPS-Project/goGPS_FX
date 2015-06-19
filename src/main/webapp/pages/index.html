@@ -7,13 +7,36 @@
 
 <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
 
-<script type='text/javascript'
-  src='http://getfirebug.com/releases/lite/latest/firebug-lite-debug.js'></script>
-<!--script type='text/javascript' src='js/GoGPS.js'></script-->
 <script src="js/jquery-2.1.4.min.js"></script>
-<script src="bootstrap/js/bootstrap.js"></script>
+<!--script type='text/javascript' src='http://getfirebug.com/releases/lite/latest/firebug-lite-debug.js'-->
+<script type='text/javascript' src='js/firebug-lite/firebug-lite-debug.js'>
+{
+    startOpened: false,
+    enableTrace: true,
+    //overrideConsole: false,
+    //enablePersistent: true,
+    saveCommandLineHistory: true,
+   // saveWindowPosition: true,
+}
+</script>
+<script>
+  var toggleChrome = function waitForChrome(){
+    if( Firebug.chrome ){
+        Firebug.chrome.toggle();
+     }
+     else
+        setTimeout(toggleChrome, 50);
+  };
+  $(document).ready(function() {
+      //console.log(FBL);
+      //console.log(FBL.Env);
+      toggleChrome();
+  });
+</script>
+<script type='text/javascript' src="bootstrap/js/bootstrap.js"></script>
 </head>
 <body data-bind="Model">
+
   <div class="container">
     <nav class="navbar navbar-default">
       <div class="navbar-header">
@@ -22,7 +45,7 @@
       <div>
         <ul class="nav navbar-nav">
           <li><a href="index.html">Reload Page</a></li>
-          <li><a data-bind="click: getPortList, clickBubble: false" href="#">Refresh Port List</a></li>
+          <li><a data-bind="click: getPortList" href="#">Refresh Port List</a></li>
           <li><a data-bind="click: running()? stop : start, text:  running()? 'stop!' : 'go!' " href="#"><em>go!</em></a></li>
         </ul>
       </div>
@@ -32,14 +55,14 @@
         <div class="col-sm-1">
             <h4>Mode</h4>
         </div>
-          <div class="col-sm-2">
+          <div class="col-sm-3">
               <select class="form-control" data-bind="options: runModes, optionsText: 'name', value: selectedRunMode" ></select>
           </div>
           <div class="col-sm-2"></div>
           <div class="col-sm-3">
               <h4>Dynamic Model</h4>
           </div>
-          <div class="col-sm-2">
+          <div class="col-sm-3">
               <select class="form-control" data-bind="options: dynModels, optionsText: 'name', value: selectedDynModel"></select>
         </div>
       </div>
