@@ -179,6 +179,8 @@ public final class GoGPSDef {
       stop( model );
 
     l.info("Start goGPS" );
+    String outFolder = model.getOutputFolder();
+
     Producer observation = model.getSelectedObservationProducer(); 
     switch ( observation.getType() ){
       case Producers.SERIAL : {
@@ -226,7 +228,7 @@ public final class GoGPSDef {
           ubxSerialConn2.init();
           ConsoleStreamer listener = new ConsoleStreamer(model);
           ubxSerialConn2.addStreamEventListener(listener);
-          navigationIn = new ObservationsBuffer( ubxSerialConn2, "./navigationOut.dat" );
+          navigationIn = new ObservationsBuffer( ubxSerialConn2, outFolder + "/navigationOut.dat" );
         }
        break;
       case Producers.FILE:
@@ -243,17 +245,16 @@ public final class GoGPSDef {
     GoGPS goGPS = new GoGPS(navigationIn, roverIn, null);
     goGPS.setDynamicModel( model.getSelectedDynModel().getValue() );
 
-    String outFolder = model.getOutputFolder();
     String outPathTxt = outFolder + "/out.txt";
     String outPathKml = outFolder + "/out.kml";
     TxtProducer txt = new TxtProducer(outPathTxt);
-    ConsoleProducer console = new ConsoleProducer();
+//    ConsoleProducer console = new ConsoleProducer();
     double goodDopThreshold = 10;
     int timeSampleDelaySec = 30; // should be tuned according to the dataset; use '0' to disable timestamps in the KML 
     KmlProducer kml = new KmlProducer(outPathKml, goodDopThreshold, timeSampleDelaySec );
     goGPS.addPositionConsumerListener(txt);
     goGPS.addPositionConsumerListener(kml);
-    goGPS.addPositionConsumerListener(console);
+//    goGPS.addPositionConsumerListener(console);
 
     roverIn.init();
     if( navigationIn!=roverIn )

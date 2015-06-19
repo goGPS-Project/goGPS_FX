@@ -48,6 +48,10 @@ public class RinexNavigationStreamEventProducer extends RinexNavigationParser im
         sel.addObservations(oc);
       }
     }
+    if( o==null )
+      for(StreamEventListener sel:streamEventListeners){
+        sel.streamClosed();
+      }
     return super.getGpsSatPosition(o, satID, satType, receiverClockError );
   }
 

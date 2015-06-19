@@ -17,6 +17,12 @@ public class ConsoleStreamer implements StreamEventListener{
   @Override
   public void streamClosed() {
     System.out.println("streamClosed");
+    try {
+      GoGPSDef.stop(model);
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
   @Override
   public void addObservations( org.gogpsproject.Observations o) {

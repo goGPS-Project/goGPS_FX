@@ -49,6 +49,11 @@ public class RinexObservationParserStreamEventProducer extends RinexObservationP
         sel.addObservations(oc);
       }
     }
+    if( o==null )
+      for(StreamEventListener sel:streamEventListeners){
+        sel.streamClosed();
+      }
+
     return o;
   }
 }
