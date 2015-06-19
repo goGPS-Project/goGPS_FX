@@ -4,7 +4,6 @@ import org.gogpsproject.Coordinates;
 import org.gogpsproject.EphGps;
 import org.gogpsproject.IonoGps;
 import org.gogpsproject.ObservationSet;
-import org.gogpsproject.Observations;
 import org.gogpsproject.StreamEventListener;
 
 public class ConsoleStreamer implements StreamEventListener{
@@ -21,14 +20,14 @@ public class ConsoleStreamer implements StreamEventListener{
   }
 
   @Override
-  public void addObservations( Observations o) {
+  public void addObservations( org.gogpsproject.Observations o) {
     model.getSatellites().clear();
-//    for( int i = 0; i<o.getNumSat(); i++ ){
-//      int satId = o.getSatID(i);
-//      ObservationSet os = o.getSatByID(satId);
-//      SatelliteModel sat = new SatelliteModel(satId, os.getSignalStrength(0), os.getCodeC(0), os.getDoppler(0), os.getCodeP(0) );
-//      model.getSatellites().add(sat);
-//    }
+    for( int i = 0; i<o.getNumSat(); i++ ){
+      int satId = o.getSatID(i);
+      ObservationSet os = o.getSatByID(satId);
+      SatelliteModel sat = new SatelliteModel(satId, os.getSignalStrength(0), os.getCodeC(0), os.getDoppler(0), os.getCodeP(0) );
+      model.getSatellites().add(sat);
+    }
   }
 
   @Override
@@ -47,7 +46,7 @@ public class ConsoleStreamer implements StreamEventListener{
   }
 
   @Override
-  public Observations getCurrentObservations() {
+  public org.gogpsproject.Observations getCurrentObservations() {
     System.out.println("streamClosed");
     return null;
   }
@@ -56,4 +55,5 @@ public class ConsoleStreamer implements StreamEventListener{
   public void pointToNextObservations() {
     System.out.println("pointToNextObservations");
   }
+
 }
