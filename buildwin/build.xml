@@ -127,6 +127,8 @@
 		<mkdir dir="dist/src" />
 		<mkdir dir="dist/src/main" />
 		<mkdir dir="dist/src/main/webapp" />
+		<mkdir dir="dist/data" />
+		<mkdir dir="dist/out" />
 
 		<copy todir="dist/libs">
 			<fileset dir="externalLibs">
@@ -144,11 +146,17 @@
 				<include name="**/*" />
 			</fileset>
 		</copy>
+		<copy todir="dist/data">
+			<fileset dir="../data">
+				<include name="yamatogawa_*" />
+			</fileset>
+		</copy>
 
 		<fx:resources id="appRes">
 			<fx:fileset dir="dist" includes="goGPS_FX.jar" />
 			<fx:fileset dir="dist" includes="libs/**" />
 			<fx:fileset dir="dist" includes="src/**" />
+			<fx:fileset dir="dist" includes="data/**" />
 		</fx:resources>
 
 		<fx:application id="fxApplication" name="goGPS_FX"
