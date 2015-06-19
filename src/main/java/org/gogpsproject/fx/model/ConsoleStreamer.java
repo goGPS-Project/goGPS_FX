@@ -18,7 +18,6 @@ public class ConsoleStreamer implements StreamEventListener{
   public void streamClosed() {
     System.out.println("streamClosed");
   }
-
   @Override
   public void addObservations( org.gogpsproject.Observations o) {
     model.getSatellites().clear();
