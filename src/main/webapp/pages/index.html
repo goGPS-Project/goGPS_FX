@@ -85,7 +85,7 @@
                 <div class="col-sm-3" data-bind="if: type()=='serial'">
                     <select class="form-control" data-bind="options: $root.speedOptions, value: $data.serialPort().speed"></select>
                 </div>
-                <div class="col-sm-5" data-bind="if: type()=='file'">
+                <div class="col-sm-7" data-bind="if: type()=='file'">
                     <input class="form-control" data-bind="textInput: filename"></input>
                 </div>
                </div>  
@@ -111,7 +111,7 @@
                  <div class="col-sm-3" data-bind="if: type()=='serial'">
                     <select class="form-control" data-bind="options: $root.speedOptions, value: $data.serialPort().speed"></select>
                  </div>
-                 <div class="col-sm-5" data-bind="if: type()=='file'">
+                 <div class="col-sm-7" data-bind="if: type()=='file'">
                     <input class="form-control" data-bind="textInput: filename"></input>
                 </div>                 
                 <div class="col-sm-5" data-bind="if: type()=='ftp'">
