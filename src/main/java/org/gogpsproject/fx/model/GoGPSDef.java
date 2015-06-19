@@ -92,12 +92,6 @@ public final class GoGPSDef {
     Producers.init();
   }
   
-  @net.java.html.js.JavaScriptBody(args = { "msg" }, body = "alert(msg);")
-  public static native void alert(String msg);
-
-  @net.java.html.js.JavaScriptBody(args = {}, body = "if (!document.getElementById('FirebugLite')){E = document['createElement' + 'NS'] && document.documentElement.namespaceURI;E = E ? document['createElement' + 'NS'](E, 'script') : document['createElement']('script');E['setAttribute']('id', 'FirebugLite');E['setAttribute']('src', 'https://getfirebug.com/' + 'firebug-lite.js' + '#startOpened');E['setAttribute']('FirebugLite', '4');(document['getElementsByTagName']('head')[0] || document['getElementsByTagName']('body')[0]).appendChild(E);E = new Image;E['setAttribute']('src', 'https://getfirebug.com/' + '#startOpened');}")
-  public static native void loadFirebug();
-
   public static void cleanUp(GoGPSModel model) throws InterruptedException {
     List<SerialPortModel> ports = model.getSerialPortList();
     for (SerialPortModel port : ports) {
@@ -149,8 +143,8 @@ public final class GoGPSDef {
 
   /* Some DukeScript example code, I'll keep it here for now */
   @net.java.html.js.JavaScriptBody(args = { "msg", "callback" }, javacall = true, body = "if (confirm(msg)) {\n"
-      + "  callback.@java.lang.Runnable::run()();\n" + "}\n")
-  static native void confirmByUser(String msg, Runnable callback);
+      + "  callback.@java.lang.Runnable::run()();} " )
+  public static native void confirmByUser(String msg, Runnable callback);
 
   @net.java.html.js.JavaScriptBody(args = {}, body = "var w = window,\n"
       + "    d = document,\n" + "    e = d.documentElement,\n"
@@ -160,14 +154,36 @@ public final class GoGPSDef {
       + "return 'Screen size is ' + x + ' times ' + y;\n")
   static native String screenSize();
   
+  @net.java.html.js.JavaScriptBody(args = { "msg" }, body = "alert(msg);")
+  public static native void alert(String msg);
+
+  
   /**
    * Creates a "goGPS" javascript object, for debugging from the Firebug command line
    */
-  @net.java.html.js.JavaScriptBody(args = {}, body = "ko.bindingHandlers.Model = {"
-      + "init: function( element, valueAccessor, allBindingsAccessor, viewModel ){"
-      + "goGPS = viewModel;" + "}" 
+  @net.java.html.js.JavaScriptBody(args = {}, body = ""
+      + "ko.bindingHandlers.Model = {"
+        + "init: function( element, valueAccessor, allBindingsAccessor, viewModel ){"
+        + "goGPS = viewModel;" 
+        + "}" 
       + "};")
   public static native void registerModel();
+
+  public static boolean checkDir(String tempDir) {
+    try {
+        final File f = new File(tempDir);
+        if (!f.exists() || !f.isDirectory()) {
+        f.mkdir();
+        if (!f.exists() || !f.isDirectory()) {
+            return false;
+        }
+      } // end if
+      return true;
+    } catch (final Exception e) {
+        e.printStackTrace();
+    }
+    return false;
+  }
 
   @Function 
   static void start( GoGPSModel model ) throws Exception {
@@ -180,7 +196,8 @@ public final class GoGPSDef {
 
     l.info("Start goGPS" );
     String outFolder = model.getOutputFolder();
-
+    checkDir(outFolder);
+    
     Producer observation = model.getSelectedObservationProducer(); 
     switch ( observation.getType() ){
       case Producers.SERIAL : {
