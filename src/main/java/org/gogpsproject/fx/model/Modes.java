@@ -18,11 +18,9 @@ public class Modes {
   public static Mode doubleDifferences;
   public static Mode kalmanFilter;
 
-  public static List<Mode> get(){
+  public static void init(){
     standAlone        = new Mode("Stand-alone",       GoGPS.RUN_MODE_STANDALONE);
     doubleDifferences = new Mode("Double difference", GoGPS.RUN_MODE_DOUBLE_DIFF);
     kalmanFilter      = new Mode("Kalman filter",     GoGPS.RUN_MODE_KALMAN_FILTER);
-    
-    return Arrays.asList(new Mode[]{ standAlone, kalmanFilter, doubleDifferences });
   }
 }

@@ -27,9 +27,12 @@ import org.gogpsproject.parser.ublox.UBXSerialConnection;
 import org.gogpsproject.producer.KmlProducer;
 import org.gogpsproject.producer.TxtProducer;
 
+import net.java.html.js.JavaScriptBody;
 import net.java.html.json.ComputedProperty;
 import net.java.html.json.Function;
 import net.java.html.json.Model;
+import net.java.html.json.OnPropertyChange;
+import net.java.html.json.OnReceive;
 import net.java.html.json.Property;
 
 /**
@@ -37,10 +40,7 @@ import net.java.html.json.Property;
  * It defines GoGPSModel, the root of our model tree, it maps to a "goGPS" javascript object
  */
 @Model(className = "GoGPSModel", targetId = "", properties = {
-
-    @Property(name = "runModes", type = Mode.class, array=true),
     @Property(name = "selectedRunMode", type = Mode.class),
-    @Property(name = "dynModels", type = DynModel.class, array=true),
     @Property(name = "selectedDynModel", type = DynModel.class),
     @Property(name = "observationProducers", type = Producer.class, array=true),
     @Property(name = "selectedObservationProducer", type = Producer.class),
@@ -48,14 +48,30 @@ import net.java.html.json.Property;
     @Property(name = "selectedNavigationProducer", type = Producer.class),
     @Property(name = "outputFolder", type = String.class),
     @Property(name = "serialPortList", type = SerialPortModel.class, array = true),
-    @Property(name = "speedOptions", type = int.class, array=true),
-    @Property(name = "measurementRateOptions", type = int.class, array=true),
-
     @Property(name = "satellites", type = SatelliteModel.class, array=true),
-
     @Property(name = "running", type = boolean.class)
     })
 public final class GoGPSDef {
+
+  @ComputedProperty
+  public static List<Mode> runModes(){
+    return Arrays.asList(new Mode[]{ Modes.standAlone, Modes.kalmanFilter, Modes.doubleDifferences });
+  }
+
+  @ComputedProperty
+  public static List<DynModel> dynModels(){
+    return Arrays.asList(new DynModel[]{ DynModels.staticm, DynModels.constantSpeed, DynModels.constantAcceleration });
+  }
+
+  @ComputedProperty
+  public static List<Integer> speedOptions(){
+    return  Arrays.asList(new Integer[]{9600, 115200} );
+  }
+  
+  @ComputedProperty
+  public static List<Integer> measurementRateOptions(){
+    return  Arrays.asList(new Integer[]{1, 2, 5, 10});
+  }
 
   private static final Logger l = Logger.getLogger(GoGPS_Fx.class.getName());
 
@@ -82,15 +98,15 @@ public final class GoGPSDef {
    */
   @Function
   public static void init( GoGPSModel goGPSModel ){
-    goGPSModel.getRunModes().addAll( Modes.get() );
-    goGPSModel.getDynModels().addAll( DynModels.get() );
+    Modes.init();
     goGPSModel.setSelectedRunMode(Modes.standAlone);
+    DynModels.init();
     goGPSModel.setSelectedDynModel(DynModels.staticm);
-    goGPSModel.getSpeedOptions().addAll( Arrays.asList(new Integer[]{9600, 115200}));
-    goGPSModel.getMeasurementRateOptions().addAll( Arrays.asList(new Integer[]{1, 2, 5, 10}));
-    goGPSModel.setOutputFolder("./out");
     Producers.init();
+    goGPSModel.setOutputFolder("./out");
   }
+
+
   
   public static void cleanUp(GoGPSModel model) throws InterruptedException {
     List<SerialPortModel> ports = model.getSerialPortList();
@@ -142,11 +158,11 @@ public final class GoGPSDef {
   }
 
   /* Some DukeScript example code, I'll keep it here for now */
-  @net.java.html.js.JavaScriptBody(args = { "msg", "callback" }, javacall = true, body = "if (confirm(msg)) {\n"
+  @JavaScriptBody(args = { "msg", "callback" }, javacall = true, body = "if (confirm(msg)) {\n"
       + "  callback.@java.lang.Runnable::run()();} " )
   public static native void confirmByUser(String msg, Runnable callback);
 
-  @net.java.html.js.JavaScriptBody(args = {}, body = "var w = window,\n"
+  @JavaScriptBody(args = {}, body = "var w = window,\n"
       + "    d = document,\n" + "    e = d.documentElement,\n"
       + "    g = d.getElementsByTagName('body')[0],\n"
       + "    x = w.innerWidth || e.clientWidth || g.clientWidth,\n"
@@ -154,14 +170,14 @@ public final class GoGPSDef {
       + "return 'Screen size is ' + x + ' times ' + y;\n")
   static native String screenSize();
   
-  @net.java.html.js.JavaScriptBody(args = { "msg" }, body = "alert(msg);")
+  @JavaScriptBody(args = { "msg" }, body = "alert(msg);")
   public static native void alert(String msg);
 
   
   /**
    * Creates a "goGPS" javascript object, for debugging from the Firebug command line
    */
-  @net.java.html.js.JavaScriptBody(args = {}, body = ""
+  @JavaScriptBody(args = {}, body = ""
       + "ko.bindingHandlers.Model = {"
         + "init: function( element, valueAccessor, allBindingsAccessor, viewModel ){"
         + "goGPS = viewModel;" 
