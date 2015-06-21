@@ -59,10 +59,10 @@
               <select class="form-control" data-bind="options: runModes, optionsText: 'name', value: selectedRunMode" ></select>
           </div>
           <div class="col-sm-2"></div>
-          <div class="col-sm-3">
+          <div class="col-sm-3" data-bind="if: selectedRunMode().value() > 0">
               <h4>Dynamic Model</h4>
           </div>
-          <div class="col-sm-3">
+          <div class="col-sm-3" data-bind="if: selectedRunMode().value() > 0">
               <select class="form-control" data-bind="options: dynModels, optionsText: 'name', value: selectedDynModel"></select>
         </div>
       </div>
@@ -92,7 +92,7 @@
              </div>
           </div>
       </div>
-      <div class="row  table-bordered">
+      <div class="row  table-bordered" data-bind="if: selectedRunMode().value() > 0">
           <div class="col-sm-5">
             <h4>Navigation</h4>
           </div>
@@ -101,6 +101,35 @@
                 <div class="row  table-bordered">
                   <div class="col-sm-1">
                     <input type="radio" data-bind="checkedValue: $data, checked: $root.selectedNavigationProducer" />
+                  </div>
+                  <div class="col-sm-4 other">
+                    <span data-bind="text: name"></span>
+                 </div>
+                <div class="col-sm-3" data-bind="if: type()=='serial'">
+                     <select class="form-control" data-bind="options: $root.serialPortList, optionsText: 'name', value: serialPort"></select>
+                </div>
+                 <div class="col-sm-3" data-bind="if: type()=='serial'">
+                    <select class="form-control" data-bind="options: $root.speedOptions, value: $data.serialPort().speed"></select>
+                 </div>
+                 <div class="col-sm-7" data-bind="if: type()=='file'">
+                    <input class="form-control" data-bind="textInput: filename"></input>
+                </div>                 
+                <div class="col-sm-5" data-bind="if: type()=='ftp'">
+                    GARNER_NAVIGATION_AUTO
+                </div>
+             </div>
+           </div>
+          </div>
+     </div>
+      <div class="row  table-bordered">
+          <div class="col-sm-5">
+            <h4>Base Station</h4>
+          </div>
+          <div class="col-sm-7">
+            <div data-bind="foreach: masterProducers">
+                <div class="row  table-bordered">
+                  <div class="col-sm-1">
+                    <input type="radio" data-bind="checkedValue: $data, checked: $root.selectedMasterProducer" />
                   </div>
                   <div class="col-sm-4 other">
                     <span data-bind="text: name"></span>

@@ -40,16 +40,15 @@ public class GoGPS_Fx {
 //        GoGPSDef.cleanUp(goGPSModel);
 //      }
       BrwsrCtx ctx = BrwsrCtx.findDefault(GoGPS_Fx.class);
-    
       goGPSModel = new GoGPSModel();
       GoGPSDef.init(goGPSModel);
       
       Models.toRaw(goGPSModel);
       GoGPSDef.registerModel();
       goGPSModel.applyBindings();
-      
+
       System.setOut(new PrintStream(new FirebugConsoleInfo(ctx), true));
-//      System.setErr(new PrintStream(new FirebugConsoleError(ctx), true));
+//    System.setErr(new PrintStream(new FirebugConsoleError(ctx), true));
 
       // test Serialio. If it fails, copy native library to root
       for( int i=0; i<2; i++ ){

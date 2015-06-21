@@ -46,6 +46,8 @@ import net.java.html.json.Property;
     @Property(name = "selectedObservationProducer", type = Producer.class),
     @Property(name = "navigationProducers", type = Producer.class, array=true),
     @Property(name = "selectedNavigationProducer", type = Producer.class),
+    @Property(name = "masterProducers", type = Producer.class, array=true),
+    @Property(name = "selectedMasterProducer", type = Producer.class),
     @Property(name = "outputFolder", type = String.class),
     @Property(name = "serialPortList", type = SerialPortModel.class, array = true),
     @Property(name = "satellites", type = SatelliteModel.class, array=true),
@@ -129,6 +131,7 @@ public final class GoGPSDef {
 
     if (model.isRunning())
       stop(model);
+    
     ports.clear();
 
     for (String name : UBXSerialConnection.getPortList(true)) {
@@ -144,17 +147,24 @@ public final class GoGPSDef {
       model.getObservationProducers().add( Producers.serialObservationProducer );
       Producers.serialNavigationProducer.setSerialPort(ports.get(0));
       model.getNavigationProducers().add( Producers.serialNavigationProducer);
+      model.getMasterProducers().add( Producers.serialMasterProducer );
     } else {
       Producers.serialObservationProducer.setSerialPort(null);
       Producers.serialNavigationProducer.setSerialPort(null);
+      Producers.serialMasterProducer.setSerialPort(null);
+    }
+    if (ports.size() > 1) {
+      Producers.serialMasterProducer.setSerialPort(ports.get(1));
     }
     
     model.getObservationProducers().add( Producers.rinexObservationProducer );
     model.getNavigationProducers().add( Producers.rinexNavigationProducer );
     model.getNavigationProducers().add( Producers.ftpNavigationProducer );
+    model.getMasterProducers().add( Producers.rinexMasterProducer );
     
     model.setSelectedObservationProducer(model.getObservationProducers().get(0));
     model.setSelectedNavigationProducer(model.getNavigationProducers().get(0));
+    model.setSelectedMasterProducer(model.getMasterProducers().get(0));
   }
 
   /* Some DukeScript example code, I'll keep it here for now */
