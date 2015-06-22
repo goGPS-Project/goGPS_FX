@@ -33,7 +33,7 @@ public class Producers {
     rinexNavigationProducer   = new Producer( FILE,   "Rinex Navigation File", null, "./data/yamatogawa_rover.nav");
     ftpNavigationProducer     = new Producer( FTP,    "Rinex FTP", null, "" );
     serialMasterProducer      = new Producer( SERIAL, "Serial (Ublox)", null, "");
-    rinexMasterProducer       = new Producer( FILE,   "Rinex Master File", null, "./data/yamatogawa_master.obs");
+    rinexMasterProducer       = new Producer( FILE,   "Rinex Observation File", null, "./data/yamatogawa_master.obs");
   }
 }
 

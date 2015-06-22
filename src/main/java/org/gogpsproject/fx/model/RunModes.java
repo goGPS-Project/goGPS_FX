@@ -20,7 +20,7 @@ public class RunModes {
 
   public static void init(){
     standAlone        = new Mode("Code Stand-alone",       GoGPS.RUN_MODE_STANDALONE);
-    doubleDifferences = new Mode("Code double difference", GoGPS.RUN_MODE_DOUBLE_DIFF);
-    kalmanFilter      = new Mode("Kalman filter",          GoGPS.RUN_MODE_KALMAN_FILTER);
+    doubleDifferences = new Mode("Code Double Difference", GoGPS.RUN_MODE_DOUBLE_DIFF);
+    kalmanFilter      = new Mode("Kalman Filter",          GoGPS.RUN_MODE_KALMAN_FILTER);
   }
 }
