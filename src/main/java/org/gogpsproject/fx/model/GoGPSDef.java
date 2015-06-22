@@ -77,7 +77,6 @@ public final class GoGPSDef {
 
   private static final Logger l = Logger.getLogger(GoGPS_Fx.class.getName());
   
-  private static GoGPSModel model;
   static ObservationsProducer roverIn;
   static NavigationProducer   navigationIn;
   static ObservationsProducer masterIn;
@@ -101,7 +100,6 @@ public final class GoGPSDef {
    */
   @Function
   public static void init( GoGPSModel goGPSModel ){
-    model = goGPSModel;
     Modes.init();
     goGPSModel.setSelectedRunMode(Modes.standAlone);
     DynModels.init();
@@ -175,11 +173,11 @@ public final class GoGPSDef {
    * @throws Exception
    */
   @Function
-  public static void refreshPorts(  GoGPSModel model ) {
+  public static void getPorts( GoGPSModel model ) {
     if (model.isRunning())
       try {
         stop(model);
-//        List<SerialPortModel> ports = model.getPorts();
+//        for( SerialPortModel port: model.getPorts();
       } catch (InterruptedException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
@@ -187,8 +185,6 @@ public final class GoGPSDef {
 
     List<SerialPortModel> ports = model.getPorts();
     ports.clear();
-//    List<SerialPortModel> ports = new ArrayList<SerialPortModel>();
-//    model.getPorts() .setPorts(ports);
     
     for (String name : UBXSerialConnection.getPortList(true)) {
       SerialPortModel port = new SerialPortModel(name, 9600, 1, false);
@@ -256,10 +252,10 @@ public final class GoGPSDef {
     String outFolder = model.getOutputFolder();
     checkDir(outFolder);
     
-    Producer observation = model.getSelectedObservationProducer(); 
-    switch ( observation.getType() ){
+    Producer rover = model.getSelectedObservationProducer(); 
+    switch ( rover.getType() ){
       case Producers.SERIAL : {
-          SerialPortModel port1 = observation.getSerialPort();
+          SerialPortModel port1 = rover.getSerialPort();
           ubxSerialConn1 = new UBXSerialConnection( port1.getName(), port1.getSpeed() );
   
           ubxSerialConn1.setMeasurementRate( port1.getMeasurementRate() );
@@ -276,7 +272,7 @@ public final class GoGPSDef {
         }
         break;
         case Producers.FILE: {
-          roverIn = new RinexObservationParserStreamEventProducer(new File( observation.getFilename() ));
+          roverIn = new RinexObservationParserStreamEventProducer(new File( rover.getFilename() ));
           ConsoleStreamer listener = new ConsoleStreamer(model);
           ((StreamEventProducer) roverIn).addStreamEventListener(listener);
         }
@@ -286,7 +282,7 @@ public final class GoGPSDef {
     Producer navigation = model.getSelectedNavigationProducer();
     switch(navigation.getType()){
       case Producers.SERIAL:
-        if( navigation.getSerialPort() == observation.getSerialPort() ) {
+        if( navigation.getSerialPort() == rover.getSerialPort() ) {
           navigationIn = (NavigationProducer) roverIn;
         } 
         else {
@@ -317,7 +313,45 @@ public final class GoGPSDef {
         break;
     }
     
-    GoGPS goGPS = new GoGPS(navigationIn, roverIn, null);
+    Producer master = model.getSelectedMasterProducer();
+    if( model.getSelectedRunMode() != Modes.standAlone ){
+      switch( master.getType()){
+        case Producers.SERIAL:
+          if( master.getSerialPort() == rover.getSerialPort() ) {
+            // this case doesn't make sense and shouldn't be allowed
+            masterIn = roverIn;
+          } 
+          else if( master.getSerialPort() == navigation.getSerialPort() ) {
+            masterIn = (ObservationsProducer) navigationIn;
+          } 
+          else {
+            SerialPortModel port2 = master.getSerialPort();
+            ubxSerialConn2 = new UBXSerialConnection( port2.getName(), port2.getSpeed() );
+  
+            ubxSerialConn2.setMeasurementRate( port2.getMeasurementRate() );
+            ubxSerialConn2.enableEphemeris(setEphemerisRate);
+            ubxSerialConn2.enableIonoParam(setIonosphereRate);
+            ubxSerialConn2.enableTimetag(enableTimetag);
+            ubxSerialConn2.enableDebug(enableDebug);
+            ubxSerialConn2.enableNmeaSentences(new ArrayList<String>());
+  
+            ubxSerialConn2.init();
+            ConsoleStreamer listener = new ConsoleStreamer(model);
+            ubxSerialConn2.addStreamEventListener(listener);
+            masterIn = new ObservationsBuffer( ubxSerialConn2, outFolder + "/masterOut.dat" );
+          }
+         break;
+        case Producers.FILE:
+          masterIn = new RinexObservationParser(new File( master.getFilename() ));
+        break;
+        // TODO NTRIP server case
+//        case Producers.FTP:
+//          navigationIn = new RinexNavigation( RinexNavigation.GARNER_NAVIGATION_AUTO );
+//        break;
+      }
+    }
+    
+    GoGPS goGPS = new GoGPS( navigationIn, roverIn, masterIn );
     goGPS.setDynamicModel( model.getSelectedDynModel().getValue() );
 
     String outPathTxt = outFolder + "/out.txt";
@@ -334,6 +368,8 @@ public final class GoGPSDef {
     roverIn.init();
     if( navigationIn!=roverIn )
       navigationIn.init();
+    if( masterIn!=roverIn && masterIn!=navigationIn )
+      masterIn.init();
     
     model.setRunning(true);
     goGPS.runThreadMode( model.getSelectedRunMode().getValue() );
