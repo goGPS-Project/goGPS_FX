@@ -53,7 +53,7 @@ public class GoGPS_Fx {
       // test Serialio. If it fails, copy native library to root
       for( int i=0; i<2; i++ ){
         try {
-          GoGPSDef.getPortList( goGPSModel );
+          GoGPSDef.refreshPorts( goGPSModel );
           System.out.println("RXTX Ok");
           break;
         }

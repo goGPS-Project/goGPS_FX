@@ -40,16 +40,16 @@ import net.java.html.json.Property;
  * It defines GoGPSModel, the root of our model tree, it maps to a "goGPS" javascript object
  */
 @Model(className = "GoGPSModel", targetId = "", properties = {
+    @Property(name = "ports", type = SerialPortModel.class, array = true),
     @Property(name = "selectedRunMode", type = Mode.class),
     @Property(name = "selectedDynModel", type = DynModel.class),
     @Property(name = "observationProducers", type = Producer.class, array=true),
-    @Property(name = "selectedObservationProducer", type = Producer.class),
     @Property(name = "navigationProducers", type = Producer.class, array=true),
-    @Property(name = "selectedNavigationProducer", type = Producer.class),
     @Property(name = "masterProducers", type = Producer.class, array=true),
+    @Property(name = "selectedObservationProducer", type = Producer.class),
+    @Property(name = "selectedNavigationProducer", type = Producer.class),
     @Property(name = "selectedMasterProducer", type = Producer.class),
     @Property(name = "outputFolder", type = String.class),
-    @Property(name = "serialPortList", type = SerialPortModel.class, array = true),
     @Property(name = "satellites", type = SatelliteModel.class, array=true),
     @Property(name = "running", type = boolean.class)
     })
@@ -76,7 +76,8 @@ public final class GoGPSDef {
   }
 
   private static final Logger l = Logger.getLogger(GoGPS_Fx.class.getName());
-
+  
+  private static GoGPSModel model;
   static ObservationsProducer roverIn;
   static NavigationProducer   navigationIn;
   static ObservationsProducer masterIn;
@@ -100,6 +101,7 @@ public final class GoGPSDef {
    */
   @Function
   public static void init( GoGPSModel goGPSModel ){
+    model = goGPSModel;
     Modes.init();
     goGPSModel.setSelectedRunMode(Modes.standAlone);
     DynModels.init();
@@ -108,15 +110,62 @@ public final class GoGPSDef {
     goGPSModel.setOutputFolder("./out");
   }
 
-
-  
   public static void cleanUp(GoGPSModel model) throws InterruptedException {
-    List<SerialPortModel> ports = model.getSerialPortList();
+    List<SerialPortModel> ports = model.getPorts();
     for (SerialPortModel port : ports) {
       if (port.isConnected()) {
         stop(model);
       }
     }
+  }
+
+  @OnPropertyChange("ports")
+  public static void getObservationProducers( GoGPSModel model ){
+    List<SerialPortModel> ports = model.getPorts();
+    List<Producer> observationProducers = model.getObservationProducers();
+    observationProducers.clear();
+
+    if (ports.size() > 0) {
+      Producers.serialObservationProducer.setSerialPort(ports.get(0));
+      observationProducers.add( Producers.serialObservationProducer );
+    } else {
+      Producers.serialObservationProducer.setSerialPort(null);
+    }
+    observationProducers.add( Producers.rinexObservationProducer );
+  }
+
+  @OnPropertyChange("ports")
+  public static void getNavigationProducers( GoGPSModel model ){
+    List<SerialPortModel> ports = model.getPorts();
+    List<Producer> navigationProducers = model.getNavigationProducers();
+    navigationProducers.clear();
+
+    if( ports.size() > 0 ){
+      Producers.serialNavigationProducer.setSerialPort(ports.get(0));
+      navigationProducers.add( Producers.serialNavigationProducer);
+    } else {
+      Producers.serialNavigationProducer.setSerialPort(null);
+    }
+
+    navigationProducers.add( Producers.rinexNavigationProducer );
+    navigationProducers.add( Producers.ftpNavigationProducer );
+  }
+
+  @OnPropertyChange("ports")
+  public static void getMasterProducers( GoGPSModel model ){
+    List<SerialPortModel> ports = model.getPorts();
+    List<Producer> masterProducers = model.getMasterProducers();
+    masterProducers.clear();
+
+    if (ports.size() > 0) {
+      masterProducers.add( Producers.serialMasterProducer );
+    } else {
+      Producers.serialMasterProducer.setSerialPort(null);
+    }
+    if (ports.size() > 1) {
+      Producers.serialMasterProducer.setSerialPort(ports.get(1));
+    }
+    masterProducers.add( Producers.rinexMasterProducer );
   }
 
   /**
@@ -126,45 +175,28 @@ public final class GoGPSDef {
    * @throws Exception
    */
   @Function
-  public static void getPortList(GoGPSModel model) throws Exception {
-    List<SerialPortModel> ports = model.getSerialPortList();
-
+  public static void refreshPorts(  GoGPSModel model ) {
     if (model.isRunning())
-      stop(model);
-    
-    ports.clear();
+      try {
+        stop(model);
+//        List<SerialPortModel> ports = model.getPorts();
+      } catch (InterruptedException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
 
+    List<SerialPortModel> ports = model.getPorts();
+    ports.clear();
+//    List<SerialPortModel> ports = new ArrayList<SerialPortModel>();
+//    model.getPorts() .setPorts(ports);
+    
     for (String name : UBXSerialConnection.getPortList(true)) {
       SerialPortModel port = new SerialPortModel(name, 9600, 1, false);
       ports.add(port);
     }
-
-    model.getObservationProducers().clear();
-    model.getNavigationProducers().clear();
-
-    if (ports.size() > 0) {
-      Producers.serialObservationProducer.setSerialPort(ports.get(0));
-      model.getObservationProducers().add( Producers.serialObservationProducer );
-      Producers.serialNavigationProducer.setSerialPort(ports.get(0));
-      model.getNavigationProducers().add( Producers.serialNavigationProducer);
-      model.getMasterProducers().add( Producers.serialMasterProducer );
-    } else {
-      Producers.serialObservationProducer.setSerialPort(null);
-      Producers.serialNavigationProducer.setSerialPort(null);
-      Producers.serialMasterProducer.setSerialPort(null);
-    }
-    if (ports.size() > 1) {
-      Producers.serialMasterProducer.setSerialPort(ports.get(1));
-    }
-    
-    model.getObservationProducers().add( Producers.rinexObservationProducer );
-    model.getNavigationProducers().add( Producers.rinexNavigationProducer );
-    model.getNavigationProducers().add( Producers.ftpNavigationProducer );
-    model.getMasterProducers().add( Producers.rinexMasterProducer );
-    
-    model.setSelectedObservationProducer(model.getObservationProducers().get(0));
-    model.setSelectedNavigationProducer(model.getNavigationProducers().get(0));
-    model.setSelectedMasterProducer(model.getMasterProducers().get(0));
+    model.setSelectedObservationProducer( model.getObservationProducers().get(0));
+    model.setSelectedNavigationProducer( model.getNavigationProducers().get(0));
+    model.setSelectedMasterProducer( model.getMasterProducers().get(0));
   }
 
   /* Some DukeScript example code, I'll keep it here for now */
