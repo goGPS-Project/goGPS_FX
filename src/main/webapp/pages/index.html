@@ -19,20 +19,6 @@
    // saveWindowPosition: true,
 }
 </script>
-<script>
-  var toggleChrome = function waitForChrome(){
-    if( Firebug.chrome ){
-        Firebug.chrome.toggle();
-     }
-     else
-        setTimeout(toggleChrome, 50);
-  };
-  $(document).ready(function() {
-      //console.log(FBL);
-      //console.log(FBL.Env);
-      toggleChrome();
-  });
-</script>
 <script type='text/javascript' src="bootstrap/js/bootstrap.js"></script>
 </head>
 <body data-bind="Model">
@@ -55,10 +41,10 @@
         <div class="col-sm-1">
             <h4>Mode</h4>
         </div>
-          <div class="col-sm-3">
+          <div class="col-sm-4">
               <select class="form-control" data-bind="options: runModes, optionsText: 'name', value: selectedRunMode" ></select>
           </div>
-          <div class="col-sm-2"></div>
+          <div class="col-sm-1"></div>
           <div class="col-sm-3" data-bind="if: selectedRunMode().value() > 0">
               <h4>Dynamic Model</h4>
           </div>

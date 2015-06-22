@@ -4,6 +4,8 @@ import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.logging.Logger;
 
+import org.gogpsproject.fx.model.FirebugConsole;
+import org.gogpsproject.fx.model.FirebugConsole.FirebugConsoleError;
 import org.gogpsproject.fx.model.FirebugConsole.FirebugConsoleInfo;
 import org.gogpsproject.fx.model.GoGPSDef;
 import org.gogpsproject.fx.model.GoGPSModel;
@@ -40,15 +42,14 @@ public class GoGPS_Fx {
 //        GoGPSDef.cleanUp(goGPSModel);
 //      }
       BrwsrCtx ctx = BrwsrCtx.findDefault(GoGPS_Fx.class);
+      FirebugConsole.init(ctx);
+      
       goGPSModel = new GoGPSModel();
       GoGPSDef.init(goGPSModel);
       
       Models.toRaw(goGPSModel);
       GoGPSDef.registerModel();
       goGPSModel.applyBindings();
-
-      System.setOut(new PrintStream(new FirebugConsoleInfo(ctx), true));
-//    System.setErr(new PrintStream(new FirebugConsoleError(ctx), true));
 
       // test Serialio. If it fails, copy native library to root
       for( int i=0; i<2; i++ ){

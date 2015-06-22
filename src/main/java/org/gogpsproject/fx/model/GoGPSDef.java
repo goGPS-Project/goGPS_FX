@@ -57,7 +57,7 @@ public final class GoGPSDef {
 
   @ComputedProperty
   public static List<Mode> runModes(){
-    return Arrays.asList(new Mode[]{ Modes.standAlone, Modes.kalmanFilter, Modes.doubleDifferences });
+    return Arrays.asList(new Mode[]{ RunModes.standAlone, RunModes.doubleDifferences, RunModes.kalmanFilter });
   }
 
   @ComputedProperty
@@ -100,8 +100,8 @@ public final class GoGPSDef {
    */
   @Function
   public static void init( GoGPSModel goGPSModel ){
-    Modes.init();
-    goGPSModel.setSelectedRunMode(Modes.standAlone);
+    RunModes.init();
+    goGPSModel.setSelectedRunMode(RunModes.standAlone);
     DynModels.init();
     goGPSModel.setSelectedDynModel(DynModels.staticm);
     Producers.init();
@@ -314,7 +314,7 @@ public final class GoGPSDef {
     }
     
     Producer master = model.getSelectedMasterProducer();
-    if( model.getSelectedRunMode() != Modes.standAlone ){
+    if( model.getSelectedRunMode() != RunModes.standAlone ){
       switch( master.getType()){
         case Producers.SERIAL:
           if( master.getSerialPort() == rover.getSerialPort() ) {
@@ -368,7 +368,7 @@ public final class GoGPSDef {
     roverIn.init();
     if( navigationIn!=roverIn )
       navigationIn.init();
-    if( masterIn!=roverIn && masterIn!=navigationIn )
+    if( masterIn!= null && masterIn!=roverIn && masterIn!=navigationIn )
       masterIn.init();
     
     model.setRunning(true);

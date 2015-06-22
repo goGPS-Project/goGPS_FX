@@ -1,6 +1,7 @@
 package org.gogpsproject.fx.model;
 
 import java.io.OutputStream;
+import java.io.PrintStream;
 
 import net.java.html.BrwsrCtx;
 
@@ -56,4 +57,29 @@ public abstract class FirebugConsole extends OutputStream {
     public native void logNative( String msg );
   }
   
+/*
+ */
+  @net.java.html.js.JavaScriptBody(args = { "callback" }, javacall = true, body = "" +
+  "  var toggleChrome = function waitForChrome(){ " +
+      "if( Firebug.chrome ){ " +
+        "Firebug.chrome.toggle(); " +
+        "callback.@java.lang.Runnable::run()();" +
+       "} " +
+       "else " +
+        "setTimeout(toggleChrome, 50); " +
+    "}; " +
+    "$(document).ready(function() { " +
+        "toggleChrome(); " +
+    "}); ")
+  public static native void toggleChrome(Runnable callback);
+  
+  public static void init(BrwsrCtx ctx){
+      toggleChrome( new Runnable(){
+
+        @Override
+        public void run() {
+          System.setOut(new PrintStream(new FirebugConsoleInfo(ctx), true));
+          System.setErr(new PrintStream(new FirebugConsoleError(ctx), true));
+        }});
+  }
 }
