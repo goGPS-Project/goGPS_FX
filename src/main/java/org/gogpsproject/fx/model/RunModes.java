@@ -13,14 +13,14 @@ import net.java.html.json.Property;
     @Property(name = "name", type = String.class ),
     @Property(name = "value", type = int.class )
 })
-public class Modes {
+public class RunModes {
   public static Mode standAlone;
   public static Mode doubleDifferences;
   public static Mode kalmanFilter;
 
   public static void init(){
-    standAlone        = new Mode("Stand-alone",       GoGPS.RUN_MODE_STANDALONE);
-    doubleDifferences = new Mode("Double difference", GoGPS.RUN_MODE_DOUBLE_DIFF);
-    kalmanFilter      = new Mode("Kalman filter",     GoGPS.RUN_MODE_KALMAN_FILTER);
+    standAlone        = new Mode("Code Stand-alone",       GoGPS.RUN_MODE_STANDALONE);
+    doubleDifferences = new Mode("Code double difference", GoGPS.RUN_MODE_DOUBLE_DIFF);
+    kalmanFilter      = new Mode("Kalman filter",          GoGPS.RUN_MODE_KALMAN_FILTER);
   }
 }
