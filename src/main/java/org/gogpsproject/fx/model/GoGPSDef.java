@@ -398,6 +398,11 @@ public final class GoGPSDef {
       ubxSerialConn2.release( true, 10000 );
       ubxSerialConn2 = null;
     }
+    if( masterIn!=null && masterIn!=roverIn && masterIn!=roverIn  ){
+      System.out.println("Stop Master");
+      masterIn.release( true, 10000 ); // release and close rover
+      masterIn = null;
+    }
     
     model.setRunning(false);
 //    for (SerialPortModel port : ports) {
