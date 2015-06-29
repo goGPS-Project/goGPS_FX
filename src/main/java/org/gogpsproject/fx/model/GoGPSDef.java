@@ -55,26 +55,6 @@ import net.java.html.json.Property;
     })
 public final class GoGPSDef {
 
-  @ComputedProperty
-  public static List<Mode> runModes(){
-    return Arrays.asList(new Mode[]{ RunModes.standAlone, RunModes.doubleDifferences, RunModes.kalmanFilter });
-  }
-
-  @ComputedProperty
-  public static List<DynModel> dynModels(){
-    return Arrays.asList(new DynModel[]{ DynModels.staticm, DynModels.constantSpeed, DynModels.constantAcceleration });
-  }
-
-  @ComputedProperty
-  public static List<Integer> speedOptions(){
-    return  Arrays.asList(new Integer[]{9600, 115200} );
-  }
-  
-  @ComputedProperty
-  public static List<Integer> measurementRateOptions(){
-    return  Arrays.asList(new Integer[]{1, 2, 5, 10});
-  }
-
   private static final Logger l = Logger.getLogger(GoGPS_Fx.class.getName());
   
   static ObservationsProducer roverIn;
@@ -93,6 +73,33 @@ public final class GoGPSDef {
   private FileOutputStream fosOutLog = null;
   private DataOutputStream outLog = null;//new XMLEncoder(os);
 
+  @ComputedProperty
+  public static List<Mode> runModes(){
+    return Arrays.asList(new Mode[]{ 
+        RunModes.standAlone, 
+        RunModes.doubleDifferences, 
+        RunModes.kalmanFilter, 
+        RunModes.SnapshotStandAlone });
+  }
+
+  @ComputedProperty
+  public static List<DynModel> dynModels(){
+    return Arrays.asList(new DynModel[]{ 
+        DynModels.staticm, 
+        DynModels.constantSpeed, 
+        DynModels.constantAcceleration });
+  }
+
+  @ComputedProperty
+  public static List<Integer> speedOptions(){
+    return  Arrays.asList(new Integer[]{9600, 115200} );
+  }
+  
+  @ComputedProperty
+  public static List<Integer> measurementRateOptions(){
+    return  Arrays.asList(new Integer[]{1, 2, 5, 10});
+  }
+
   /**
    * Called by onPageLoad(), it builds goGPSModel and its descendants
    * and populates it with default values
@@ -108,6 +115,11 @@ public final class GoGPSDef {
     goGPSModel.setOutputFolder("./out");
   }
 
+  /**
+   * TODO probably not needed
+   * @param model
+   * @throws InterruptedException
+   */
   public static void cleanUp(GoGPSModel model) throws InterruptedException {
     List<SerialPortModel> ports = model.getPorts();
     for (SerialPortModel port : ports) {
@@ -167,8 +179,8 @@ public final class GoGPSDef {
   }
 
   /**
-   * This method scans for available serial ports. 
-   * Not only that, it populates the list of available Observation and Navigation producers
+   * Scan for available serial ports. 
+   * Also populate the list of available Observation and Navigation producers
    * @param model
    * @throws Exception
    */
@@ -195,7 +207,7 @@ public final class GoGPSDef {
     model.setSelectedMasterProducer( model.getMasterProducers().get(0));
   }
 
-  /* Some DukeScript example code, I'll keep it here for now */
+  /***** Some DukeScript example code, I'll keep it here for now */
   @JavaScriptBody(args = { "msg", "callback" }, javacall = true, body = "if (confirm(msg)) {\n"
       + "  callback.@java.lang.Runnable::run()();} " )
   public static native void confirmByUser(String msg, Runnable callback);
@@ -210,7 +222,7 @@ public final class GoGPSDef {
   
   @JavaScriptBody(args = { "msg" }, body = "alert(msg);")
   public static native void alert(String msg);
-
+  /*****/
   
   /**
    * Creates a "goGPS" javascript object, for debugging from the Firebug command line
@@ -314,7 +326,7 @@ public final class GoGPSDef {
     }
     
     Producer master = model.getSelectedMasterProducer();
-    if( model.getSelectedRunMode() != RunModes.standAlone ){
+    if( model.getSelectedRunMode() != RunModes.standAlone && model.getSelectedRunMode() != RunModes.SnapshotStandAlone ){
       switch( master.getType()){
         case Producers.SERIAL:
           if( master.getSerialPort() == rover.getSerialPort() ) {

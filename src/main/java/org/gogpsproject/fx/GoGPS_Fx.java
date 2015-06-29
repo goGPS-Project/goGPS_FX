@@ -5,16 +5,12 @@ import java.util.Arrays;
 import java.util.logging.Logger;
 
 import org.gogpsproject.fx.model.FirebugConsole;
-import org.gogpsproject.fx.model.FirebugConsole.FirebugConsoleError;
-import org.gogpsproject.fx.model.FirebugConsole.FirebugConsoleInfo;
 import org.gogpsproject.fx.model.GoGPSDef;
 import org.gogpsproject.fx.model.GoGPSModel;
 import org.gogpsproject.fx.model.SerialPortDef;
 
 import net.java.html.BrwsrCtx;
 import net.java.html.boot.BrowserBuilder;
-import net.java.html.js.JavaScriptBody;
-import net.java.html.js.JavaScriptResource;
 import net.java.html.json.Models;
 import netscape.javascript.JSException;
 
