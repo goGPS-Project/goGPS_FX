@@ -200,8 +200,14 @@ public final class GoGPSDef {
     List<SerialPortModel> ports = model.getPorts();
     ports.clear();
     
+    if( model.getSystem().getOSType() == OSType.Windows32 ||  model.getSystem().getOSType() == OSType.Windows64 ){
+      SystemDef.updateInfoObjects();
+    }
+    
     for (String name : UBXSerialConnection.getPortList(true)) {
-      SerialPortModel port = new SerialPortModel(name, 9600, 1, false);
+      String friendlyName = SystemDef.getFriendlyName( model, name );
+
+      SerialPortModel port = new SerialPortModel(name, friendlyName, 9600, 1, false);
       ports.add(port);
     }
     model.setSelectedObservationProducer( model.getObservationProducers().get(0));

@@ -8,6 +8,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.logging.Logger;
 
+import com.digitalinferno.win32.test.PrintDevices;
+import com.digitalinferno.win32.test.PrintDevices.DeviceInformation;
+import com.sun.jna.platform.win32.SetupApi.SP_DEVINFO_DATA;
+
 import net.java.html.json.ComputedProperty;
 import net.java.html.json.Function;
 import net.java.html.json.Model;
@@ -21,6 +25,8 @@ public class SystemDef {
 
   // cached result of OS detection
   protected static OSType detectedOS;
+  protected static PrintDevices pd = PrintDevices.getInstance();
+  protected static List<DeviceInformation> infoObjects;
 
   public static void addDir(String s) throws IOException {
     try {
@@ -92,19 +98,19 @@ public class SystemDef {
     String dir = "";
     switch (model.getOSType()) {
         case Windows32: 
-          dir = "./libs/RXTX/win32";
+          dir = System.getProperty("user.dir") + "./libs/RXTX/win32";
           break;
         case Windows64: 
           dir = System.getProperty("user.dir") + "\\libs\\RXTX\\win64";
           break;
         case MacOS: 
-          dir = "./libs/RXTX/mac-10.5";
+          dir = System.getProperty("user.dir") + "./libs/RXTX/mac-10.5";
           break;
         case Linux32: 
-          dir = "./libs/RXTX/i686-pc-linux-gnu";
+          dir = System.getProperty("user.dir") + "./libs/RXTX/i686-pc-linux-gnu";
           break;
         case Linux64: 
-          dir = "./libs/RXTX/x86_64-unknown-linux-gnu";
+          dir = System.getProperty("user.dir") + "./libs/RXTX/x86_64-unknown-linux-gnu";
           break;
         case Other: 
           throw new Exception("RxTx doesn't support this system");
@@ -124,20 +130,20 @@ public class SystemDef {
     String to = "";
     switch( model.getOSType() ) {
         case Windows32: 
-          from = "./libs/RXTX/win32";
+          from = /*System.getProperty("user.dir") + */ ".\\libs\\RXTX\\win32\\rxtxSerial.dll";
           break;
         case Windows64: 
           from = /*System.getProperty("user.dir") + */ ".\\libs\\RXTX\\win64\\rxtxSerial.dll";
           to = ".\\rxtxSerial.dll";
           break;
         case MacOS: 
-          from = "./libs/RXTX/mac-10.5";
+          from = "./libs/RXTX/mac-10.5/librxtxSerial.jnilib";
           break;
         case Linux32: 
-          from = "./libs/RXTX/i686-pc-linux-gnu";
+          from = "./libs/RXTX/i686-pc-linux-gnu/librxtxSerial.so";
           break;
         case Linux64: 
-          from = "./libs/RXTX/x86_64-unknown-linux-gnu";
+          from = "./libs/RXTX/x86_64-unknown-linux-gnu/librxtxSerial.so";
           break;
         case Other: 
           throw new Exception("RxTx doesn't support this system");
@@ -146,6 +152,29 @@ public class SystemDef {
       Files.copy( new File(from).toPath(), new File(to).toPath() );
     }
     catch( java.nio.file.FileAlreadyExistsException e){};
+  }
+
+  public static void updateInfoObjects(){
+    PrintDevices pd = PrintDevices.getInstance();
+    // Try to retrieve all SP_DEVINFO_DATA references, for this windows machine
+    List<SP_DEVINFO_DATA.ByReference> deviceDevInfoDataReferences = pd.getAllDevInfoDataReferences();    
+    System.out.println("Found " + deviceDevInfoDataReferences.size() + " SP_DEVINFO_DATA references");
+    // Next, using the found SP_DEVINFO_DATA references, get some value objects with info found in the registry
+    infoObjects = pd.getAllDevInfoForDataFound(deviceDevInfoDataReferences);
+  }
+  
+  public static String getFriendlyName( GoGPSModel model, String name ) {
+    if( model.getSystem().getOSType() == OSType.Windows32 || model.getSystem().getOSType() == OSType.Windows64 ){
+
+      for (DeviceInformation devInfo : infoObjects) {
+        System.out.println(devInfo.toString());
+        if( devInfo.getFriendlyName() != null && !devInfo.getFriendlyName().equals("") && devInfo.getFriendlyName().contains(name)){
+          return devInfo.getManufacturer() + ": " + devInfo.getFriendlyName();
+        }
+      }
+    }
+    
+    return name;
   }
 }
 
