@@ -88,8 +88,8 @@ public class SystemDef {
     } else {
       detectedOS = OSType.Other;
     }
+    System.out.println("detectedOS = " + detectedOS.name() );
   }
-  System.out.println("detectedOS = " + detectedOS.name() );
   return detectedOS;
   }
   
@@ -168,8 +168,9 @@ public class SystemDef {
 
       for (DeviceInformation devInfo : infoObjects) {
         System.out.println(devInfo.toString());
-        if( devInfo.getFriendlyName() != null && !devInfo.getFriendlyName().equals("") && devInfo.getFriendlyName().contains(name)){
-          return devInfo.getManufacturer() + ": " + devInfo.getFriendlyName();
+        String friendlyName = devInfo.getFriendlyName();
+        if( friendlyName != null && !friendlyName.equals("") && friendlyName.contains(name)){
+          return devInfo.getManufacturer() + ": " + friendlyName;
         }
       }
     }

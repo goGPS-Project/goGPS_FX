@@ -65,7 +65,7 @@
                   <div class="col-sm-4 other">
                     <span data-bind="text: name"></span>
                  </div>
-                <div class="col-sm-3" data-bind="if: $root.ports().length>0 && type()=='serial'">
+                <div class="col-sm-4" data-bind="if: $root.ports().length>0 && type()=='serial'">
                      <select class="form-control" data-bind="options: $root.ports, optionsText: 'friendlyName', value: serialPort"></select>
                 </div>
                 <div class="col-sm-3" data-bind="if: $root.ports().length>0 && type()=='serial'">
@@ -91,7 +91,7 @@
                   <div class="col-sm-4 other">
                     <span data-bind="text: name"></span>
                  </div>
-                <div class="col-sm-3" data-bind="if: $root.ports().length>0 && type()=='serial'">
+                <div class="col-sm-4" data-bind="if: $root.ports().length>0 && type()=='serial'">
                      <select class="form-control" data-bind="options: $root.ports, optionsText: 'friendlyName', value: serialPort"></select>
                 </div>
                  <div class="col-sm-3" data-bind="if: $root.ports().length>0 && type()=='serial'">
@@ -120,7 +120,7 @@
                   <div class="col-sm-4 other">
                     <span data-bind="text: name"></span>
                  </div>
-                <div class="col-sm-3" data-bind="if: type()=='serial'">
+                <div class="col-sm-4" data-bind="if: type()=='serial'">
                      <select class="form-control" data-bind="options: $root.ports, optionsText: 'friendlyName', value: serialPort"></select>
                 </div>
                  <div class="col-sm-3" data-bind="if: type()=='serial'">
