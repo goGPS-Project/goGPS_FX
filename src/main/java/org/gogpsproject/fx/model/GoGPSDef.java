@@ -51,7 +51,8 @@ import net.java.html.json.Property;
     @Property(name = "selectedMasterProducer", type = Producer.class),
     @Property(name = "outputFolder", type = String.class),
     @Property(name = "satellites", type = SatelliteModel.class, array=true),
-    @Property(name = "running", type = boolean.class)
+    @Property(name = "running", type = boolean.class),
+    @Property(name = "system", type = SystemDef.class)
     })
 public final class GoGPSDef {
 
@@ -178,6 +179,7 @@ public final class GoGPSDef {
     masterProducers.add( Producers.rinexMasterProducer );
   }
 
+  
   /**
    * Scan for available serial ports. 
    * Also populate the list of available Observation and Navigation producers

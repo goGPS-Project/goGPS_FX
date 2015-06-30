@@ -8,6 +8,7 @@ import org.gogpsproject.fx.model.FirebugConsole;
 import org.gogpsproject.fx.model.GoGPSDef;
 import org.gogpsproject.fx.model.GoGPSModel;
 import org.gogpsproject.fx.model.SerialPortDef;
+import org.gogpsproject.fx.model.SystemDef;
 
 import net.java.html.BrwsrCtx;
 import net.java.html.boot.BrowserBuilder;
@@ -62,7 +63,7 @@ public class GoGPS_Fx {
           System.err.println(localThrowable + " thrown while loading " + "gnu.io.RXTXCommDriver");
           System.err.flush();
           if( i == 0 ){
-            SerialPortDef.copyRxTxLibToRoot();
+            SystemDef.copyRxTxLibToRoot( goGPSModel.getSystem() );
             GoGPSDef.alert("RXTX lib copied to root, you might have to restart the app");
           }
         }
