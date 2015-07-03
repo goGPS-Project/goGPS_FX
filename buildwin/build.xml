@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="goGPS_FX" default="do-deploy" basedir="."
 	xmlns:fx="javafx:com.sun.javafx.tools.ant">
-	<property name="version" value="0.3" />
+	<property name="version" value="0.4" />
 	<target name="init-fx-tasks">
 		<path id="fxant">
 			<filelist>
