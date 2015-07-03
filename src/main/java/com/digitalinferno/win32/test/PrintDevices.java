@@ -20,6 +20,8 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.win32.W32APIOptions;
 
 /**
+ * This code is in the PUBLIC DOMAIN. Do with it what you wish, but don't blame me.
+ *
  * Class for using JNA to get SP_DEVINFO_DATA references for "Plug'n'Play" devices
  * on the local windows machine, as well as a few methods to get some info about the devices.
  *
@@ -45,7 +47,8 @@ import com.sun.jna.win32.W32APIOptions;
  * @author geir
  * @version 1.5 - 2013-03-29 - Minor changes only, one SetupApi instance used.
  * @version 1.6 - 2013-03-29 - Corrected a spelling error. Rearranged some comments and info.
- * @version 1.7 - 2013-04-04 - Split a very long method
+ * @version 1.7 - 2013-04-04 - Split a very long method, updated some comments
+ * @version 1.8 - 2015-06-30 - Added license info 
  */
 public class PrintDevices {
 
@@ -66,7 +69,8 @@ public class PrintDevices {
 
     // --------------------------------------------
 
-    // This is set once, and used for all "querying"
+    // For some reason we must use the same WinNT.HANDLE everywhere... 
+    // So, this is set once, and used for all "querying"
     private final WinNT.HANDLE hDevInfo;
 
     // And while were at it, lets do this one once also
@@ -144,20 +148,6 @@ public class PrintDevices {
      */
     public List<DeviceInformation> getAllDevInfoForDataFound(List<SP_DEVINFO_DATA.ByReference> deviceDevInfoDataReferences) {
 
-        // For some reason this does not work.
-        // We must use the same WinNT.HANDLE instance as was used when finding the SP_DEVINFO_DATA references.
-        // Surely there must be some way to avoid this, or else the WinNT.HANDLE instance need to be stored
-        // with the SP_DEVINFO_DATA reference.
-        // That just seems stoopid.
-/*
-        // First get a WinNT.HANDLE (which is sometimes referred to as "DevInfo" and "hDevInfo", just to confuse you)
-        WinNT.HANDLE hDevInfo = pd.getHandleFromSetupDiGetClassDevs(DISetupApi.DIGCF_PRESENT, DISetupApi.DIGCF_ALLCLASSES);
-        if (hDevInfo == WinBase.INVALID_HANDLE_VALUE) {
-            // Nah, something is bad. Giving up.
-            System.err.println("Did not find a valid HANDLE");
-            return;
-        }
-*/
         List<DeviceInformation> returnValue = new ArrayList<DeviceInformation>();
 
         for (SP_DEVINFO_DATA.ByReference devNfoDataRef : deviceDevInfoDataReferences) {
