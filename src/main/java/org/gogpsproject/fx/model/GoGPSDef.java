@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 
 import org.gogpsproject.GoGPS;
 import org.gogpsproject.NavigationProducer;
-import org.gogpsproject.ObservationsBuffer;
+import org.gogpsproject.ObservationsSpeedBuffer;
 import org.gogpsproject.ObservationsProducer;
 import org.gogpsproject.StreamEventProducer;
 import org.gogpsproject.fx.GoGPS_Fx;
@@ -22,10 +22,14 @@ import org.gogpsproject.fx.model.Producer;
 import org.gogpsproject.fx.model.SerialPortModel;
 import org.gogpsproject.parser.rinex.RinexNavigation;
 import org.gogpsproject.parser.rinex.RinexNavigationParser;
+import org.gogpsproject.parser.rinex.RinexNavigationSpeed;
+import org.gogpsproject.parser.rinex.RinexNavigationSpeedParser;
 import org.gogpsproject.parser.rinex.RinexObservationParser;
 import org.gogpsproject.parser.ublox.UBXSerialConnection;
+import org.gogpsproject.parser.ublox.UBXSnapshotSerialConnection;
 import org.gogpsproject.producer.KmlProducer;
 import org.gogpsproject.producer.TxtProducer;
+import org.gogpsproject.producer.rinex.RinexV2Producer;
 
 import net.java.html.js.JavaScriptBody;
 import net.java.html.json.ComputedProperty;
@@ -66,7 +70,7 @@ public final class GoGPSDef {
   private static UBXSerialConnection ubxSerialConn2;
   
   private static int setEphemerisRate = 10;
-  private static int setIonosphereRate = 60;
+  private static int setIonosphereRate = 10;
   private static boolean enableTimetag = true;
   private static Boolean enableDebug = true;
 
@@ -276,8 +280,12 @@ public final class GoGPSDef {
     switch ( rover.getType() ){
       case Producers.SERIAL : {
           SerialPortModel port1 = rover.getSerialPort();
-          ubxSerialConn1 = new UBXSerialConnection( port1.getName(), port1.getSpeed() );
-  
+          
+          if( model.getSelectedRunMode() != RunModes.SnapshotStandAlone )
+            ubxSerialConn1 = new UBXSerialConnection( port1.getName(), port1.getSpeed() );
+          else
+            ubxSerialConn1 = new UBXSnapshotSerialConnection( port1.getName(), port1.getSpeed() );
+          
           ubxSerialConn1.setMeasurementRate( port1.getMeasurementRate() );
           ubxSerialConn1.enableEphemeris(setEphemerisRate);
           ubxSerialConn1.enableIonoParam(setIonosphereRate);
@@ -285,10 +293,25 @@ public final class GoGPSDef {
           ubxSerialConn1.enableDebug(enableDebug);
           ubxSerialConn1.enableNmeaSentences(new ArrayList<String>());
   
-          ubxSerialConn1.init();
+          try {
+            ubxSerialConn1.init();
+          }
+          catch( gnu.io.PortInUseException ex ) {
+            alert( port1.getFriendlyName() + " is in use " );
+            stop( model );
+            return;
+          }
+          
           ConsoleStreamer listener = new ConsoleStreamer(model);
           ubxSerialConn1.addStreamEventListener(listener);
-          roverIn = new ObservationsBuffer( ubxSerialConn1, "./roverOut.dat" );
+          
+          RinexV2Producer rp = null;
+          rp = new RinexV2Producer( false, true, "UB" );
+          rp.enableCompression( true );
+          rp.setOutputDir( outFolder );
+          ubxSerialConn1.addStreamEventListener(rp);
+          
+          roverIn = new ObservationsSpeedBuffer( ubxSerialConn1, outFolder + "/roverOut.dat" );
         }
         break;
         case Producers.FILE: {
@@ -313,23 +336,31 @@ public final class GoGPSDef {
           ubxSerialConn2.enableEphemeris(setEphemerisRate);
           ubxSerialConn2.enableIonoParam(setIonosphereRate);
           ubxSerialConn2.enableTimetag(enableTimetag);
-          ubxSerialConn2.enableDebug(enableDebug);
+//          ubxSerialConn2.enableDebug(enableDebug);
+          ubxSerialConn2.enableDebug(false);
           ubxSerialConn2.enableNmeaSentences(new ArrayList<String>());
 
-          ubxSerialConn2.init();
-          ConsoleStreamer listener = new ConsoleStreamer(model);
-          ubxSerialConn2.addStreamEventListener(listener);
-          navigationIn = new ObservationsBuffer( ubxSerialConn2, outFolder + "/navigationOut.dat" );
+          try {
+            ubxSerialConn2.init();
+          }
+          catch( gnu.io.PortInUseException ex ) {
+            alert( port2.getFriendlyName() + " is in use " );
+            stop( model );
+            return;
+          }
+//          ConsoleStreamer listener = new ConsoleStreamer(model);
+//          ubxSerialConn2.addStreamEventListener(listener);
+          navigationIn = new ObservationsSpeedBuffer( ubxSerialConn2, outFolder + "/navigationOut.dat" );
         }
        break;
       case Producers.FILE:
-          navigationIn = new RinexNavigationParser(new File( navigation.getFilename() ));
+          navigationIn = new RinexNavigationSpeedParser(new File( navigation.getFilename() ));
 //          navigationIn = new RinexNavigationStreamEventProducer(new File( navigation.getFilename() ));
 //          ConsoleStreamer listener = new ConsoleStreamer(model);
 //          ((StreamEventProducer) navigationIn).addStreamEventListener(listener);
         break;
       case Producers.FTP:
-          navigationIn = new RinexNavigation( RinexNavigation.GARNER_NAVIGATION_AUTO );
+          navigationIn = new RinexNavigationSpeed( RinexNavigation.GARNER_NAVIGATION_AUTO );
         break;
     }
     
@@ -358,7 +389,7 @@ public final class GoGPSDef {
             ubxSerialConn2.init();
             ConsoleStreamer listener = new ConsoleStreamer(model);
             ubxSerialConn2.addStreamEventListener(listener);
-            masterIn = new ObservationsBuffer( ubxSerialConn2, outFolder + "/masterOut.dat" );
+            masterIn = new ObservationsSpeedBuffer( ubxSerialConn2, outFolder + "/masterOut.dat" );
           }
          break;
         case Producers.FILE:
@@ -415,6 +446,11 @@ public final class GoGPSDef {
     }
     if( ubxSerialConn2 != null ){
       l.info("Stop UBX2");
+//      TODO
+//      java.lang.NullPointerException
+//      at org.gogpsproject.parser.AbstractSerialConnection.release(AbstractSerialConnection.java:52)
+//      at org.gogpsproject.parser.ublox.UBXSerialConnection.release(UBXSerialConnection.java:87)
+//      at org.gogpsproject.fx.model.GoGPSDef.stop(GoGPSDef.java:439)
       ubxSerialConn2.release( true, 10000 );
       ubxSerialConn2 = null;
     }
