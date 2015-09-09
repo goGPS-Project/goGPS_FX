@@ -3,6 +3,8 @@ package org.gogpsproject.fx.model;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
+import org.gogpsproject.fx.Leaflet;
+
 import net.java.html.BrwsrCtx;
 
 public abstract class FirebugConsole extends OutputStream {
@@ -78,8 +80,9 @@ public abstract class FirebugConsole extends OutputStream {
 
         @Override
         public void run() {
-          System.setOut(new PrintStream(new FirebugConsoleInfo(ctx), true));
-          System.setErr(new PrintStream(new FirebugConsoleError(ctx), true));
+            System.setOut(new PrintStream(new FirebugConsoleInfo(ctx), true));
+            System.setErr(new PrintStream(new FirebugConsoleError(ctx), true));
+            Leaflet.init(ctx);
         }});
   }
 }
