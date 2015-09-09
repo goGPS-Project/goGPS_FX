@@ -276,6 +276,8 @@ public final class GoGPSDef {
     String outFolder = model.getOutputFolder();
     checkDir(outFolder);
     
+    ConsoleStreamer consoleListener = new ConsoleStreamer(model);
+    
     Producer rover = model.getSelectedObservationProducer(); 
     switch ( rover.getType() ){
       case Producers.SERIAL : {
@@ -302,12 +304,11 @@ public final class GoGPSDef {
             return;
           }
           
-          ConsoleStreamer listener = new ConsoleStreamer(model);
-          ubxSerialConn1.addStreamEventListener(listener);
+          ubxSerialConn1.addStreamEventListener(consoleListener);
           
           RinexV2Producer rp = null;
           rp = new RinexV2Producer( false, true, "UB" );
-          rp.enableCompression( true );
+          rp.enableCompression( false );
           rp.setOutputDir( outFolder );
           ubxSerialConn1.addStreamEventListener(rp);
           
@@ -316,8 +317,7 @@ public final class GoGPSDef {
         break;
         case Producers.FILE: {
           roverIn = new RinexObservationParserStreamEventProducer(new File( rover.getFilename() ));
-          ConsoleStreamer listener = new ConsoleStreamer(model);
-          ((StreamEventProducer) roverIn).addStreamEventListener(listener);
+          ((StreamEventProducer) roverIn).addStreamEventListener(consoleListener);
         }
         break;
     }
@@ -387,8 +387,7 @@ public final class GoGPSDef {
             ubxSerialConn2.enableNmeaSentences(new ArrayList<String>());
   
             ubxSerialConn2.init();
-            ConsoleStreamer listener = new ConsoleStreamer(model);
-            ubxSerialConn2.addStreamEventListener(listener);
+            ubxSerialConn2.addStreamEventListener(consoleListener);
             masterIn = new ObservationsSpeedBuffer( ubxSerialConn2, outFolder + "/masterOut.dat" );
           }
          break;
@@ -414,7 +413,7 @@ public final class GoGPSDef {
     KmlProducer kml = new KmlProducer(outPathKml, goodDopThreshold, timeSampleDelaySec );
     goGPS.addPositionConsumerListener(txt);
     goGPS.addPositionConsumerListener(kml);
-//    goGPS.addPositionConsumerListener(console);
+    goGPS.addPositionConsumerListener(consoleListener);
 
     roverIn.init();
     if( navigationIn!=roverIn )
