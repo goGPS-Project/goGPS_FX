@@ -20,6 +20,19 @@
 }
 </script>
 <script type='text/javascript' src="bootstrap/js/bootstrap.js"></script>
+<link rel="stylesheet" href="leaflet-0.7.2/leaflet.css" />
+    <style type="text/css">
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        #map { 
+        	margin: 1em auto;
+        	height:70%;
+            min-height: 100%; 
+        }
+    </style>
+<script type='text/javascript' src="leaflet-0.7.2/leaflet-src.js"></script>
 </head>
 <body data-bind="Model">
 
@@ -156,4 +169,5 @@
        </div>     
    </div>
   </div>
+  <div id="map"></div>
 </html>
