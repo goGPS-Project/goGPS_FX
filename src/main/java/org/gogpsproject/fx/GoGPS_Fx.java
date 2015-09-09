@@ -1,13 +1,10 @@
 package org.gogpsproject.fx;
 	
-import java.io.PrintStream;
-import java.util.Arrays;
 import java.util.logging.Logger;
 
 import org.gogpsproject.fx.model.FirebugConsole;
 import org.gogpsproject.fx.model.GoGPSDef;
 import org.gogpsproject.fx.model.GoGPSModel;
-import org.gogpsproject.fx.model.SerialPortDef;
 import org.gogpsproject.fx.model.SystemDef;
 
 import net.java.html.BrwsrCtx;
@@ -40,7 +37,7 @@ public class GoGPS_Fx {
 //      }
       BrwsrCtx ctx = BrwsrCtx.findDefault(GoGPS_Fx.class);
       FirebugConsole.init(ctx);
-      
+
       goGPSModel = new GoGPSModel();
       GoGPSDef.init(goGPSModel);
       
