@@ -1,6 +1,7 @@
 package org.gogpsproject.fx;
 
 import net.java.html.BrwsrCtx;
+import net.java.html.geo.Position;
 import net.java.html.leaflet.ILayer;
 import net.java.html.leaflet.Icon;
 import net.java.html.leaflet.IconOptions;
@@ -19,36 +20,52 @@ import net.java.html.leaflet.event.MouseListener;
 
 public class Leaflet {
   public static BrwsrCtx ctx;
-  
-  public Leaflet() {
-    // TODO Auto-generated constructor stub
-  }
-  
   public static Map map;
+         static GeoLocation geoLocation = new GeoLocation(true);
+  public static LatLng geoLocationLatLng = new LatLng(48.336614, 14.319305);
+  
+  static{
+    if( geoLocation.isSupported() ){
+      geoLocation.start();
+    }
+  }
+
+  static public class GeoLocation extends net.java.html.geo.Position.Handle{
+
+    protected GeoLocation(boolean oneTime) {
+      super(oneTime);
+    }
+
+    @Override
+    protected void onError(Exception arg0) throws Throwable {
+      // TODO Auto-generated method stub
+    }
+
+    @Override
+    protected void onLocation(Position pos ) throws Throwable {
+      geoLocationLatLng = new LatLng( pos.getCoords().getLatitude(), pos.getCoords().getLongitude() );
+      if( map != null ){
+        Leaflet.map.setView(geoLocationLatLng, 20);
+      }
+    }
+  }
   
   public static void init( BrwsrCtx _ctx ){
     ctx = _ctx;
     
     // Create a map zoomed to Linz.
     MapOptions mapOptions = new MapOptions()
-              .setCenter(new LatLng(48.336614, 14.319305))
+              .setCenter(geoLocationLatLng)
               .setZoom(15)
               .setLayers(new ILayer[] { /* duckLayer */ });
     map = new Map("map", mapOptions);
     
-//      // add a tile layer to the map
-      TileLayerOptions tlo = new TileLayerOptions();
-      tlo.setAttribution("Map data &copy; <a href='http://www.thunderforest.com/opencyclemap/'>OpenCycleMap</a> contributors, "
-              + "<a href='http://creativecommons.org/licenses/by-sa/2.0/'>CC-BY-SA</a>, "
-              + "Imagery © <a href='http://www.thunderforest.com/'>Thunderforest</a>");
-      tlo.setMaxZoom(18);
-      TileLayer layer = new TileLayer("http://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png", tlo);
+      TileLayerOptions tlo = new TileLayerOptions()
+         .setAttribution("Map &copy; 1987-2014 <a href=\"http://developer.here.com\">HERE</a>")
+         .setMaxZoom(20)
+         .setSubdomains("1234");
+      TileLayer layer = new TileLayer("http://{s}.aerial.maps.cit.api.here.com/maptile/2.1/maptile/newest/satellite.day/{z}/{x}/{y}/256/png8?app_id=DemoAppId01082013GAL&app_code=AJKnXv84fjrb0KIHawS0Tg", tlo);
       map.addLayer(layer);
-      
-      // Set a marker with a user defined icon
-//      Icon icon = new Icon(new IconOptions("leaflet-0.7.2/images/marker-icon.png"));
-//      Marker m = new Marker(new LatLng(48.336614, 14.33), new MarkerOptions().setIcon(icon));
-//      m.addTo(map);
       
 //      // Add a polygon. When you click on the polygon a popup shows up
 //      Polygon polygonLayer = new Polygon(new LatLng[] {
