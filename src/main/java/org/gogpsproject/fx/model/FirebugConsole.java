@@ -82,7 +82,7 @@ public abstract class FirebugConsole extends OutputStream {
         public void run() {
             System.setOut(new PrintStream(new FirebugConsoleInfo(ctx), true));
             System.setErr(new PrintStream(new FirebugConsoleError(ctx), true));
-            Leaflet.init(ctx);
+            Leaflet.get().init(ctx);
         }});
   }
 }

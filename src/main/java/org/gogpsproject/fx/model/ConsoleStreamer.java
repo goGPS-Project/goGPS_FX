@@ -9,20 +9,14 @@ import org.gogpsproject.ObservationSet;
 import org.gogpsproject.PositionConsumer;
 import org.gogpsproject.RoverPosition;
 import org.gogpsproject.StreamEventListener;
-import org.gogpsproject.fx.GoGPS_Fx;
 import org.gogpsproject.fx.Leaflet;
-
-import net.java.html.leaflet.Icon;
-import net.java.html.leaflet.IconOptions;
-import net.java.html.leaflet.LatLng;
-import net.java.html.leaflet.Marker;
-import net.java.html.leaflet.MarkerOptions;
 
 public class ConsoleStreamer implements StreamEventListener, PositionConsumer{
  
-  private static final Logger logger = Logger.getLogger(ConsoleStreamer.class.getName());
+  public static final Logger logger = Logger.getLogger(ConsoleStreamer.class.getName());
 
   GoGPSModel model;
+  Leaflet L = Leaflet.get();
   
   public ConsoleStreamer( GoGPSModel model ){
     this.model = model;
@@ -77,24 +71,25 @@ public class ConsoleStreamer implements StreamEventListener, PositionConsumer{
 
   @Override
   public void addCoordinate(RoverPosition coord) {
-    
-    Leaflet.ctx.execute(new Runnable(){
-      @Override
-      public void run() {
-        // it doesn't work String to int class cast ex
-//        int z = Leaflet.map.getMaxZoom();
-
-        Icon icon = new Icon(new IconOptions("leaflet-0.7.2/images/marker-icon.png"));
-        LatLng ll = new LatLng( coord.getGeodeticLatitude(), coord.getGeodeticLongitude() );
-        Marker m = new Marker(ll, new MarkerOptions().setIcon(icon));
-        m.addTo(Leaflet.map);
-        Leaflet.map.setView(ll, 20);
-      }
-    });
+    L.addMarker(coord);
   }
 
   @Override
   public void event(int event) {
+    switch( event ){
+    case 0: 
+      L.clearMarkers();
+//      Leaflet.ctx.execute(new Runnable(){
+//        @Override
+//        public void run() {
+//          Leaflet.map.
+//        }
+//       });
+    break;
+    default:
+      logger.info( "ev " + event );
+      break;
+    }
   }
 
 }
