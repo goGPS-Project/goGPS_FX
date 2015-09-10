@@ -189,7 +189,7 @@
 		<dependency>
 			<groupId>org.gogpsproject</groupId>
 			<artifactId>goGPS-core</artifactId>
-			<version>1.0.3-SnapshotGps_0.2</version>
+			<version>1.0.3-SnapshotGps_0.5</version>
 		</dependency>
 		<dependency>
 			<groupId>com.googlecode.efficient-java-matrix-library</groupId>
@@ -213,7 +213,7 @@
 			<groupId>org.ow2.asm</groupId>
 			<artifactId>asm</artifactId>
 			<version>5.0.3</version>
-			<scope>provided</scope>
+			<!--scope>provided</scope-->
 		</dependency>
 		<dependency>
 			<groupId>com.dukescript.api</groupId>
@@ -235,6 +235,11 @@
 			<artifactId>net.java.html.geo</artifactId>
 			<version>1.2</version>
 		</dependency>
+        <dependency>
+            <groupId>com.google.maps</groupId>
+            <artifactId>google-maps-services</artifactId>
+            <version>0.1.6</version>
+        </dependency>   
 	</dependencies>
 
 	<profiles>
