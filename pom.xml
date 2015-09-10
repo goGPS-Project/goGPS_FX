@@ -5,7 +5,7 @@
 
 	<groupId>org.gogpsproject</groupId>
 	<artifactId>goGPS_FX</artifactId>
-	<version>0.0.4</version>
+	<version>0.0.5</version>
 	<packaging>jar</packaging>
 	<name>goGPS javaFX</name>
 	<url>http://www.gogps-project.org</url>
