@@ -1,8 +1,14 @@
 package org.gogpsproject.fx;
 
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 import java.util.logging.Logger;
 
+import org.gogpsproject.ObservationSet;
 import org.gogpsproject.RoverPosition;
+import org.gogpsproject.RoverPositionObs;
 import org.gogpsproject.fx.model.ConsoleStreamer;
 
 import net.java.html.BrwsrCtx;
@@ -34,6 +40,15 @@ public class Leaflet {
   static GeoLocation geoLocation = new GeoLocation(true);
   static LatLng geoLocationLatLng = new LatLng(48.336614, 14.319305);
   LayerGroup markers;
+  
+  final DecimalFormat df = new DecimalFormat("0.0000");
+  final DecimalFormat dopf = new DecimalFormat("0.0");
+  final SimpleDateFormat sdfHeader = new SimpleDateFormat("dd-MMM-yy HH:mm:ss");
+  final TimeZone utc = TimeZone.getTimeZone("GMT Time");
+
+  private Leaflet(){
+    sdfHeader.setTimeZone(utc);
+  }
   
   public static Leaflet get(){
     if( instance == null )
@@ -125,6 +140,46 @@ public class Leaflet {
 //        int z = map.getMaxZoom();
         LatLng ll = new LatLng( coord.getGeodeticLatitude(), coord.getGeodeticLongitude() );
         Marker m = new Marker( ll, markerOptions );
+        
+        m.addMouseListener(MouseEvent.Type.CLICK, new MouseListener() {
+          @Override
+          public void onEvent(MouseEvent ev) {
+            
+              PopupOptions popupOptions = new PopupOptions().setMaxWidth(400);
+              Popup popup = new Popup(popupOptions);
+              popup.setLatLng(ev.getLatLng());
+              String ppStr = "Coord: " + df.format( coord.getGeodeticLatitude()) + ", " 
+                                         + df.format( coord.getGeodeticLongitude()) + ", " 
+                                         + df.format( coord.getGeodeticHeight())  
+                                         + "<br/>hdop: " + dopf.format( coord.gethDop()) 
+                                         + "<br/>computed Time: " + coord.getRefTime().getGpsWeek() + "." + coord.getRefTime().getGpsWeekSec()  + " " + sdfHeader.format(new Date(coord.getRefTime().getMsec())) ; 
+              if( coord instanceof RoverPositionObs ){
+                RoverPositionObs c2 = (RoverPositionObs)coord;
+                ppStr += "<br/>recorded Time: " + c2.sampleTime.getGpsTime() + " " + sdfHeader.format(new Date(c2.sampleTime.getMsec())) + "<br/>"; 
+//                        +"<br/>obs: " + c2.obs.toString()
+                for(int i=0;i<c2.obs.getNumSat();i++){
+                  ObservationSet os = c2.obs.getSatByIdx(i);
+                  ppStr +=
+//                      "satType:"+ os.getSatType() +
+                      "  satID:"+os.getSatID()
+                      +"\tC:"+ df.format(os.getCodeC(0))
+//                    +" cP:"+ df.format(os.getCodeP(0))
+//                    +" Ph:"+fd(os.getPhaseCycles(0))
+                    +" Dp:"+df.format(os.getDoppler(0))
+//                    +" Ss:"+fd(os.getSignalStrength(0))
+//                    +" LL:"+fd(os.getLossLockInd(0))
+//                    +" LL2:"+fd(os.getLossLockInd(1))
+                    + "<br/>";
+                }
+
+                ppStr += "<br/>index: " + c2.index;
+              }
+              ppStr = ppStr.replace("/(\r\n|\n|\r)/g","<br />");
+              popup.setContent(ppStr);
+              popup.openOn(map);
+          }
+        });
+        
         markers.addLayer(m);
         map.setView(ll, 20);
       }
