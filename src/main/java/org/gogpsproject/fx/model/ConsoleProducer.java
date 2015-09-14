@@ -59,7 +59,7 @@ public class ConsoleProducer implements PositionConsumer, Runnable {
 		dateTXT.setTimeZone(TZ);
 		timeTXT.setTimeZone(TZ);
 
-		t = new Thread(this);
+		t = new Thread(this, "ConsoleProducer" );
 		t.start();
 	}
 

@@ -313,6 +313,7 @@ public final class GoGPSDef {
           ubxSerialConn1.addStreamEventListener(rp);
           
           roverIn = new ObservationsSpeedBuffer( ubxSerialConn1, outFolder + "/roverOut.dat" );
+          ((ObservationsSpeedBuffer)roverIn).setDebug(true);
         }
         break;
         case Producers.FILE: {
@@ -387,7 +388,7 @@ public final class GoGPSDef {
             ubxSerialConn2.enableNmeaSentences(new ArrayList<String>());
   
             ubxSerialConn2.init();
-            ubxSerialConn2.addStreamEventListener(consoleListener);
+//            ubxSerialConn2.addStreamEventListener(consoleListener);
             masterIn = new ObservationsSpeedBuffer( ubxSerialConn2, outFolder + "/masterOut.dat" );
           }
          break;
@@ -403,7 +404,7 @@ public final class GoGPSDef {
     
     GoGPS goGPS = new GoGPS( navigationIn, roverIn, masterIn );
     goGPS.setDynamicModel( model.getSelectedDynModel().getValue() );
-
+    goGPS.setCutoff(5);
     String outPathTxt = outFolder + "/out.txt";
     String outPathKml = outFolder + "/out.kml";
     TxtProducer txt = new TxtProducer(outPathTxt);
@@ -415,11 +416,18 @@ public final class GoGPSDef {
     goGPS.addPositionConsumerListener(kml);
     goGPS.addPositionConsumerListener(consoleListener);
 
-    roverIn.init();
-    if( navigationIn!=roverIn )
-      navigationIn.init();
-    if( masterIn!= null && masterIn!=roverIn && masterIn!=navigationIn )
-      masterIn.init();
+    try {
+      roverIn.init();
+      if( navigationIn!=roverIn )
+        navigationIn.init();
+      if( masterIn!= null && masterIn!=roverIn && masterIn!=navigationIn )
+        masterIn.init();
+    }
+    catch( Exception e ){
+      alert( e.getMessage() );
+      stop( model );
+      return;
+    }
     
     model.setRunning(true);
     goGPS.runThreadMode( model.getSelectedRunMode().getValue() );

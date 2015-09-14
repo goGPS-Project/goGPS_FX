@@ -87,7 +87,7 @@ public class ConsoleStreamer implements StreamEventListener, PositionConsumer{
 //       });
     break;
     default:
-      logger.info( "ev " + event );
+//      logger.info( "ev " + event );
       break;
     }
   }
