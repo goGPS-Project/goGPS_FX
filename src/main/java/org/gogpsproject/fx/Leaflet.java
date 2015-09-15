@@ -23,6 +23,7 @@ import net.java.html.leaflet.Map;
 import net.java.html.leaflet.MapOptions;
 import net.java.html.leaflet.Marker;
 import net.java.html.leaflet.MarkerOptions;
+import net.java.html.leaflet.Point;
 import net.java.html.leaflet.Polygon;
 import net.java.html.leaflet.Popup;
 import net.java.html.leaflet.PopupOptions;
@@ -46,8 +47,31 @@ public class Leaflet {
   final SimpleDateFormat sdfHeader = new SimpleDateFormat("dd-MMM-yy HH:mm:ss");
   final TimeZone utc = TimeZone.getTimeZone("GMT Time");
 
+  final IconOptions redIconOption;
+  final Icon redIcon; 
+  final MarkerOptions redMarkerOptions;
+  final IconOptions greenIconOption;
+  final Icon greenIcon; 
+  final MarkerOptions greenMarkerOptions;
+  final IconOptions greyIconOption;
+  final Icon greyIcon; 
+  final MarkerOptions greyMarkerOptions;
+
   private Leaflet(){
     sdfHeader.setTimeZone(utc);
+    final Point size = new Point(10,10);
+    //final IconOptions iconOption = new IconOptions("leaflet-0.7.2/images/marker-icon.png");
+    redIconOption = new IconOptions("leaflet-0.7.2/images/SNP_2752125_en_v0.png").setIconSize(size);
+    greenIconOption = new IconOptions("leaflet-0.7.2/images/SNP_2752129_en_v0.png").setIconSize(size);
+    greyIconOption = new IconOptions("http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png").setIconSize(size);
+                     
+    redIcon = new Icon(redIconOption);
+    greenIcon = new Icon(greenIconOption);
+    greyIcon = new Icon(greyIconOption);
+
+    redMarkerOptions = new MarkerOptions().setIcon(redIcon);
+    greenMarkerOptions = new MarkerOptions().setIcon(greenIcon);
+    greyMarkerOptions = new MarkerOptions().setIcon(greyIcon);
   }
   
   public static Leaflet get(){
@@ -99,29 +123,7 @@ public class Leaflet {
       
       markers = new FeatureGroup(new ILayer[]{});
       markers.addTo(map);
-//      // Add a polygon. When you click on the polygon a popup shows up
-//      Polygon polygonLayer = new Polygon(new LatLng[] {
-//              new LatLng(48.335067, 14.320660),
-//              new LatLng(48.337335, 14.323642),
-//              new LatLng(48.335238, 14.328942),
-//              new LatLng(48.333883, 14.327612)
-//      });
-//      polygonLayer.addMouseListener(MouseEvent.Type.CLICK, new MouseListener() {
-//          @Override
-//          public void onEvent(MouseEvent ev) {
-//              PopupOptions popupOptions = new PopupOptions().setMaxWidth(400);
-//              Popup popup = new Popup(popupOptions);
-//              popup.setLatLng(ev.getLatLng());
-//              popup.setContent("The Leaflet API for Java has been created here!");
-//              popup.openOn(map);
-//          }
-//      });
-//      map.addLayer(polygonLayer);
   }
-
-  IconOptions iconOption = new IconOptions("leaflet-0.7.2/images/marker-icon.png");
-  Icon icon = new Icon(iconOption);
-  MarkerOptions markerOptions = new MarkerOptions().setIcon(icon);
 
   public void clearMarkers() {
     ctx.execute(new Runnable(){
@@ -139,7 +141,12 @@ public class Leaflet {
         // it doesn't work String to int class cast ex
 //        int z = map.getMaxZoom();
         LatLng ll = new LatLng( coord.getGeodeticLatitude(), coord.getGeodeticLongitude() );
-        Marker m = new Marker( ll, markerOptions );
+        Marker m;
+        
+        if( coord.gethDop()>2 )
+          m = new Marker( ll, redMarkerOptions );
+        else
+          m = new Marker( ll, greenMarkerOptions );
         
         m.addMouseListener(MouseEvent.Type.CLICK, new MouseListener() {
           @Override
@@ -155,22 +162,24 @@ public class Leaflet {
                                          + "<br/>computed Time: " + coord.getRefTime().getGpsWeek() + "." + coord.getRefTime().getGpsWeekSec()  + " " + sdfHeader.format(new Date(coord.getRefTime().getMsec())) ; 
               if( coord instanceof RoverPositionObs ){
                 RoverPositionObs c2 = (RoverPositionObs)coord;
-                ppStr += "<br/>recorded Time: " + c2.sampleTime.getGpsTime() + " " + sdfHeader.format(new Date(c2.sampleTime.getMsec())) + "<br/>"; 
+                ppStr += "<br/>recorded Time: " + c2.sampleTime.getGpsWeek() + "." + c2.sampleTime.getGpsWeekSec() + " " + sdfHeader.format(new Date(c2.sampleTime.getMsec())) + "<br/>"; 
 //                        +"<br/>obs: " + c2.obs.toString()
+                ppStr+= "<table><tr align=right><th>satId</th><th>Code</th><th>Doppler</th><th>SNR</th></tr>";
                 for(int i=0;i<c2.obs.getNumSat();i++){
                   ObservationSet os = c2.obs.getSatByIdx(i);
-                  ppStr +=
+                  ppStr += "<tr align=right>" + 
 //                      "satType:"+ os.getSatType() +
-                      "  satID:"+os.getSatID()
-                      +"\tC:"+ df.format(os.getCodeC(0))
+                      "<td>" + os.getSatID() + "</td>" 
+                      +"<td>"+ (long)(os.getCodeC(0)) + "</td>"
 //                    +" cP:"+ df.format(os.getCodeP(0))
 //                    +" Ph:"+fd(os.getPhaseCycles(0))
-                    +" Dp:"+df.format(os.getDoppler(0))
-//                    +" Ss:"+fd(os.getSignalStrength(0))
+                    +"<td>"+(long)(os.getDoppler(0)) + "</td>"
+                    +"<td>"+dopf.format(os.getSignalStrength(0)) + "</td>"
 //                    +" LL:"+fd(os.getLossLockInd(0))
 //                    +" LL2:"+fd(os.getLossLockInd(1))
-                    + "<br/>";
+                    + "</tr>";
                 }
+                ppStr+= "</table>";
 
                 ppStr += "<br/>index: " + c2.index;
               }
