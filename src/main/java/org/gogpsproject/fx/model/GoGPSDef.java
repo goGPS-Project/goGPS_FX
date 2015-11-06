@@ -27,6 +27,7 @@ import org.gogpsproject.parser.rinex.RinexNavigationSpeedParser;
 import org.gogpsproject.parser.rinex.RinexObservationParser;
 import org.gogpsproject.parser.ublox.UBXSerialConnection;
 import org.gogpsproject.parser.ublox.UBXSnapshotSerialConnection;
+import org.gogpsproject.producer.JakKmlProducer;
 import org.gogpsproject.producer.KmlProducer;
 import org.gogpsproject.producer.TxtProducer;
 import org.gogpsproject.producer.rinex.RinexV2Producer;
@@ -44,6 +45,7 @@ import net.java.html.json.Property;
  * It defines GoGPSModel, the root of our model tree, it maps to a "goGPS" javascript object
  */
 @Model(className = "GoGPSModel", targetId = "", properties = {
+    @Property(name = "version", type = String.class),
     @Property(name = "ports", type = SerialPortModel.class, array = true),
     @Property(name = "selectedRunMode", type = Mode.class),
     @Property(name = "selectedDynModel", type = DynModel.class),
@@ -59,7 +61,8 @@ import net.java.html.json.Property;
     @Property(name = "system", type = SystemDef.class)
     })
 public final class GoGPSDef {
-
+  public static final String VERSION = "0.6";
+  
   private static final Logger l = Logger.getLogger(GoGPS_Fx.class.getName());
   
   static ObservationsProducer roverIn;
@@ -84,7 +87,8 @@ public final class GoGPSDef {
         RunModes.standAlone, 
         RunModes.doubleDifferences, 
         RunModes.kalmanFilter, 
-        RunModes.SnapshotStandAlone });
+        RunModes.standAloneSnapshot,
+        RunModes.standAloneCoarseTime});
   }
 
   @ComputedProperty
@@ -112,6 +116,7 @@ public final class GoGPSDef {
    */
   @Function
   public static void init( GoGPSModel goGPSModel ){
+    goGPSModel.setVersion( VERSION );
     RunModes.init();
     goGPSModel.setSelectedRunMode(RunModes.standAlone);
     DynModels.init();
@@ -283,7 +288,7 @@ public final class GoGPSDef {
       case Producers.SERIAL : {
           SerialPortModel port1 = rover.getSerialPort();
           
-          if( model.getSelectedRunMode() != RunModes.SnapshotStandAlone )
+          if( model.getSelectedRunMode() != RunModes.standAloneSnapshot )
             ubxSerialConn1 = new UBXSerialConnection( port1.getName(), port1.getSpeed() );
           else
             ubxSerialConn1 = new UBXSnapshotSerialConnection( port1.getName(), port1.getSpeed() );
@@ -366,7 +371,7 @@ public final class GoGPSDef {
     }
     
     Producer master = model.getSelectedMasterProducer();
-    if( model.getSelectedRunMode() != RunModes.standAlone && model.getSelectedRunMode() != RunModes.SnapshotStandAlone ){
+    if( model.getSelectedRunMode() != RunModes.standAlone && model.getSelectedRunMode() != RunModes.standAloneSnapshot ){
       switch( master.getType()){
         case Producers.SERIAL:
           if( master.getSerialPort() == rover.getSerialPort() ) {
@@ -411,6 +416,7 @@ public final class GoGPSDef {
 //    ConsoleProducer console = new ConsoleProducer();
     double goodDopThreshold = 10;
     int timeSampleDelaySec = 30; // should be tuned according to the dataset; use '0' to disable timestamps in the KML 
+    //JakKmlProducer kml = new JakKmlProducer(outPathKml, goodDopThreshold, timeSampleDelaySec );
     KmlProducer kml = new KmlProducer(outPathKml, goodDopThreshold, timeSampleDelaySec );
     goGPS.addPositionConsumerListener(txt);
     goGPS.addPositionConsumerListener(kml);
