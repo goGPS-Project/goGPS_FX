@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.logging.Logger;
 
+import org.gogpsproject.Coordinates;
 import org.gogpsproject.GoGPS;
 import org.gogpsproject.NavigationProducer;
 import org.gogpsproject.ObservationsSpeedBuffer;
@@ -25,6 +26,7 @@ import org.gogpsproject.parser.rinex.RinexNavigationParser;
 import org.gogpsproject.parser.rinex.RinexNavigationSpeed;
 import org.gogpsproject.parser.rinex.RinexNavigationSpeedParser;
 import org.gogpsproject.parser.rinex.RinexObservationParser;
+import org.gogpsproject.parser.rinex.RinexObservationParserBitslipCheck;
 import org.gogpsproject.parser.ublox.UBXSerialConnection;
 import org.gogpsproject.parser.ublox.UBXSnapshotSerialConnection;
 import org.gogpsproject.producer.JakKmlProducer;
@@ -322,7 +324,11 @@ public final class GoGPSDef {
         }
         break;
         case Producers.FILE: {
-          roverIn = new RinexObservationParserStreamEventProducer(new File( rover.getFilename() ));
+          if( model.getSelectedRunMode() == RunModes.standAloneCoarseTime )
+            roverIn = new RinexObservationParserStreamEventProducer( new RinexObservationParserBitslipCheck(new File( rover.getFilename())));
+          else   
+            roverIn = new RinexObservationParserStreamEventProducer( new RinexObservationParser(new File( rover.getFilename())));
+          
           ((StreamEventProducer) roverIn).addStreamEventListener(consoleListener);
         }
         break;
@@ -366,12 +372,13 @@ public final class GoGPSDef {
 //          ((StreamEventProducer) navigationIn).addStreamEventListener(listener);
         break;
       case Producers.FTP:
-          navigationIn = new RinexNavigationSpeed( RinexNavigation.GARNER_NAVIGATION_AUTO );
+//          navigationIn = new RinexNavigationSpeed( RinexNavigation.GARNER_NAVIGATION_AUTO );
+          navigationIn = new RinexNavigationSpeed( RinexNavigation.NASA_NAVIGATION_DAILY );
         break;
     }
     
     Producer master = model.getSelectedMasterProducer();
-    if( model.getSelectedRunMode() != RunModes.standAlone && model.getSelectedRunMode() != RunModes.standAloneSnapshot ){
+    if( model.getSelectedRunMode() == RunModes.kalmanFilter || model.getSelectedRunMode()== RunModes.doubleDifferences ){
       switch( master.getType()){
         case Producers.SERIAL:
           if( master.getSerialPort() == rover.getSerialPort() ) {
@@ -409,7 +416,8 @@ public final class GoGPSDef {
     
     GoGPS goGPS = new GoGPS( navigationIn, roverIn, masterIn );
     goGPS.setDynamicModel( model.getSelectedDynModel().getValue() );
-    goGPS.setCutoff(5);
+//    goGPS.setCutoff(5);
+    goGPS.setCutoff(0);
     String outPathTxt = outFolder + "/out.txt";
     String outPathKml = outFolder + "/out.kml";
     TxtProducer txt = new TxtProducer(outPathTxt);
@@ -436,6 +444,8 @@ public final class GoGPSDef {
     }
     
     model.setRunning(true);
+//    Coordinates aprioriPos = roverIn.getDefinedPosition();
+    
     goGPS.runThreadMode( model.getSelectedRunMode().getValue() );
     
   }
