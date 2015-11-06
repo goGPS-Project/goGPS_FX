@@ -56,6 +56,7 @@ import net.java.html.json.Property;
     @Property(name = "masterProducers", type = Producer.class, array=true),
     @Property(name = "selectedObservationProducer", type = Producer.class),
     @Property(name = "selectedNavigationProducer", type = Producer.class),
+    @Property(name = "selectedNavigationFTP", type = FTPModel.class),
     @Property(name = "selectedMasterProducer", type = Producer.class),
     @Property(name = "outputFolder", type = String.class),
     @Property(name = "satellites", type = SatelliteModel.class, array=true),
@@ -83,6 +84,14 @@ public final class GoGPSDef {
   private FileOutputStream fosOutLog = null;
   private DataOutputStream outLog = null;//new XMLEncoder(os);
 
+  @ComputedProperty
+  public static List<FTPModel> ftps(){
+    return Arrays.asList(new FTPModel[]{
+        FTPSites.GarnerNavigationAuto,
+        FTPSites.NasaNavigationDaily
+    });
+  };
+  
   @ComputedProperty
   public static List<Mode> runModes(){
     return Arrays.asList(new Mode[]{ 
@@ -119,6 +128,8 @@ public final class GoGPSDef {
   @Function
   public static void init( GoGPSModel goGPSModel ){
     goGPSModel.setVersion( VERSION );
+    FTPSites.init();
+    goGPSModel.setSelectedNavigationFTP(FTPSites.GarnerNavigationAuto);
     RunModes.init();
     goGPSModel.setSelectedRunMode(RunModes.standAlone);
     DynModels.init();
@@ -372,8 +383,7 @@ public final class GoGPSDef {
 //          ((StreamEventProducer) navigationIn).addStreamEventListener(listener);
         break;
       case Producers.FTP:
-//          navigationIn = new RinexNavigationSpeed( RinexNavigation.GARNER_NAVIGATION_AUTO );
-          navigationIn = new RinexNavigationSpeed( RinexNavigation.NASA_NAVIGATION_DAILY );
+          navigationIn = new RinexNavigationSpeed( model.getSelectedNavigationFTP().getFtp() );
         break;
     }
     

@@ -22,6 +22,9 @@ public class GoGPS_Fx {
 
     String rootdir = System.getProperty("user.dir") + "/src/main/webapp";
     System.setProperty("browser.rootdir", rootdir ); 
+    //System.out.println("browser.rootdir is " + System.getProperty("browser.rootdir"));
+    
+    BrowserBuilder bb = BrowserBuilder.newBrowser();
     
     BrowserBuilder.newBrowser().
     loadPage("pages/index.html").
