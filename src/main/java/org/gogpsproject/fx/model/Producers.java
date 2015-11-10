@@ -18,22 +18,5 @@ public class Producers {
   public static final String FILE   = "file";
   public static final String FTP    = "ftp";
 
-  public static Producer serialObservationProducer;
-  public static Producer rinexObservationProducer;
-  public static Producer serialNavigationProducer;
-  public static Producer rinexNavigationProducer;
-  public static Producer ftpNavigationProducer;
-  public static Producer serialMasterProducer;
-  public static Producer rinexMasterProducer;
-  
-  public static void init(){
-    serialObservationProducer = new Producer( SERIAL, "Serial (Ublox)", null, "" );
-    rinexObservationProducer  = new Producer( FILE,   "Rinex Observation File", null, "./data/yamatogawa_rover.obs");
-    serialNavigationProducer  = new Producer( SERIAL, "Serial (Ublox)", null, "");
-    rinexNavigationProducer   = new Producer( FILE,   "Rinex Navigation File", null, "./data/yamatogawa_rover.nav");
-    ftpNavigationProducer     = new Producer( FTP,    "Rinex FTP", null, "" );
-    serialMasterProducer      = new Producer( SERIAL, "Serial (Ublox)", null, "");
-    rinexMasterProducer       = new Producer( FILE,   "Rinex Observation File", null, "./data/yamatogawa_master.obs");
-  }
 }
 
