@@ -55,14 +55,14 @@
             <h4>Mode</h4>
         </div>
           <div class="col-sm-4">
-              <select class="form-control" data-bind="options: runModes, optionsText: 'name', value: selectedRunMode" ></select>
+              <select class="form-control" data-bind="options: runModes, optionsText: 'name', value: s().selectedRunMode" ></select>
           </div>
           <div class="col-sm-1"></div>
-          <div class="col-sm-3" data-bind="if: selectedRunMode().value() > 0 && selectedRunMode().value() < 10">
+          <div class="col-sm-3" data-bind="if: s().selectedRunMode().value() > 0 && s().selectedRunMode().value() < 10">
               <h4>Dynamic Model</h4>
           </div>
-          <div class="col-sm-3" data-bind="if: selectedRunMode().value() > 0 && selectedRunMode().value() < 10 ">
-              <select class="form-control" data-bind="options: dynModels, optionsText: 'name', value: selectedDynModel"></select>
+          <div class="col-sm-3" data-bind="if: s().selectedRunMode().value() > 0 && s().selectedRunMode().value() < 10 ">
+              <select class="form-control" data-bind="options: dynModels, optionsText: 'name', value: s().selectedDynModel"></select>
         </div>
       </div>
       <div class="row  table-bordered">
@@ -73,7 +73,7 @@
             <div data-bind="foreach: observationProducers">
                 <div class="row table-bordered">
                   <div class="col-sm-1">
-                    <input type="radio" data-bind="checkedValue: $data, checked: $root.selectedObservationProducer" />
+                    <input type="radio" data-bind="checkedValue: $data, checked: $root.s().selectedObservationProducer" />
                   </div>
                   <div class="col-sm-4 other">
                     <span data-bind="text: name"></span>
@@ -99,7 +99,7 @@
             <div data-bind="foreach: navigationProducers">
                 <div class="row  table-bordered">
                   <div class="col-sm-1">
-                    <input type="radio" data-bind="checkedValue: $data, checked: $root.selectedNavigationProducer" />
+                    <input type="radio" data-bind="checkedValue: $data, checked: $root.s().selectedNavigationProducer" />
                   </div>
                   <div class="col-sm-4 other">
                     <span data-bind="text: name"></span>
@@ -114,13 +114,13 @@
                     <input class="form-control" data-bind="textInput: filename"></input>
                 </div>                 
                 <div class="col-sm-7" data-bind="if: type()=='ftp'">
-                	<select class="form-control" data-bind="options: $root.ftps, optionsText: 'name', value: $root.selectedNavigationFTP"></select>
+                	<select class="form-control" data-bind="options: $root.ftps, optionsText: 'name', value: $root.s().selectedNavigationFTP"></select>
                 </div>
              </div>
            </div>
           </div>
      </div>
-      <div class="row  table-bordered"  data-bind="if: selectedRunMode().value() > 0 && selectedRunMode().value() < 10">
+      <div class="row  table-bordered"  data-bind="if: s().selectedRunMode().value() > 0 && s().selectedRunMode().value() < 10">
           <div class="col-sm-5">
             <h4>Master Station</h4>
           </div>
@@ -128,7 +128,7 @@
             <div data-bind="foreach: masterProducers">
                 <div class="row  table-bordered">
                   <div class="col-sm-1">
-                    <input type="radio" data-bind="checkedValue: $data, checked: $root.selectedMasterProducer" />
+                    <input type="radio" data-bind="checkedValue: $data, checked: $root.s().selectedMasterProducer" />
                   </div>
                   <div class="col-sm-4 other">
                     <span data-bind="text: name"></span>
@@ -154,7 +154,7 @@
             <h4>Output Folder</h4>
           </div>
           <div class="col-sm-2">
-              <input class="form-control" data-bind="textInput: outputFolder"></input>
+              <input class="form-control" data-bind="textInput: s().outputFolder"></input>
           </div>
        </div>     
        <div class="row ">

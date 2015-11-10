@@ -1,8 +1,10 @@
 package org.gogpsproject.fx.model;
 
+import java.io.ByteArrayInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -21,6 +23,10 @@ import org.gogpsproject.fx.model.GoGPSModel;
 import org.gogpsproject.fx.model.Mode;
 import org.gogpsproject.fx.model.Producer;
 import org.gogpsproject.fx.model.SerialPortModel;
+import org.gogpsproject.fx.storage.Preferences;
+import org.gogpsproject.fx.storage.Preferences;
+import org.gogpsproject.fx.storage.StorageManager;
+import org.gogpsproject.fx.storage.StorageManager.Storage;
 import org.gogpsproject.parser.rinex.RinexNavigation;
 import org.gogpsproject.parser.rinex.RinexNavigationParser;
 import org.gogpsproject.parser.rinex.RinexNavigationSpeed;
@@ -34,10 +40,12 @@ import org.gogpsproject.producer.KmlProducer;
 import org.gogpsproject.producer.TxtProducer;
 import org.gogpsproject.producer.rinex.RinexV2Producer;
 
+import net.java.html.BrwsrCtx;
 import net.java.html.js.JavaScriptBody;
 import net.java.html.json.ComputedProperty;
 import net.java.html.json.Function;
 import net.java.html.json.Model;
+import net.java.html.json.Models;
 import net.java.html.json.OnPropertyChange;
 import net.java.html.json.OnReceive;
 import net.java.html.json.Property;
@@ -49,19 +57,14 @@ import net.java.html.json.Property;
 @Model(className = "GoGPSModel", targetId = "", properties = {
     @Property(name = "version", type = String.class),
     @Property(name = "ports", type = SerialPortModel.class, array = true),
-    @Property(name = "selectedRunMode", type = Mode.class),
-    @Property(name = "selectedDynModel", type = DynModel.class),
+    @Property(name = "runModes", type = Mode.class, array=true),
     @Property(name = "observationProducers", type = Producer.class, array=true),
     @Property(name = "navigationProducers", type = Producer.class, array=true),
     @Property(name = "masterProducers", type = Producer.class, array=true),
-    @Property(name = "selectedObservationProducer", type = Producer.class),
-    @Property(name = "selectedNavigationProducer", type = Producer.class),
-    @Property(name = "selectedNavigationFTP", type = FTPModel.class),
-    @Property(name = "selectedMasterProducer", type = Producer.class),
-    @Property(name = "outputFolder", type = String.class),
     @Property(name = "satellites", type = SatelliteModel.class, array=true),
     @Property(name = "running", type = boolean.class),
-    @Property(name = "system", type = SystemDef.class)
+    @Property(name = "system", type = SystemDef.class),
+    @Property(name = "s", type = Preferences.class ) // s for state
     })
 public final class GoGPSDef {
   public static final String VERSION = "0.6";
@@ -93,16 +96,6 @@ public final class GoGPSDef {
   };
   
   @ComputedProperty
-  public static List<Mode> runModes(){
-    return Arrays.asList(new Mode[]{ 
-        RunModes.standAlone, 
-        RunModes.doubleDifferences, 
-        RunModes.kalmanFilter, 
-        RunModes.standAloneSnapshot,
-        RunModes.standAloneCoarseTime});
-  }
-
-  @ComputedProperty
   public static List<DynModel> dynModels(){
     return Arrays.asList(new DynModel[]{ 
         DynModels.staticm, 
@@ -125,17 +118,20 @@ public final class GoGPSDef {
    * and populates it with default values
    * @param goGPSModel
    */
-  @Function
+//  @Function
   public static void init( GoGPSModel goGPSModel ){
     goGPSModel.setVersion( VERSION );
+    
+//    if( storage.get("outputFolder").equals("") );
+//      storage.put("outputFolder", "./out");
+//    //goGPSModel
+//    Models;
+    
     FTPSites.init();
-    goGPSModel.setSelectedNavigationFTP(FTPSites.GarnerNavigationAuto);
-    RunModes.init();
-    goGPSModel.setSelectedRunMode(RunModes.standAlone);
+    RunModes.init( goGPSModel );
     DynModels.init();
-    goGPSModel.setSelectedDynModel(DynModels.staticm);
     Producers.init();
-    goGPSModel.setOutputFolder("./out");
+    goGPSModel.setS( Preferences.init() );
   }
 
   /**
@@ -232,9 +228,9 @@ public final class GoGPSDef {
       SerialPortModel port = new SerialPortModel(name, friendlyName, 9600, 1, false);
       ports.add(port);
     }
-    model.setSelectedObservationProducer( model.getObservationProducers().get(0));
-    model.setSelectedNavigationProducer( model.getNavigationProducers().get(0));
-    model.setSelectedMasterProducer( model.getMasterProducers().get(0));
+    model.getS().setSelectedObservationProducer( model.getObservationProducers().get(0));
+    model.getS().setSelectedNavigationProducer( model.getNavigationProducers().get(0));
+    model.getS().setSelectedMasterProducer( model.getMasterProducers().get(0));
   }
 
   /***** Some DukeScript example code, I'll keep it here for now */
@@ -291,17 +287,17 @@ public final class GoGPSDef {
       stop( model );
 
     l.info("Start goGPS" );
-    String outFolder = model.getOutputFolder();
+    String outFolder = model.getS().getOutputFolder();
     checkDir(outFolder);
     
     ConsoleStreamer consoleListener = new ConsoleStreamer(model);
     
-    Producer rover = model.getSelectedObservationProducer(); 
+    Producer rover = model.getS().getSelectedObservationProducer(); 
     switch ( rover.getType() ){
       case Producers.SERIAL : {
           SerialPortModel port1 = rover.getSerialPort();
           
-          if( model.getSelectedRunMode() != RunModes.standAloneSnapshot )
+          if( model.getS().getSelectedRunMode() != RunModes.standAloneSnapshot )
             ubxSerialConn1 = new UBXSerialConnection( port1.getName(), port1.getSpeed() );
           else
             ubxSerialConn1 = new UBXSnapshotSerialConnection( port1.getName(), port1.getSpeed() );
@@ -335,7 +331,7 @@ public final class GoGPSDef {
         }
         break;
         case Producers.FILE: {
-          if( model.getSelectedRunMode() == RunModes.standAloneCoarseTime )
+          if( model.getS().getSelectedRunMode() == RunModes.standAloneCoarseTime )
             roverIn = new RinexObservationParserStreamEventProducer( new RinexObservationParserBitslipCheck(new File( rover.getFilename())));
           else   
             roverIn = new RinexObservationParserStreamEventProducer( new RinexObservationParser(new File( rover.getFilename())));
@@ -345,7 +341,7 @@ public final class GoGPSDef {
         break;
     }
     
-    Producer navigation = model.getSelectedNavigationProducer();
+    Producer navigation = model.getS().getSelectedNavigationProducer();
     switch(navigation.getType()){
       case Producers.SERIAL:
         if( navigation.getSerialPort() == rover.getSerialPort() ) {
@@ -383,12 +379,12 @@ public final class GoGPSDef {
 //          ((StreamEventProducer) navigationIn).addStreamEventListener(listener);
         break;
       case Producers.FTP:
-          navigationIn = new RinexNavigationSpeed( model.getSelectedNavigationFTP().getFtp() );
+          navigationIn = new RinexNavigationSpeed( model.getS().getSelectedNavigationFTP().getFtp() );
         break;
     }
     
-    Producer master = model.getSelectedMasterProducer();
-    if( model.getSelectedRunMode() == RunModes.kalmanFilter || model.getSelectedRunMode()== RunModes.doubleDifferences ){
+    Producer master = model.getS().getSelectedMasterProducer();
+    if( model.getS().getSelectedRunMode() == RunModes.kalmanFilter || model.getS().getSelectedRunMode()== RunModes.doubleDifferences ){
       switch( master.getType()){
         case Producers.SERIAL:
           if( master.getSerialPort() == rover.getSerialPort() ) {
@@ -425,7 +421,7 @@ public final class GoGPSDef {
     }
     
     GoGPS goGPS = new GoGPS( navigationIn, roverIn, masterIn );
-    goGPS.setDynamicModel( model.getSelectedDynModel().getValue() );
+    goGPS.setDynamicModel( model.getS().getSelectedDynModel().getValue() );
 //    goGPS.setCutoff(5);
     goGPS.setCutoff(0);
     String outPathTxt = outFolder + "/out.txt";
@@ -452,11 +448,15 @@ public final class GoGPSDef {
       stop( model );
       return;
     }
+
+    // save state
+    Storage storage = StorageManager.getStorage();
+    storage.put("Preferences", model.getS().toString());
     
     model.setRunning(true);
 //    Coordinates aprioriPos = roverIn.getDefinedPosition();
     
-    goGPS.runThreadMode( model.getSelectedRunMode().getValue() );
+    goGPS.runThreadMode( model.getS().getSelectedRunMode().getValue() );
     
   }
 
