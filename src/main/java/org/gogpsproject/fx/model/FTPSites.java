@@ -1,6 +1,7 @@
 package org.gogpsproject.fx.model;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.gogpsproject.parser.rinex.RinexNavigation;
 
@@ -23,14 +24,14 @@ public class FTPSites {
   public static FTPModel GarnerNavigationAuto;
   public static FTPModel NasaNavigationDaily;
   
-  public static void init( GoGPSModel model ){
+  public static List<FTPModel> init(){
     GarnerNavigationAuto = new FTPModel( "Garner Navigation Auto", RinexNavigation.GARNER_NAVIGATION_AUTO );
     NasaNavigationDaily = new FTPModel( "Nasa Navigation Daily", RinexNavigation.NASA_NAVIGATION_DAILY );
     
-    model.getFtps().addAll( Arrays.asList( 
+    return Arrays.asList( 
           FTPSites.GarnerNavigationAuto,
           FTPSites.NasaNavigationDaily
-    ));
+    );
   }
 }
 

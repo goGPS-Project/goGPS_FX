@@ -39,7 +39,7 @@
   <div class="container">
     <nav class="navbar navbar-default">
       <div class="navbar-header">
-        <em class="navbar-brand active" href="#" >goGPS_FX <span data-bind="text: version"/></em>
+        <em class="navbar-brand active" href="#" >goGPS_FX <span data-bind="text: s().version"/></em>
       </div>
       <div>
         <ul class="nav navbar-nav">
@@ -55,14 +55,14 @@
             <h4>Mode</h4>
         </div>
           <div class="col-sm-4">
-              <select class="form-control" data-bind="options: runModes, optionsText: 'name', value: s().runMode" ></select>
+              <select class="form-control" data-bind="options: s().runModes, optionsText: 'name', value: s().runMode" ></select>
           </div>
           <div class="col-sm-1"></div>
           <div class="col-sm-3" data-bind="if: s().runMode().value() > 0 && s().runMode().value() < 10">
               <h4>Dynamic Model</h4>
           </div>
           <div class="col-sm-3" data-bind="if: s().runMode().value() > 0 && s().runMode().value() < 10 ">
-              <select class="form-control" data-bind="options: dynModels, optionsText: 'name', value: s().dynModel"></select>
+              <select class="form-control" data-bind="options: s().dynModels, optionsText: 'name', value: s().dynModel"></select>
         </div>
       </div>
       <div class="row  table-bordered">
@@ -114,7 +114,7 @@
                     <input class="form-control" data-bind="textInput: filename"></input>
                 </div>                 
                 <div class="col-sm-7" data-bind="if: type()=='ftp'">
-                	<select class="form-control" data-bind="options: $root.ftps, optionsText: 'name', value: $root.s().navigationFTP"></select>
+                	<select class="form-control" data-bind="options: $root.s().ftps, optionsText: 'name', value: $root.s().navigationFTP"></select>
                 </div>
              </div>
            </div>

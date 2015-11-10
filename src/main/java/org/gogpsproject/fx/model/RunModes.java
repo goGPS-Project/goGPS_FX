@@ -20,18 +20,18 @@ public class RunModes {
   public static Mode standAloneSnapshot;
   public static Mode standAloneCoarseTime;
 
-  public static void init( GoGPSModel model ){
+  public static List<Mode> init(){
     standAlone           = new Mode("Code Stand-alone",             GoGPS.RUN_MODE_STANDALONE);
     doubleDifferences    = new Mode("Code Double Difference",       GoGPS.RUN_MODE_DOUBLE_DIFF);
     kalmanFilter         = new Mode("Kalman Filter",                GoGPS.RUN_MODE_KALMAN_FILTER);
     standAloneSnapshot   = new Mode("Code Stand-alone Snapshot",    GoGPS.RUN_MODE_STANDALONE_SNAPSHOT);
     standAloneCoarseTime = new Mode("Code Stand-alone Coarse Time", GoGPS.RUN_MODE_STANDALONE_COARSETIME);
     
-    model.getRunModes().addAll( Arrays.asList(  
-                                  RunModes.standAlone, 
-                                  RunModes.doubleDifferences, 
-                                  RunModes.kalmanFilter, 
-                                  RunModes.standAloneSnapshot,
-                                  RunModes.standAloneCoarseTime ));
+    return Arrays.asList(  
+        RunModes.standAlone, 
+        RunModes.doubleDifferences, 
+        RunModes.kalmanFilter, 
+        RunModes.standAloneSnapshot,
+        RunModes.standAloneCoarseTime );
   }
 }

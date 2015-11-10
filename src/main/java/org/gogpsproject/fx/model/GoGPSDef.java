@@ -40,11 +40,7 @@ import net.java.html.json.Property;
  * It defines GoGPSModel, the root of our model tree, it maps to a "goGPS" javascript object
  */
 @Model(className = "GoGPSModel", targetId = "", properties = {
-    @Property(name = "version", type = String.class),
     @Property(name = "ports", type = SerialPortModel.class, array = true),
-    @Property(name = "runModes", type = Mode.class, array=true),
-    @Property(name = "ftps", type = FTPModel.class, array=true),
-    @Property(name = "dynModels", type = DynModel.class, array=true),
     @Property(name = "observationProducers", type = Producer.class, array=true),
     @Property(name = "navigationProducers", type = Producer.class, array=true),
     @Property(name = "masterProducers", type = Producer.class, array=true),
@@ -87,15 +83,11 @@ public final class GoGPSDef {
   /**
    * Called by onPageLoad(), it builds goGPSModel and its descendants
    * and populates it with default values
-   * @param goGPSModel
+   * @param model
    */
 //  @Function
-  public static void init( GoGPSModel goGPSModel ){
-    goGPSModel.setVersion( VERSION );
-    FTPSites.init( goGPSModel );
-    RunModes.init( goGPSModel );
-    DynModels.init( goGPSModel );
-    Preferences.init( goGPSModel );
+  public static void init( GoGPSModel model ){
+    Preferences.init( model );
   }
 
   /**

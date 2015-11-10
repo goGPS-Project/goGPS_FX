@@ -9,6 +9,7 @@ import org.gogpsproject.fx.model.DynModel;
 import org.gogpsproject.fx.model.DynModels;
 import org.gogpsproject.fx.model.FTPModel;
 import org.gogpsproject.fx.model.FTPSites;
+import org.gogpsproject.fx.model.GoGPSDef;
 import org.gogpsproject.fx.model.GoGPSModel;
 import org.gogpsproject.fx.model.Mode;
 import org.gogpsproject.fx.model.Producer;
@@ -23,8 +24,13 @@ import net.java.html.json.OnPropertyChange;
 import net.java.html.json.Property;
 
 @Model(className = "State", targetId ="", properties = {
+    @Property(name = "version", type = String.class),
     @Property(name = "runMode",  type = Mode.class),
     @Property(name = "dynModel", type = DynModel.class),
+    
+    @Property(name = "runModes", type = Mode.class, array=true),
+    @Property(name = "ftps", type = FTPModel.class, array=true),
+    @Property(name = "dynModels", type = DynModel.class, array=true),
     
     @Property(name = "serialObservationProducer", type = Producer.class),
     @Property(name = "rinexObservationProducer", type = Producer.class),
@@ -42,7 +48,7 @@ import net.java.html.json.Property;
 })
 public class Preferences {
   public static void init( GoGPSModel model ){
-    State s;
+    State s = null;
     BrwsrCtx ctx = BrwsrCtx.findDefault(GoGPS_Fx.class);
     Storage storage = StorageManager.getStorage();
     String modelstr = storage.get("Preferences");
@@ -56,11 +62,9 @@ public class Preferences {
         throw new RuntimeException(ex);
       }
     }
-    else {
+    if( s == null || !s.getVersion().equals( GoGPSDef.VERSION )){
       s = new State();
-      s.setNavigationFTP(FTPSites.GarnerNavigationAuto);
-      s.setRunMode(RunModes.standAlone);
-      s.setDynModel(DynModels.staticm);
+      s.setVersion( GoGPSDef.VERSION );
   //    goGPSModel.setOutputFolder( storage.get("outputFolder") );
       s.setOutputFolder( "./out" );
       s.setSerialObservationProducer( new Producer( Producers.SERIAL, "Serial (Ublox)", null, "" ));
@@ -70,6 +74,12 @@ public class Preferences {
       s.setFtpNavigationProducer( new Producer( Producers.FTP,    "Rinex FTP", null, "" ) );
       s.setSerialMasterProducer( new Producer( Producers.SERIAL, "Serial (Ublox)", null, "") );
       s.setRinexMasterProducer( new Producer( Producers.FILE,   "Rinex Observation File", null, "./data/yamatogawa_master.obs") );
+      s.getFtps().addAll( FTPSites.init() );
+      s.getRunModes().addAll( RunModes.init());
+      s.getDynModels().addAll( DynModels.init());
+      s.setNavigationFTP(FTPSites.GarnerNavigationAuto);
+      s.setRunMode(RunModes.standAlone);
+      s.setDynModel(DynModels.staticm);
     }
     
     model.setS(s);
