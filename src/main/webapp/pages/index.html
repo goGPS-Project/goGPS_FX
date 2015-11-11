@@ -62,7 +62,7 @@
               <h4>Dynamic Model</h4>
           </div>
           <div class="col-sm-3" data-bind="if: s().runMode() > 0 && s().runMode() < 10 ">
-              <select class="form-control" data-bind="options: dynModels, optionsText: 'name', value: s().dynModel"></select>
+              <select class="form-control" data-bind="options: dynModels, optionsText: 'name', optionsValue: 'value', value: s().dynModel"></select>
         </div>
       </div>
       <div class="row  table-bordered">

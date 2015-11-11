@@ -384,7 +384,7 @@ public final class GoGPSDef {
     }
     
     GoGPS goGPS = new GoGPS( navigationIn, roverIn, masterIn );
-    goGPS.setDynamicModel( model.getS().getDynModel().getValue() );
+    goGPS.setDynamicModel( model.getS().getDynModel() );
 //    goGPS.setCutoff(5);
     goGPS.setCutoff(0);
     String outPathTxt = outFolder + "/out.txt";
