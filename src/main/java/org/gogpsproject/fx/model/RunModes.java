@@ -14,26 +14,13 @@ import net.java.html.json.Property;
     @Property(name = "value", type = int.class )
 })
 public class RunModes {
-  public static Mode standAlone;
-  public static Mode doubleDifferences;
-  public static Mode kalmanFilter;
-  public static Mode standAloneSnapshot;
-  public static Mode standAloneCoarseTime;
-
   public static List<Mode> init(){
-    standAlone           = new Mode("Code Stand-alone",             GoGPS.RUN_MODE_STANDALONE);
-    doubleDifferences    = new Mode("Code Double Difference",       GoGPS.RUN_MODE_DOUBLE_DIFF);
-    kalmanFilter         = new Mode("Kalman Filter",                GoGPS.RUN_MODE_KALMAN_FILTER);
-    standAloneSnapshot   = new Mode("Code Stand-alone Snapshot",    GoGPS.RUN_MODE_STANDALONE_SNAPSHOT);
-    standAloneCoarseTime = new Mode("Code Stand-alone Coarse Time", GoGPS.RUN_MODE_STANDALONE_COARSETIME);
-    
     return Arrays.asList(  
-        RunModes.standAlone, 
-        RunModes.doubleDifferences, 
-        RunModes.kalmanFilter, 
-        RunModes.standAloneCoarseTime,
-        RunModes.standAloneSnapshot
+        new Mode("Code Stand-alone",             GoGPS.RUN_MODE_STANDALONE), 
+        new Mode("Code Double Difference",       GoGPS.RUN_MODE_DOUBLE_DIFF), 
+        new Mode("Kalman Filter",                GoGPS.RUN_MODE_KALMAN_FILTER), 
+        new Mode("Code Stand-alone Coarse Time", GoGPS.RUN_MODE_STANDALONE_COARSETIME),
+        new Mode("Code Stand-alone Snapshot",    GoGPS.RUN_MODE_STANDALONE_SNAPSHOT)
     );
   }
-  
 }

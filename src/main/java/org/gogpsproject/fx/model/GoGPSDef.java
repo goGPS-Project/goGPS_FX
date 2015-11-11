@@ -259,7 +259,7 @@ public final class GoGPSDef {
       case Producers.SERIAL : {
           SerialPortModel port1 = rover.getSerialPort();
           
-          if( !model.getS().getRunMode().equals( RunModes.standAloneSnapshot.getValue() ))
+          if( model.getS().getRunMode() != GoGPS.RUN_MODE_STANDALONE_SNAPSHOT )
             ubxSerialConn1 = new UBXSerialConnection( port1.getName(), port1.getSpeed() );
           else
             ubxSerialConn1 = new UBXSnapshotSerialConnection( port1.getName(), port1.getSpeed() );
@@ -293,7 +293,7 @@ public final class GoGPSDef {
         }
         break;
         case Producers.FILE: {
-          if( model.getS().getRunMode().equals( RunModes.standAloneCoarseTime.getValue() ))
+          if( model.getS().getRunMode() == GoGPS.RUN_MODE_STANDALONE_COARSETIME )
             roverIn = new RinexObservationParserStreamEventProducer( new RinexObservationParserBitslipCheck(new File( rover.getFilename())));
           else   
             roverIn = new RinexObservationParserStreamEventProducer( new RinexObservationParser(new File( rover.getFilename())));
@@ -346,8 +346,8 @@ public final class GoGPSDef {
     }
     
     Producer master = model.getS().getMasterProducer();
-    if( model.getS().getRunMode().equals( RunModes.kalmanFilter.getValue()) 
-        || model.getS().getRunMode().equals( RunModes.doubleDifferences )){
+    if( model.getS().getRunMode() == GoGPS.RUN_MODE_KALMAN_FILTER  
+     || model.getS().getRunMode() == GoGPS.RUN_MODE_DOUBLE_DIFF ){
       switch( master.getType()){
         case Producers.SERIAL:
           if( master.getSerialPort() == rover.getSerialPort() ) {
