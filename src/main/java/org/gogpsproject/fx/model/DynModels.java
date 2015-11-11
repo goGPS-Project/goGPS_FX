@@ -19,13 +19,25 @@ public class DynModels {
   public static DynModel constantAcceleration;
   
   public static List<DynModel> init(){
-    staticm               = new DynModel("Static",   GoGPS.DYN_MODEL_STATIC);
-    constantSpeed         = new DynModel("Constant Speed",   GoGPS.DYN_MODEL_CONST_SPEED);
-    constantAcceleration  = new DynModel("Constant Acceleration",   GoGPS.DYN_MODEL_CONST_ACCELERATION);
+    staticm               = new DynModel("Static",                GoGPS.DYN_MODEL_STATIC);
+    constantSpeed         = new DynModel("Constant Speed",        GoGPS.DYN_MODEL_CONST_SPEED);
+    constantAcceleration  = new DynModel("Constant Acceleration", GoGPS.DYN_MODEL_CONST_ACCELERATION);
     
     return Arrays.asList( 
           DynModels.staticm, 
           DynModels.constantSpeed, 
           DynModels.constantAcceleration );
+  }
+  
+  public static DynModel get( int value ){
+    switch( value ){
+      case GoGPS.DYN_MODEL_STATIC:
+          return staticm;
+      case GoGPS.DYN_MODEL_CONST_ACCELERATION:
+        return constantAcceleration;
+      default:
+      case GoGPS.DYN_MODEL_CONST_SPEED:
+        return constantSpeed;
+      }
   }
 }

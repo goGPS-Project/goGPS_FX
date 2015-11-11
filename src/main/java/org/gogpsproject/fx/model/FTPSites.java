@@ -33,5 +33,14 @@ public class FTPSites {
           FTPSites.NasaNavigationDaily
     );
   }
+  
+  public static FTPModel get( String ftp ){
+    switch(ftp){
+      case RinexNavigation.NASA_NAVIGATION_DAILY:
+        return NasaNavigationDaily;
+       default:
+         return GarnerNavigationAuto;
+    }
+  }
 }
 

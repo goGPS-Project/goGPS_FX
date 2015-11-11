@@ -40,6 +40,10 @@ import net.java.html.json.Property;
  * It defines GoGPSModel, the root of our model tree, it maps to a "goGPS" javascript object
  */
 @Model(className = "GoGPSModel", targetId = "", properties = {
+    @Property(name = "runModes", type = Mode.class, array=true),
+    @Property(name = "ftps", type = FTPModel.class, array=true),
+    @Property(name = "dynModels", type = DynModel.class, array=true),
+    
     @Property(name = "ports", type = SerialPortModel.class, array = true),
     @Property(name = "observationProducers", type = Producer.class, array=true),
     @Property(name = "navigationProducers", type = Producer.class, array=true),
@@ -87,7 +91,10 @@ public final class GoGPSDef {
    */
 //  @Function
   public static void init( GoGPSModel model ){
-    Preferences.init( model );
+    model.getRunModes().addAll( RunModes.init());
+    model.getDynModels().addAll( DynModels.init() );
+    model.getFtps().addAll( FTPSites.init() );
+    model.setS( Preferences.init() );
   }
 
   /**
@@ -252,7 +259,7 @@ public final class GoGPSDef {
       case Producers.SERIAL : {
           SerialPortModel port1 = rover.getSerialPort();
           
-          if( model.getS().getRunMode() != RunModes.standAloneSnapshot )
+          if( !model.getS().getRunMode().equals( RunModes.standAloneSnapshot.getValue() ))
             ubxSerialConn1 = new UBXSerialConnection( port1.getName(), port1.getSpeed() );
           else
             ubxSerialConn1 = new UBXSnapshotSerialConnection( port1.getName(), port1.getSpeed() );
@@ -286,7 +293,7 @@ public final class GoGPSDef {
         }
         break;
         case Producers.FILE: {
-          if( model.getS().getRunMode() == RunModes.standAloneCoarseTime )
+          if( model.getS().getRunMode().equals( RunModes.standAloneCoarseTime.getValue() ))
             roverIn = new RinexObservationParserStreamEventProducer( new RinexObservationParserBitslipCheck(new File( rover.getFilename())));
           else   
             roverIn = new RinexObservationParserStreamEventProducer( new RinexObservationParser(new File( rover.getFilename())));
@@ -339,7 +346,8 @@ public final class GoGPSDef {
     }
     
     Producer master = model.getS().getMasterProducer();
-    if( model.getS().getRunMode() == RunModes.kalmanFilter || model.getS().getRunMode()== RunModes.doubleDifferences ){
+    if( model.getS().getRunMode().equals( RunModes.kalmanFilter.getValue()) 
+        || model.getS().getRunMode().equals( RunModes.doubleDifferences )){
       switch( master.getType()){
         case Producers.SERIAL:
           if( master.getSerialPort() == rover.getSerialPort() ) {
@@ -411,7 +419,7 @@ public final class GoGPSDef {
     model.setRunning(true);
 //    Coordinates aprioriPos = roverIn.getDefinedPosition();
     
-    goGPS.runThreadMode( model.getS().getRunMode().getValue() );
+    goGPS.runThreadMode( model.getS().getRunMode() );
     
   }
 

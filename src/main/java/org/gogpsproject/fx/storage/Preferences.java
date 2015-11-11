@@ -25,12 +25,8 @@ import net.java.html.json.Property;
 
 @Model(className = "State", targetId ="", properties = {
     @Property(name = "version", type = String.class),
-    @Property(name = "runMode",  type = Mode.class),
+    @Property(name = "runMode",  type = Integer.class),
     @Property(name = "dynModel", type = DynModel.class),
-    
-    @Property(name = "runModes", type = Mode.class, array=true),
-    @Property(name = "ftps", type = FTPModel.class, array=true),
-    @Property(name = "dynModels", type = DynModel.class, array=true),
     
     @Property(name = "serialObservationProducer", type = Producer.class),
     @Property(name = "rinexObservationProducer", type = Producer.class),
@@ -47,8 +43,10 @@ import net.java.html.json.Property;
     @Property(name = "outputFolder", type = String.class)
 })
 public class Preferences {
-  public static void init( GoGPSModel model ){
+  
+  public static State init(){
     State s = null;
+    
     BrwsrCtx ctx = BrwsrCtx.findDefault(GoGPS_Fx.class);
     Storage storage = StorageManager.getStorage();
     String modelstr = storage.get("Preferences");
@@ -56,7 +54,9 @@ public class Preferences {
       InputStream is = new ByteArrayInputStream(modelstr.getBytes(StandardCharsets.UTF_8));
       try {
         s = Models.parse( ctx, State.class, is );
-        // TODO update default values
+        // update default values to match singleton objects
+        s.setDynModel( DynModels.get( s.getDynModel().getValue()) );
+        s.setNavigationFTP( FTPSites.get(s.getNavigationFTP().getFtp()) );
       }
       catch(Exception ex){
         throw new RuntimeException(ex);
@@ -74,15 +74,11 @@ public class Preferences {
       s.setFtpNavigationProducer( new Producer( Producers.FTP,    "Rinex FTP", null, "" ) );
       s.setSerialMasterProducer( new Producer( Producers.SERIAL, "Serial (Ublox)", null, "") );
       s.setRinexMasterProducer( new Producer( Producers.FILE,   "Rinex Observation File", null, "./data/yamatogawa_master.obs") );
-      s.getFtps().addAll( FTPSites.init() );
-      s.getRunModes().addAll( RunModes.init());
-      s.getDynModels().addAll( DynModels.init());
       s.setNavigationFTP(FTPSites.GarnerNavigationAuto);
-      s.setRunMode(RunModes.standAlone);
+      s.setRunMode(RunModes.standAlone.getValue());
       s.setDynModel(DynModels.staticm);
     }
-    
-    model.setS(s);
+    return s;
   }
   
 /*  @OnPropertyChange("s")

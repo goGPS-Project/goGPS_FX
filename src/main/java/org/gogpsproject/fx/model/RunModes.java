@@ -31,7 +31,9 @@ public class RunModes {
         RunModes.standAlone, 
         RunModes.doubleDifferences, 
         RunModes.kalmanFilter, 
-        RunModes.standAloneSnapshot,
-        RunModes.standAloneCoarseTime );
+        RunModes.standAloneCoarseTime,
+        RunModes.standAloneSnapshot
+    );
   }
+  
 }
