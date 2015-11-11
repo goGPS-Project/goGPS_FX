@@ -1,6 +1,5 @@
 package org.gogpsproject.fx.model;
 
-import org.gogpsproject.fx.model.Producer;
 import org.gogpsproject.fx.model.SerialPortModel;
 
 import net.java.html.json.Model;
@@ -11,6 +10,7 @@ import net.java.html.json.Property;
     @Property(name = "name", type = String.class ),
     @Property(name = "serialPort", type = SerialPortModel.class),
     @Property(name = "filename", type = String.class ),
+    @Property(name = "ftpSite",  type = FTPSite.class)
 })
 public class Producers {
   

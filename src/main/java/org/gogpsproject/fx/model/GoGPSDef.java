@@ -41,7 +41,7 @@ import net.java.html.json.Property;
  */
 @Model(className = "GoGPSModel", targetId = "", properties = {
     @Property(name = "runModes", type = Mode.class, array=true),
-    @Property(name = "ftps", type = FTPModel.class, array=true),
+    @Property(name = "ftpSites", type = FTPSite.class, array=true),
     @Property(name = "dynModels", type = DynModel.class, array=true),
     
     @Property(name = "ports", type = SerialPortModel.class, array = true),
@@ -93,7 +93,7 @@ public final class GoGPSDef {
   public static void init( GoGPSModel model ){
     model.getRunModes().addAll( RunModes.init());
     model.getDynModels().addAll( DynModels.init() );
-    model.getFtps().addAll( FTPSites.init() );
+    model.getFtpSites().addAll( FTPSites.init() );
     model.setS( Preferences.init() );
   }
 
@@ -341,7 +341,7 @@ public final class GoGPSDef {
 //          ((StreamEventProducer) navigationIn).addStreamEventListener(listener);
         break;
       case Producers.FTP:
-          navigationIn = new RinexNavigationSpeed( model.getS().getNavigationFTP().getFtp() );
+          navigationIn = new RinexNavigationSpeed( navigation.getFtpSite().getFtp() );
         break;
     }
     

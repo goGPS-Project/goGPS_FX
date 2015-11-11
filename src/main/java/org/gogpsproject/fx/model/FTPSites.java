@@ -8,7 +8,7 @@ import org.gogpsproject.parser.rinex.RinexNavigation;
 import net.java.html.json.Model;
 import net.java.html.json.Property;
 
-@Model(className = "FTPModel", targetId="", properties = {
+@Model(className = "FTPSite", targetId="", properties = {
     @Property(name = "name", type = String.class ),
     @Property(name = "ftp", type = String.class)
 })
@@ -21,20 +21,20 @@ public class FTPSites {
   public final static String IGN_NAVIGATION_HOURLY_ZIM2 = "ftp://igs.ensg.ign.fr/pub/igs/data/hourly/${yyyy}/${ddd}/zim2${ddd}${h}.${yy}n.Z";
   public final static String NASA_NAVIGATION_DAILY = "ftp://cddis.gsfc.nasa.gov/pub/gps/data/daily/${yyyy}/${ddd}/${yy}n/brdc${ddd}0.${yy}n.Z";
    */
-  public static FTPModel GarnerNavigationAuto;
-  public static FTPModel NasaNavigationDaily;
+  public static FTPSite GarnerNavigationAuto;
+  public static FTPSite NasaNavigationDaily;
   
-  public static List<FTPModel> init(){
-    GarnerNavigationAuto = new FTPModel( "Garner Navigation Auto", RinexNavigation.GARNER_NAVIGATION_AUTO );
-    NasaNavigationDaily = new FTPModel( "Nasa Navigation Daily", RinexNavigation.NASA_NAVIGATION_DAILY );
+  public static List<FTPSite> init(){
+    GarnerNavigationAuto = new FTPSite( "Garner Navigation Auto", RinexNavigation.GARNER_NAVIGATION_AUTO );
+    NasaNavigationDaily = new FTPSite( "Nasa Navigation Daily", RinexNavigation.NASA_NAVIGATION_DAILY );
     
     return Arrays.asList( 
-          FTPSites.GarnerNavigationAuto,
-          FTPSites.NasaNavigationDaily
+        FTPSites.GarnerNavigationAuto,
+        FTPSites.NasaNavigationDaily
     );
   }
   
-  public static FTPModel get( String ftp ){
+  public static FTPSite get( String ftp ){
     switch(ftp){
       case RinexNavigation.NASA_NAVIGATION_DAILY:
         return NasaNavigationDaily;
