@@ -22,7 +22,7 @@ import net.java.html.json.Model;
 import net.java.html.json.Models;
 import net.java.html.json.Property;
 
-@Model(className = "State", targetId ="", properties = {
+@Model(className = "Preferences", targetId ="", properties = {
     @Property(name = "version", type = String.class),
     @Property(name = "runMode",  type = int.class),
     @Property(name = "dynModel", type = int.class),
@@ -31,21 +31,22 @@ import net.java.html.json.Property;
     @Property(name = "masterProducer", type = Producer.class),
     @Property(name = "outputFolder", type = String.class),
     
+//    @Property(name = "producers", type = Producer.class, array=true),
     @Property(name = "serialObservationProducer", type = Producer.class),
-    @Property(name = "rinexObservationProducer", type = Producer.class),
-    @Property(name = "serialNavigationProducer", type = Producer.class),
-    @Property(name = "rinexNavigationProducer", type = Producer.class),
-    @Property(name = "ftpNavigationProducer", type = Producer.class),
-    @Property(name = "serialMasterProducer", type = Producer.class),
-    @Property(name = "rinexMasterProducer", type = Producer.class),
+    @Property(name = "rinexObservationProducer",  type = Producer.class),
+    @Property(name = "serialNavigationProducer",  type = Producer.class),
+    @Property(name = "rinexNavigationProducer",   type = Producer.class),
+    @Property(name = "ftpNavigationProducer",     type = Producer.class),
+    @Property(name = "serialMasterProducer",      type = Producer.class),
+    @Property(name = "rinexMasterProducer",       type = Producer.class),
     
 })
-public class Preferences {
+public class PreferencesDef {
  
-  private static final Logger logger = Logger.getLogger(Preferences.class.getName());
+  private static final Logger logger = Logger.getLogger(PreferencesDef.class.getName());
 
-  public static State init(){
-    State s = null;
+  public static Preferences init(){
+    Preferences s = null;
     
     try {
       BrwsrCtx ctx = BrwsrCtx.findDefault(GoGPS_Fx.class);
@@ -53,7 +54,7 @@ public class Preferences {
       String modelstr = storage.get("Preferences");
       if( !modelstr.equals("") &&  !modelstr.equals("undefined") ){
         InputStream is = new ByteArrayInputStream(modelstr.getBytes(StandardCharsets.UTF_8));
-          s = Models.parse( ctx, State.class, is );
+          s = Models.parse( ctx, Preferences.class, is );
         }
     }
     catch(Exception ex){
@@ -61,23 +62,20 @@ public class Preferences {
     }
     finally{
       if( s == null || !s.getVersion().equals( GoGPSDef.VERSION )){
-        s = new State();
+        s = new Preferences();
         s.setVersion( GoGPSDef.VERSION );
-    //    goGPSModel.setOutputFolder( storage.get("outputFolder") );
-        s.setOutputFolder( "./out" );
-        
+//        s.getProducers().addAll( Producers.init() );
         s.setSerialObservationProducer( new Producer( Producers.SERIAL, "Serial (Ublox)", null, "", null ));
-        s.setRinexObservationProducer( new Producer( Producers.FILE,   "Rinex Observation File", null, "./data/yamatogawa_rover.obs", null ));
-
-        s.setSerialNavigationProducer( new Producer( Producers.SERIAL, "Serial (Ublox)", null, "", null ));
-        s.setRinexNavigationProducer( new Producer( Producers.FILE,   "Rinex Navigation File", null, "./data/yamatogawa_rover.nav", null ));
-        s.setFtpNavigationProducer( new Producer( Producers.FTP,    "Rinex FTP", null, "", FTPSites.GarnerNavigationAuto ));
-        
-        s.setSerialMasterProducer( new Producer( Producers.SERIAL, "Serial (Ublox)", null, "", null ));
-        s.setRinexMasterProducer( new Producer( Producers.FILE,   "Rinex Observation File", null, "./data/yamatogawa_master.obs", null ));
+        s.setRinexObservationProducer( new Producer( Producers.FILE,    "Rinex Observation File", null, "./data/yamatogawa_rover.obs", null ));
+        s.setSerialNavigationProducer( new Producer( Producers.SERIAL,  "Serial (Ublox)", null, "", null ));
+        s.setRinexNavigationProducer( new Producer( Producers.FILE,     "Rinex Navigation File", null, "./data/yamatogawa_rover.nav", null ));
+        s.setFtpNavigationProducer( new Producer( Producers.FTP,        "Rinex FTP", null, "", FTPSites.GarnerNavigationAuto));
+        s.setSerialMasterProducer( new Producer( Producers.SERIAL,      "Serial (Ublox)", null, "", null ));
+        s.setRinexMasterProducer( new Producer( Producers.FILE,         "Rinex Observation File", null, "./data/yamatogawa_master.obs", null ));
         
         s.setRunMode(GoGPS.RUN_MODE_STANDALONE);
         s.setDynModel(GoGPS.DYN_MODEL_STATIC);
+        s.setOutputFolder( "./out" );
       }
     }
     return s;
