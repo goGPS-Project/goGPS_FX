@@ -52,7 +52,7 @@ import net.java.html.json.Property;
     @Property(name = "satellites", type = SatelliteModel.class, array=true),
     @Property(name = "running", type = boolean.class),
     @Property(name = "system", type = SystemDef.class),
-    @Property(name = "s", type = Preferences.class ) // s for state
+    @Property(name = "p", type = Preferences.class ) 
     })
 public final class GoGPSDef {
   public static final String VERSION = "0.6";
@@ -95,7 +95,7 @@ public final class GoGPSDef {
     model.getRunModes().addAll( RunModes.init());
     model.getDynModels().addAll( DynModels.init() );
     model.getFtpSites().addAll( FTPSites.init() );
-    model.setS( PreferencesDef.init() );
+    model.setP( PreferencesDef.init() );
   }
 
   /**
@@ -119,12 +119,12 @@ public final class GoGPSDef {
     observationProducers.clear();
 
     if (ports.size() > 0) {
-      model.getS().getSerialObservationProducer().setSerialPort(ports.get(0));
-      observationProducers.add( model.getS().getSerialObservationProducer() );
+      model.getP().getSerialObservationProducer().setSerialPort(ports.get(0));
+      observationProducers.add( model.getP().getSerialObservationProducer() );
     } else {
-      model.getS().getSerialObservationProducer().setSerialPort(null);
+      model.getP().getSerialObservationProducer().setSerialPort(null);
     }
-    observationProducers.add( model.getS().getRinexObservationProducer() );
+    observationProducers.add( model.getP().getRinexObservationProducer() );
   }
 
   @OnPropertyChange("ports")
@@ -134,14 +134,14 @@ public final class GoGPSDef {
     navigationProducers.clear();
 
     if( ports.size() > 0 ){
-      model.getS().getSerialNavigationProducer().setSerialPort(ports.get(0));
-      navigationProducers.add( model.getS().getSerialNavigationProducer() );
+      model.getP().getSerialNavigationProducer().setSerialPort(ports.get(0));
+      navigationProducers.add( model.getP().getSerialNavigationProducer() );
     } else {
-      model.getS().getSerialNavigationProducer().setSerialPort(null);
+      model.getP().getSerialNavigationProducer().setSerialPort(null);
     }
 
-    navigationProducers.add( model.getS().getRinexNavigationProducer() );
-    navigationProducers.add( model.getS().getFtpNavigationProducer() );
+    navigationProducers.add( model.getP().getRinexNavigationProducer() );
+    navigationProducers.add( model.getP().getFtpNavigationProducer() );
   }
 
   @OnPropertyChange("ports")
@@ -151,14 +151,14 @@ public final class GoGPSDef {
     masterProducers.clear();
 
     if (ports.size() > 0) {
-      masterProducers.add( model.getS().getSerialMasterProducer() );
+      masterProducers.add( model.getP().getSerialMasterProducer() );
     } else {
-      model.getS().getSerialMasterProducer().setSerialPort(null);
+      model.getP().getSerialMasterProducer().setSerialPort(null);
     }
     if (ports.size() > 1) {
-      model.getS().getSerialMasterProducer().setSerialPort(ports.get(1));
+      model.getP().getSerialMasterProducer().setSerialPort(ports.get(1));
     }
-    masterProducers.add( model.getS().getSerialMasterProducer() );
+    masterProducers.add( model.getP().getSerialMasterProducer() );
   }
 
   /**
@@ -191,9 +191,9 @@ public final class GoGPSDef {
       SerialPortModel port = new SerialPortModel(name, friendlyName, 9600, 1, false);
       ports.add(port);
     }
-    model.getS().setObservationProducer( model.getObservationProducers().get(0));
-    model.getS().setNavigationProducer( model.getNavigationProducers().get(0));
-    model.getS().setMasterProducer( model.getMasterProducers().get(0));
+    model.getP().setObservationProducer( model.getObservationProducers().get(0));
+    model.getP().setNavigationProducer( model.getNavigationProducers().get(0));
+    model.getP().setMasterProducer( model.getMasterProducers().get(0));
   }
 
   /***** Some DukeScript example code, I'll keep it here for now */
@@ -250,17 +250,17 @@ public final class GoGPSDef {
       stop( model );
 
     l.info("Start goGPS" );
-    String outFolder = model.getS().getOutputFolder();
+    String outFolder = model.getP().getOutputFolder();
     checkDir(outFolder);
     
     ConsoleStreamer consoleListener = new ConsoleStreamer(model);
     
-    Producer rover = model.getS().getObservationProducer(); 
+    Producer rover = model.getP().getObservationProducer(); 
     switch ( rover.getType() ){
       case Producers.SERIAL : {
           SerialPortModel port1 = rover.getSerialPort();
           
-          if( model.getS().getRunMode() != GoGPS.RUN_MODE_STANDALONE_SNAPSHOT )
+          if( model.getP().getRunMode() != GoGPS.RUN_MODE_STANDALONE_SNAPSHOT )
             ubxSerialConn1 = new UBXSerialConnection( port1.getName(), port1.getSpeed() );
           else
             ubxSerialConn1 = new UBXSnapshotSerialConnection( port1.getName(), port1.getSpeed() );
@@ -294,7 +294,7 @@ public final class GoGPSDef {
         }
         break;
         case Producers.FILE: {
-          if( model.getS().getRunMode() == GoGPS.RUN_MODE_STANDALONE_COARSETIME )
+          if( model.getP().getRunMode() == GoGPS.RUN_MODE_STANDALONE_COARSETIME )
             roverIn = new RinexObservationParserStreamEventProducer( new RinexObservationParserBitslipCheck(new File( rover.getFilename())));
           else   
             roverIn = new RinexObservationParserStreamEventProducer( new RinexObservationParser(new File( rover.getFilename())));
@@ -304,7 +304,7 @@ public final class GoGPSDef {
         break;
     }
     
-    Producer navigation = model.getS().getNavigationProducer();
+    Producer navigation = model.getP().getNavigationProducer();
     switch(navigation.getType()){
       case Producers.SERIAL:
         if( navigation.getSerialPort() == rover.getSerialPort() ) {
@@ -346,9 +346,9 @@ public final class GoGPSDef {
         break;
     }
     
-    Producer master = model.getS().getMasterProducer();
-    if( model.getS().getRunMode() == GoGPS.RUN_MODE_KALMAN_FILTER  
-     || model.getS().getRunMode() == GoGPS.RUN_MODE_DOUBLE_DIFF ){
+    Producer master = model.getP().getMasterProducer();
+    if( model.getP().getRunMode() == GoGPS.RUN_MODE_KALMAN_FILTER  
+     || model.getP().getRunMode() == GoGPS.RUN_MODE_DOUBLE_DIFF ){
       switch( master.getType()){
         case Producers.SERIAL:
           if( master.getSerialPort() == rover.getSerialPort() ) {
@@ -385,7 +385,7 @@ public final class GoGPSDef {
     }
     
     GoGPS goGPS = new GoGPS( navigationIn, roverIn, masterIn );
-    goGPS.setDynamicModel( model.getS().getDynModel() );
+    goGPS.setDynamicModel( model.getP().getDynModel() );
 //    goGPS.setCutoff(5);
     goGPS.setCutoff(0);
     String outPathTxt = outFolder + "/out.txt";
@@ -415,12 +415,12 @@ public final class GoGPSDef {
 
     // save state
     Storage storage = StorageManager.getStorage();
-    storage.put("Preferences", model.getS().toString());
+    storage.put("Preferences", model.getP().toString());
     
     model.setRunning(true);
 //    Coordinates aprioriPos = roverIn.getDefinedPosition();
     
-    goGPS.runThreadMode( model.getS().getRunMode() );
+    goGPS.runThreadMode( model.getP().getRunMode() );
     
   }
 
