@@ -16,6 +16,7 @@ import org.gogpsproject.ObservationsSpeedBuffer;
 import org.gogpsproject.StreamEventProducer;
 import org.gogpsproject.fx.GoGPS_Fx;
 import org.gogpsproject.fx.storage.Preferences;
+import org.gogpsproject.fx.storage.PreferencesDef;
 import org.gogpsproject.fx.storage.StorageManager;
 import org.gogpsproject.fx.storage.StorageManager.Storage;
 import org.gogpsproject.parser.rinex.RinexNavigationSpeed;
@@ -94,7 +95,7 @@ public final class GoGPSDef {
     model.getRunModes().addAll( RunModes.init());
     model.getDynModels().addAll( DynModels.init() );
     model.getFtpSites().addAll( FTPSites.init() );
-    model.setS( Preferences.init() );
+    model.setS( PreferencesDef.init() );
   }
 
   /**
